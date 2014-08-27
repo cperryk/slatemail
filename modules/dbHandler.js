@@ -66,16 +66,17 @@ var dbHandler = {
   saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
     console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid);
     console.log(mail_obj);
-    dbHandler.saveAttachments(mailbox_name, mail_obj);
-    var request = indexedDB.open("slatemail");
-    request.onsuccess = function(){
-      var db = request.result;
-      var tx = db.transaction("box_"+mailbox_name,"readwrite");
-      var store = tx.objectStore("box_"+mailbox_name);
-      store.put(mail_obj);
-      console.log('database insertion successful');
-      dbHandler.threadMail(mailbox_name, mail_obj, callback);
-    };
+    dbHandler.saveAttachments(mailbox_name, mail_obj, function(){
+      var request = indexedDB.open("slatemail");
+      request.onsuccess = function(){
+        var db = request.result;
+        var tx = db.transaction("box_"+mailbox_name,"readwrite");
+        var store = tx.objectStore("box_"+mailbox_name);
+        store.put(mail_obj);
+        console.log('database insertion successful');
+        dbHandler.threadMail(mailbox_name, mail_obj, callback);
+      };
+    });
   },
   threadMail:function(mailbox_name, mail_obj, callback){
     var mail_uid = mail_obj.uid;
@@ -172,18 +173,22 @@ var dbHandler = {
         }
       });
     }
-    function updateMailWithThreadID(mailbox_name, uid, thread_id, callback){
+    function updateMailWithThreadID(box_name, uid, thread_id, callback){
       var open_request = indexedDB.open("slatemail");
       open_request.onsuccess = function(){
         var db = open_request.result;
-        var tx = db.transaction("box_"+mailbox_name,"readwrite");
-        var store = tx.objectStore("box_"+mailbox_name);
+        var tx = db.transaction("box_"+box_name,"readwrite");
+        var store = tx.objectStore("box_"+box_name);
         var get_request = store.get(uid);
         get_request.onsuccess = function(){
           var data = get_request.result;
           data.thread_id = thread_id;
-          var request_update = store.put(data);
-          if(callback){callback();}
+          var update_request = store.put(data);
+          update_request.onsuccess = function(){
+            if(callback){
+              callback();
+            }
+          };
         };
       };
     }
@@ -242,26 +247,48 @@ var dbHandler = {
       });
     });
   },
+  updateFlags:function(box_name, uid, flags, callback){
+    var open_request = indexedDB.open('slatemail');
+    open_request.onsuccess = function(){
+      var db = open_request.result;
+      var tx = db.transaction("box_"+box_name,"readwrite");
+      var store = tx.objectStore("box_"+box_name);
+      var get_request = store.get(uid);
+      get_request.onsuccess = function(){
+        var data = get_request.result;
+        data.flags = flags;
+        var update_request = store.put(data);
+        update_request.onsuccess = function(){
+          if(callback){
+            callback();
+          }
+        };
+      };
+    };
+  },
   syncBox:function(mailbox_name, callback){
     console.log('syncing: '+mailbox_name);
-    imapHandler.getUIDs(function(uids){
-      addLocalMessages(uids);
-      deleteLocalMessages(uids);
+    imapHandler.getUIDsFlags(function(msgs){
+      addLocalMessages(msgs);
+      deleteLocalMessages(msgs);
     });
-    function addLocalMessages(uids){
-      var messages_to_process = uids.length;
-      uids.forEach(function(uid, index){
-        dbHandler.getMailFromLocalBox(mailbox_name, uid, function(result){
-          if(!result){
-            imapHandler.getMessageWithUID(uid, function(mail_obj){
-              mail_obj.uid = uid;
+    function addLocalMessages(msgs){
+      var messages_to_process = msgs.length;
+      msgs.forEach(function(msg, index){
+        dbHandler.getMailFromLocalBox(mailbox_name, msg.uid, function(result){
+          if(!result){ // no message found in local
+            imapHandler.getMessageWithUID(msg.uid, function(mail_obj){
+              mail_obj.uid = msg.uid;
+              mail_obj.flags = msg.flags;
               dbHandler.saveMailToLocalBox('INBOX', mail_obj, function(){
                 checkEnd(index);
               });
             });
           }
-          else{
-            checkEnd(index);
+          else{ // msg found in local
+            dbHandler.updateFlags(mailbox_name, msg.uid, msg.flags, function(){
+              checkEnd(index);
+            });
           }
         });
       });
@@ -274,7 +301,14 @@ var dbHandler = {
         }
       }
     }
-    function deleteLocalMessages(uids){
+    function deleteLocalMessages(msgs){
+      var uids = (function(){
+        var out = [];
+        msgs.forEach(function(msg){
+          out.push(msg.uid);
+        });
+        return out;
+      }());
       dbHandler.getMessagesFromMailbox('INBOX', function(mail_object){
         if(uids.indexOf(mail_object.uid)===-1){
           dbHandler.deleteMessage('INBOX', mail_object.uid);
@@ -361,15 +395,25 @@ var dbHandler = {
       }
     }
   },
-  saveAttachments:function(box_name, mail_object){
+  saveAttachments:function(box_name, mail_object, callback){
     if(!mail_object.attachments){
-      return;
+      callback(mail_object);
     }
     createFolders(function(){
       var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';
       var attachments = mail_object.attachments;
+      var attachments_to_save = attachments.length;
+      var saved_attachments = 0;
       attachments.forEach(function(attachment, index){
-        fs.writeFile(path+attachment.fileName, attachment.content);
+        fs.writeFile(path+attachment.fileName, attachment.content, function(){
+          delete mail_object.attachments[index].content;
+          saved_attachments ++;
+          if(saved_attachments === attachments_to_save){
+            if(callback){
+              callback(mail_object);
+            }
+          }
+        });
       });
     });
     function createFolders(callback){

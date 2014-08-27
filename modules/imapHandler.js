@@ -38,7 +38,7 @@ var imapHandler = {
 			}
 		});
 	},
-	getUIDs:function(callback,range_string){
+	getUIDsFlags:function(callback,range_string){
 		console.log('get inbox message ids');
 		// returns a list of objects representing emails in the inbox. These objects include both the email's UID and its Message ID
 		imapHandler.connect(function(){
@@ -49,6 +49,7 @@ var imapHandler = {
   			f.on('message', function(msg, seqno) {
   				var message_id;
   				var uid;
+          var flags;
   				msg.on('body', function(stream, info) {
   					var buffer = '', count = 0;
   					stream.on('data', function(chunk) {
@@ -66,15 +67,17 @@ var imapHandler = {
   					});
   				});
   				msg.once('attributes', function(attrs) {
+            console.log(attrs);
   					uid = attrs.uid;
+            flags = attrs.flags;
   				});
   				msg.once('end', function() {
   					if(message_id && uid){
-  						// message_identifiers.push({
-  						// 	message_id:message_id,
-  						// 	uid:uid
-  						// });
-  						message_identifiers.push(uid);
+  						message_identifiers.push({
+                // message_id:message_id,
+  						 	uid:uid,
+                flags:flags
+  						});
   					}
   				});
   			});
