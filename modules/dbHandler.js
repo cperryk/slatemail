@@ -2,7 +2,7 @@ var MailParser = require("mailparser").MailParser;
 var imapHandler = new require("./modules/imapHandler.js");
 var fs = require('fs');
 
-var dbhandler = {
+var dbHandler = {
   deleteDB:function(db_name, callback){
     var req = indexedDB.deleteDatabase(db_name);
     req.onsuccess = function () {
@@ -155,7 +155,7 @@ var dbhandler = {
     }
     function traceMessage(message_ids, current_index, callback){
       var message_id = message_ids[current_index];
-      dbhandler.findMailWithMessageID(message_id, function(mail_object){
+      dbHandler.findMailWithMessageID(message_id, function(mail_object){
         if(mail_object === false){
           if(current_index < message_ids.length - 1){
             traceMessage(message_ids, current_index+1, callback);
@@ -189,7 +189,7 @@ var dbhandler = {
     }
   },
   findMailWithMessageID:function(message_id, callback){
-    dbhandler.getMailFromBoxWithMessageId('INBOX', message_id, callback);
+    dbHandler.getMailFromBoxWithMessageId('INBOX', message_id, callback);
   },
   getMailFromBoxWithMessageId:function(mailbox_name, message_id, callback){
     var request_db = indexedDB.open('slatemail');
@@ -232,31 +232,32 @@ var dbhandler = {
     };
   },
   test:function(){
-    dbhandler.deleteDB('slatemail',function(){
-      dbhandler.createDB(function(){
-        dbhandler.createLocalBox('INBOX',function(){
+    dbHandler.deleteDB('slatemail',function(){
+      dbHandler.createDB(function(){
+        dbHandler.createLocalBox('INBOX',function(){
           // getEmail('test_email', function(mail_obj){
           //   mail_obj.uid = 1;
           //   saveMailToLocalBox('INBOX', mail_obj);
           // });
-          dbhandler.syncBox('INBOX');
+          dbHandler.syncBox('INBOX');
         });
       });
     });
   },
   syncBox:function(mailbox_name, callback){
     console.log('syncing: '+mailbox_name);
+    addNewMessages();
     function addNewMessages(){
       console.log('adding new messages');
-      imap_handler.getInboxMessageIDs(function(message_identifiers){
+      imapHandler.getInboxMessageIDs(function(message_identifiers){
         var messages_to_process = message_identifiers.length;
         message_identifiers.forEach(function(identifiers, index){
-          dbhandler.getMailFromLocalBox(mailbox_name, identifiers.uid, function(result){
+          dbHandler.getMailFromLocalBox(mailbox_name, identifiers.uid, function(result){
             if(!result){
-              imap_handler.getMessageWithUID(identifiers.uid, function(mail_obj){
+              imapHandler.getMessageWithUID(identifiers.uid, function(mail_obj){
                 mail_obj.uid = identifiers.uid;
-                dbhandler.saveMailToLocalBox('INBOX', mail_obj, function(){
-                  dbhandler.threadMail(mailbox_name, identifiers.uid, mail_obj, function(){
+                dbHandler.saveMailToLocalBox('INBOX', mail_obj, function(){
+                  dbHandler.threadMail(mailbox_name, identifiers.uid, mail_obj, function(){
                     checkEnd(index);
                   });
                 });
@@ -315,7 +316,7 @@ var dbhandler = {
     };
   },
   getThreadMessages:function(thread_id, callback){
-    dbhandler.getThread(thread_id, function(thread_data){
+    dbHandler.getThread(thread_id, function(thread_data){
       console.log(thread_data);
       var message_umis = thread_data.messages;
       var messages_to_get = message_umis.length;
@@ -324,7 +325,7 @@ var dbhandler = {
         umi = umi.split(':');
         var mailbox_name = umi[0];
         var uid = parseInt(umi[1],10);
-        dbhandler.getMailFromLocalBox(mailbox_name, uid, function(mail_obj){
+        dbHandler.getMailFromLocalBox(mailbox_name, uid, function(mail_obj){
           mail_objs.push(mail_obj);
           if(mail_objs.length === messages_to_get){
             mail_objs.sort(sortbyuid);
@@ -345,4 +346,4 @@ var dbhandler = {
 };
 
 
-// var Inbox = new inbox_library.Inbox(CREDENTIALS, dbhandler.test);
+// var Inbox = new inbox_library.Inbox(CREDENTIALS, dbHandler.test);

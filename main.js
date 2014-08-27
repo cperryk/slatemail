@@ -11,8 +11,9 @@ $(function(){
   updateBox();
 
   function updateBox(){
+    console.log('updatingBox');
     printMail();
-    dbhandler.syncBox('INBOX', function(){
+    dbHandler.syncBox('INBOX', function(){
       setTimeout(updateBox, 60000);
     });
   }
@@ -22,9 +23,9 @@ $(function(){
   var box = new Box({
     on_select:function(uid){
       console.log(uid);
-      dbhandler.getMailFromLocalBox('INBOX',uid,function(mail_obj){
+      dbHandler.getMailFromLocalBox('INBOX',uid,function(mail_obj){
         viewer.clear();
-        dbhandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
+        dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
           viewer.displayMessages(mail_objs);
         });
       });
@@ -33,7 +34,7 @@ $(function(){
 
   function printMail(){
     var printed_threads = [];
-    dbhandler.getMessagesFromMailbox('INBOX',function(mail_object){
+    dbHandler.getMessagesFromMailbox('INBOX',function(mail_object){
       if(printed_threads.indexOf(mail_object.thread_id)>-1){
         return;
       }

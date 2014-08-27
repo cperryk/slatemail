@@ -1,6 +1,6 @@
 var Imap = require('imap');
 var imap;
-var ImapHandler = {
+var imapHandler = {
   connect:function(callback){
     if(imap && imap.state && imap.state === 'authenticated'){
       if(callback){
@@ -24,7 +24,7 @@ var ImapHandler = {
   },
 	disconnect:function(){
 		console.log('disconnecting');
-		this.imap.end();
+		imap.end();
 	},
 	openInbox:function(callback){
 		console.log('opening inbox');
@@ -40,9 +40,9 @@ var ImapHandler = {
 	getInboxMessageIDs:function(callback,range_string){
 		console.log('get inbox message ids');
 		// returns a list of objects representing emails in the inbox. These objects include both the email's UID and its Message ID
-		ImapHandler.connect(function(){
+		imapHandler.connect(function(){
   		var message_identifiers = [];
-  		ImapHandler.openInbox(function(box){
+  		imapHandler.openInbox(function(box){
   			var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
   			var f = imap.seq.fetch(range_string, { bodies: ['HEADER.FIELDS (MESSAGE-ID)'] });
   			f.on('message', function(msg, seqno) {
@@ -85,18 +85,16 @@ var ImapHandler = {
     }); // end imap.connect
 	},
 	getMessageWithUID:function(uid, callback){
-		this.getMessagesWithSearchCriteria({
+		imapHandler.getMessagesWithSearchCriteria({
 			criteria:[['UID',parseInt(uid,10)]],
 			callback_on_message:callback
 		});
 	},
 	getMessagesWithSearchCriteria:function(conf){
 		console.log('****************** get messages with search criteria: '+conf.criteria);
-		var imap = this.imap;
-		var self = this;
-		this.openInbox(function(box){
+		imapHandler.openInbox(function(box){
 			console.log('box open');
-			self.imap.search(conf.criteria, function(err,results){
+			imap.search(conf.criteria, function(err,results){
 				console.log('search done');
 				if(err || !results || results.length === 0){
 					console.log('no results found');
@@ -107,7 +105,7 @@ var ImapHandler = {
 				}
 				var fetch = imap.fetch(results,{ bodies: '' });
 				fetch.on('message', function(msg) {
-					self.getMailObject(msg,function(mail_object){
+					imapHandler.getMailObject(msg,function(mail_object){
 						if(conf.callback_on_message){
 							conf.callback_on_message(mail_object);
 						}
@@ -145,4 +143,4 @@ var ImapHandler = {
 	}
 };
 
-module.exports = ImapHandler;
+module.exports = imapHandler;

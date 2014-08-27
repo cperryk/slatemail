@@ -44,7 +44,6 @@ Box.prototype = {
         .attr('src', url)
         .addClass('icon')
         .prependTo(message_wrapper);
-      console.log(img[0]);
     });
     function getFaviconUrl(mail_object, callback){
       if(!mail_object.from){
