@@ -10,8 +10,14 @@ var imapHandler = {
       }
     }
     var fs = require('fs');
-    var credentials = JSON.parse(fs.readFileSync('credentials/credentials2.json'));
-    imap = new Imap(credentials);
+    var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json'));
+    // conf.debug = function(s){
+    //   console.log(s);
+    // };
+    conf.port = 993;
+    conf.tls = true;
+    console.log(conf);
+    imap = new Imap(conf);
     imap.connect();
     imap.once('ready',function(){
       console.log('ready');
@@ -29,7 +35,7 @@ var imapHandler = {
 	},
 	openInbox:function(callback){
 		console.log('opening inbox');
-		imap.openBox('INBOX', true, function(err, box){
+		imap.openBox('INBOX', false, function(err, box){
 			if (err){
 				throw err;
 			}
@@ -107,9 +113,7 @@ var imapHandler = {
 	getMessagesWithSearchCriteria:function(conf){
 		console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
 		imapHandler.openInbox(function(box){
-			console.log('box open');
 			imap.search(conf.criteria, function(err,results){
-				console.log('search done');
 				if(err || !results || results.length === 0){
 					console.log('no results found');
 					if(conf.callback_on_end){
@@ -150,7 +154,19 @@ var imapHandler = {
 		msg.once('end', function() {
 
 		});
-	}
+	},
+  markSeen:function(uid, callback){
+    console.log('marking seen: '+uid);
+    imapHandler.connect(function(){
+      imapHandler.openInbox(function(){
+        imap.addFlags(uid,['Seen'],function(err){
+          if(callback){
+            callback();
+          }
+        });
+      });
+    });
+  }
 };
 
 module.exports = imapHandler;

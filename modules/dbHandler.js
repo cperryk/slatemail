@@ -438,5 +438,4 @@ var dbHandler = {
   }
 };
 
-
 // var Inbox = new inbox_library.Inbox(CREDENTIALS, dbHandler.test);
