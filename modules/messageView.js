@@ -81,9 +81,9 @@ MessageViewer.prototype = {
     iframe.contentWindow.document.open();
     iframe.contentWindow.document.write(
       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
-            '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
-            this.formatHTML(html)+
-            '<\/body><\/html>'
+        '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
+        this.formatHTML(html)+
+        '<\/body><\/html>'
     );
     iframe.contentWindow.document.close();
     iframe.attributes.frameborder = 0;

@@ -398,6 +398,7 @@ var dbHandler = {
   saveAttachments:function(box_name, mail_object, callback){
     if(!mail_object.attachments){
       callback(mail_object);
+      return;
     }
     createFolders(function(){
       var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';

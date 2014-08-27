@@ -69,7 +69,16 @@ var imapHandler = {
   				msg.once('attributes', function(attrs) {
             console.log(attrs);
   					uid = attrs.uid;
-            flags = attrs.flags;
+            flags = (function(){
+              var out = [];
+              var flags = attrs.flags;
+              for(var i in flags){
+                if(flags.hasOwnProperty(i)){
+                  out.push(flags[i]);
+                }
+              }
+              return out;
+            }());
   				});
   				msg.once('end', function() {
   					if(message_id && uid){
