@@ -285,7 +285,7 @@ var dbHandler = {
     request.onsuccess = function (e){
       var db = request.result;
       var objectStore = db.transaction("box_"+box_name).objectStore("box_INBOX");
-      objectStore.openCursor().onsuccess = function(event) {
+      objectStore.openCursor(null, 'prev').onsuccess = function(event) {
         var cursor = event.target.result;
         if (cursor) {
           var mail_object = cursor.value;

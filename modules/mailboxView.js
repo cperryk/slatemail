@@ -33,7 +33,7 @@ Box.prototype = {
       .html(this.getPreviewText(mail_object))
       .appendTo(message_wrapper);
     this.insertFavicon(message_wrapper, mail_object);
-    message_wrapper.prependTo('#inbox');
+    message_wrapper.appendTo('#inbox');
   },
   insertFavicon:function(message_wrapper, mail_object){
     var url = getFaviconUrl(mail_object, function(url){
