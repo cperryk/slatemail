@@ -33,12 +33,17 @@ var imapHandler = {
 		imap.end();
 	},
 	openInbox:function(callback){
-		console.log('opening inbox');
+    if(imap.opened_box === 'INBOX'){
+      callback(imap._box);
+      return;
+    }
+    console.log('OPENING BOX');
 		imap.openBox('INBOX', false, function(err, box){
 			if (err){
 				throw err;
 			}
 			else{
+        imap.opened_box = 'INBOX';
 				callback(box);
 			}
 		});

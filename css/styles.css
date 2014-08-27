@@ -55,7 +55,7 @@ body {
   .inbox_email.unseen {
     background-color: #ffeeee; }
   .inbox_email.selected {
-    background-color: yellow; }
+    background-color: #feffaf; }
   .inbox_email .from {
     font-weight: bold;
     margin-bottom: 0.2em; }

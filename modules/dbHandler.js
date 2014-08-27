@@ -131,7 +131,7 @@ var dbHandler = {
           messages:[mailbox_name+':'+mail_uid]
         };
         var add_request = store.add(data);
-        add_request.onsuccess = function(){
+        add_request.onsuccess = function(event){
           var thread_id = event.target.result;
           console.log('saved message '+mailbox_name+mail_uid+' to new thread '+thread_id);
           mail_obj.thread_id = event.target.result;
