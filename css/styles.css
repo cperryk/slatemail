@@ -45,6 +45,8 @@ body {
   cursor: pointer;
   overflow: hidden;
   position: relative; }
+  .inbox_email.unseen {
+    background-color: #ffeeee; }
   .inbox_email.selected {
     background-color: yellow; }
   .inbox_email .from {

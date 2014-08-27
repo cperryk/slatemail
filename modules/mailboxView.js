@@ -20,6 +20,9 @@ Box.prototype = {
     var message_wrapper = $('<div>')
       .data('uid',mail_object.uid)
       .addClass('inbox_email');
+    if(mail_object.flags.indexOf('\\Seen')===-1){
+      message_wrapper.addClass('unseen');
+    }
     $('<div>')
       .addClass('from')
       .html(this.parseName(mail_object.headers.from))

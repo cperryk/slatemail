@@ -49,6 +49,9 @@ body{
 	cursor:pointer;
 	overflow: hidden;
 	position: relative;
+	&.unseen{
+		background-color:#ffeeee;
+	}
 	&.selected{
 		background-color:yellow;
 	}
