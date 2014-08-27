@@ -67,7 +67,12 @@ MessageViewer.prototype = {
     window.document.getElementById('message_viewer').appendChild(container);
 
     iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(formatHTML(html));
+    iframe.contentWindow.document.write(
+      '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
+            '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
+            formatHTML(html)+
+            '<\/body><\/html>'
+    );
     iframe.contentWindow.document.close();
     iframe.attributes.frameborder = 0;
 
