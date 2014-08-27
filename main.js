@@ -14,7 +14,7 @@ $(function(){
     console.log('updatingBox');
     printMail();
     dbHandler.syncBox('INBOX', function(){
-      //setTimeout(updateBox, 60000);
+      setTimeout(updateBox, 60000);
     });
   }
 

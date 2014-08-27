@@ -66,6 +66,7 @@ var dbHandler = {
   saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
     console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid);
     console.log(mail_obj);
+    dbHandler.saveAttachments(mailbox_name, mail_obj);
     var request = indexedDB.open("slatemail");
     request.onsuccess = function(){
       var db = request.result;
@@ -210,7 +211,7 @@ var dbHandler = {
     };
   },
   getMailFromLocalBox:function(mailbox_name, uid, callback){
-    console.log('getMailFromLocalBox',mailbox_name, uid);
+    //console.log('getMailFromLocalBox',mailbox_name, uid);
     var request_db = indexedDB.open("slatemail");
     request_db.onsuccess = function(){
       var db = request_db.result;
@@ -219,8 +220,6 @@ var dbHandler = {
       var request = store.get(uid);
       request.onsuccess = function(){
         var matching = request.result;
-        console.log(matching);
-        console.log(mailbox_name, uid, matching);
         if(matching!==undefined){
           callback(request.result);
         }
@@ -360,6 +359,36 @@ var dbHandler = {
       else{
         return 1;
       }
+    }
+  },
+  saveAttachments:function(box_name, mail_object){
+    if(!mail_object.attachments){
+      return;
+    }
+    createFolders(function(){
+      var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';
+      var attachments = mail_object.attachments;
+      attachments.forEach(function(attachment, index){
+        fs.writeFile(path+attachment.fileName, attachment.content);
+      });
+    });
+    function createFolders(callback){
+      createDirectoryIfNotExists('attachments', function(){
+        createDirectoryIfNotExists('attachments/'+box_name, function(){
+          createDirectoryIfNotExists('attachments/'+box_name+'/'+mail_object.uid,callback);
+        });
+      });
+    }
+    function createDirectoryIfNotExists(path, callback){
+      fs.exists(path,function(exists){
+        if(!exists){
+          console.log('creating directory: '+path);
+          fs.mkdir(path, callback);
+        }
+        else{
+          callback();
+        }
+      });
     }
   }
 };

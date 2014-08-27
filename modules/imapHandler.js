@@ -1,4 +1,5 @@
 var Imap = require('imap');
+var MailParser = require("mailparser").MailParser;
 var imap;
 var imapHandler = {
   connect:function(callback){
@@ -92,7 +93,7 @@ var imapHandler = {
 		});
 	},
 	getMessagesWithSearchCriteria:function(conf){
-		console.log('****************** get messages with search criteria: '+conf.criteria);
+		console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
 		imapHandler.openInbox(function(box){
 			console.log('box open');
 			imap.search(conf.criteria, function(err,results){
@@ -126,12 +127,8 @@ var imapHandler = {
 		});
 	},
 	getMailObject: function(msg,callback){
-		console.log('get mail object');
-		var MailParser = require("mailparser").MailParser;
 		var parser = new MailParser();
-		parser.on('end', function(mail_object){
-			callback(mail_object);
-		});
+		parser.on('end', callback);
 		msg.on('body', function(stream, info) {
 			stream.pipe(parser);
 		});

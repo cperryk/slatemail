@@ -6,7 +6,6 @@ function Box(conf){
   this.conf = conf;
   var self = this;
   this.addEventListeners();
-  this.last_printed_date;
 }
 Box.prototype = {
   addEventListeners:function(){
@@ -23,7 +22,7 @@ Box.prototype = {
       .addClass('inbox_email');
     $('<div>')
       .addClass('from')
-      .html(mail_object.headers.from)
+      .html(this.parseName(mail_object.headers.from))
       .appendTo(message_wrapper);
     $('<div>')
       .addClass('subject')
@@ -88,6 +87,15 @@ Box.prototype = {
       return mail_object.html.replace(/[\n\r]/g, '').slice(0,100);
     }
     return false;
-  }
+  },
+  parseName:function(s){
+    s = s.replace(/"/g,"");
+    s = s.split(',');
+    if(s.length>1){
+      s.reverse();
+      return s.join(' ');
+    }
+    return s[0];
+  },
 };
 module.exports = Box;

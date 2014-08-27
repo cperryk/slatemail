@@ -1,28 +1,27 @@
 var $ = require('jquery');
 
-function formatHTML(html){
-  var stage = $('<div>')
-      .hide()
-      .html(html)
-      .find('.gmail_quote')
-        .remove()
-        .end()
-      .find('#OLK_SRC_BODY_SECTION')
-        .remove()
-        .end()
-      .find('.gmail_extra')
-        .remove()
-        .end()
-      .find('#signature')
-        .remove()
-        .end();
-  return stage.html();
-}
-
 function MessageViewer(){
 
 }
 MessageViewer.prototype = {
+  formatHTML: function(html){
+    var stage = $('<div>')
+        .hide()
+        .html(html)
+        .find('.gmail_quote')
+          .remove()
+          .end()
+        .find('#OLK_SRC_BODY_SECTION')
+          .remove()
+          .end()
+        .find('.gmail_extra')
+          .remove()
+          .end()
+        .find('#signature')
+          .remove()
+          .end();
+    return stage.html();
+  },
   clear: function(){
     $('#message_viewer').empty();
     return this;
@@ -34,17 +33,30 @@ MessageViewer.prototype = {
     });
   },
   getToString: function(message_data){
+    var self = this;
     var to = message_data.to;
     var arr = [];
     to.forEach(function(rec){
       if(rec.name){
-        arr.push(rec.name);
+        arr.push(self.parseName(rec.name));
       }
       else{
         arr.push(rec.address);
       }
     });
     return arr.join(', ');
+  },
+  getFromString:function(message_data){
+    return this.parseName(message_data.from[0].name || message_data.from[0].address);
+  },
+  parseName:function(s){
+    s = s.replace(/"/g,"");
+    s = s.split(',');
+    if(s.length>1){
+      s.reverse();
+      return s.join(' ');
+    }
+    return s[0];
   },
   displayMessage: function(message_data){
 
@@ -53,7 +65,7 @@ MessageViewer.prototype = {
 
     $('<p>')
       .addClass('from')
-      .html(message_data.from[0].name || message_data.from[0].address)
+      .html(this.getFromString(message_data))
       .appendTo(container);
     $('<p>')
       .addClass('to')
@@ -70,7 +82,7 @@ MessageViewer.prototype = {
     iframe.contentWindow.document.write(
       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
             '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
-            formatHTML(html)+
+            this.formatHTML(html)+
             '<\/body><\/html>'
     );
     iframe.contentWindow.document.close();
