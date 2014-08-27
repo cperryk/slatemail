@@ -237,19 +237,6 @@ var dbHandler = {
       };
     };
   },
-  test:function(){
-    dbHandler.deleteDB('slatemail',function(){
-      dbHandler.createDB(function(){
-        dbHandler.createLocalBox('INBOX',function(){
-          // getEmail('test_email', function(mail_obj){
-          //   mail_obj.uid = 1;
-          //   saveMailToLocalBox('INBOX', mail_obj);
-          // });
-          dbHandler.syncBox('INBOX');
-        });
-      });
-    });
-  },
   updateFlags:function(box_name, uid, flags, callback){
     var open_request = indexedDB.open('slatemail');
     open_request.onsuccess = function(){
@@ -283,7 +270,7 @@ var dbHandler = {
             imapHandler.getMessageWithUID(msg.uid, function(mail_obj){
               mail_obj.uid = msg.uid;
               mail_obj.flags = msg.flags;
-              dbHandler.saveMailToLocalBox('INBOX', mail_obj, function(){
+              dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
                 checkEnd(index);
               });
             });
@@ -312,9 +299,9 @@ var dbHandler = {
         });
         return out;
       }());
-      dbHandler.getMessagesFromMailbox('INBOX', function(mail_object){
+      dbHandler.getMessagesFromMailbox(mailbox_name, function(mail_object){
         if(uids.indexOf(mail_object.uid)===-1){
-          dbHandler.deleteMessage('INBOX', mail_object.uid);
+          dbHandler.deleteMessage(mailbox_name, mail_object.uid);
         }
       });
     }

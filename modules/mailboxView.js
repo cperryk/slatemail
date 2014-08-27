@@ -2,8 +2,12 @@ var $ = require('jquery');
 var favicon = require('favicon');
 var favicon_urls = {};
 var onSelectEmail;
+var last_printed_date;
 
 mailboxView = {
+  clear:function(){
+    $('#inbox').empty();
+  },
   addEventListeners:function(){
     var self = this;
     $(function(){
@@ -32,8 +36,50 @@ mailboxView = {
       .html(mailboxView.getPreviewText(mail_object))
       .appendTo(message_wrapper);
     mailboxView.insertFavicon(message_wrapper, mail_object);
-    mailboxView.lasted_printed_date = mail_object.date;
+    mailboxView.insertDateSeparator(mail_object);
     message_wrapper.appendTo('#inbox');
+  },
+  insertDateSeparator:function(mail_object){
+    var date_string = mailboxView.getDateString(mail_object.date);
+    if(date_string && date_string!==last_printed_date){
+      mailboxView.printDateSeparator(date_string);
+      last_printed_date = date_string;
+    }
+  },
+  getDateString:function(date){
+    var today = new Date();
+    var days_diff = Math.abs(Math.round(daysDiff(today, date)));
+    var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+    if(days_diff===0){
+      return 'today';
+    }
+    if(days_diff===1){
+      return 'yestersday';
+    }
+    if(days_diff===2 && days_diff < 7){
+      return days_of_week[date.getDay()];
+    }
+    if(days_diff >= 7 && days_diff < 14){
+      return 'One week ago';
+    }
+    if(days_diff >= 14){
+      return 'Two weeks or more';
+    }
+    return false;
+
+    function daysDiff(first, second) {
+      return (second-first)/(1000*60*60*24);
+    }
+
+
+    return false;
+  },
+  printDateSeparator:function(s){
+    $('<div>')
+      .addClass('date_separator')
+      .html(s)
+      .appendTo('#inbox');
   },
   insertFavicon:function(message_wrapper, mail_object){
     var url = getFaviconUrl(mail_object, function(url){
@@ -101,7 +147,6 @@ mailboxView = {
     onSelectEmail = fnc;
   }
 };
-
 mailboxView.addEventListeners();
 
 module.exports = mailboxView;

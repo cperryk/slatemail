@@ -20,6 +20,7 @@ $(function(){
       messageView.clear();
       dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
         markRead(mail_objs);
+        messageView.clear();
         messageView.displayMessages(mail_objs);
       });
     });

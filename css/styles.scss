@@ -12,6 +12,14 @@ body{
 	top:0px;
 	left:0px;
 	border-right:1px solid #c7c7c7;
+	.date_separator{
+		padding:1em;
+		text-transform:uppercase;
+		font-size:0.7em;
+		color:#006e76;
+		border-bottom:1px solid #c7c7c7;
+		text-align:center;
+	}
 }
 #message_viewer{
 	padding:2em;
@@ -65,7 +73,8 @@ body{
 	.text_preview{
 		padding:0.3em 0;
 		font-size:0.7em;
-		color:gray;
+		line-height:1.2;
+		color:#a5a5a5;
 	}
 	.date{
 		position: absolute;
