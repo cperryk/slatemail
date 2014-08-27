@@ -6,6 +6,7 @@ function Box(conf){
   this.conf = conf;
   var self = this;
   this.addEventListeners();
+  this.last_printed_date;
 }
 Box.prototype = {
   addEventListeners:function(){
@@ -33,6 +34,7 @@ Box.prototype = {
       .html(this.getPreviewText(mail_object))
       .appendTo(message_wrapper);
     this.insertFavicon(message_wrapper, mail_object);
+    this.lasted_printed_date = mail_object.date;
     message_wrapper.appendTo('#inbox');
   },
   insertFavicon:function(message_wrapper, mail_object){

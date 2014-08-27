@@ -73,12 +73,11 @@ var dbHandler = {
       var store = tx.objectStore("box_"+mailbox_name);
       store.put(mail_obj);
       console.log('database insertion successful');
-      if(callback){
-        callback();
-      }
+      dbHandler.threadMail(mailbox_name, mail_obj, callback);
     };
   },
-  threadMail:function(mailbox_name, mail_uid, mail_obj, callback){
+  threadMail:function(mailbox_name, mail_obj, callback){
+    var mail_uid = mail_obj.uid;
     console.log('threading message '+mailbox_name+':'+mail_uid);
     traceInReplyTo(function(thread_id){
       if(!thread_id){
@@ -246,45 +245,65 @@ var dbHandler = {
   },
   syncBox:function(mailbox_name, callback){
     console.log('syncing: '+mailbox_name);
-    addNewMessages();
-    function addNewMessages(){
-      console.log('adding new messages');
-      imapHandler.getInboxMessageIDs(function(message_identifiers){
-        var messages_to_process = message_identifiers.length;
-        message_identifiers.forEach(function(identifiers, index){
-          dbHandler.getMailFromLocalBox(mailbox_name, identifiers.uid, function(result){
-            if(!result){
-              imapHandler.getMessageWithUID(identifiers.uid, function(mail_obj){
-                mail_obj.uid = identifiers.uid;
-                dbHandler.saveMailToLocalBox('INBOX', mail_obj, function(){
-                  dbHandler.threadMail(mailbox_name, identifiers.uid, mail_obj, function(){
-                    checkEnd(index);
-                  });
-                });
+    imapHandler.getUIDs(function(uids){
+      addLocalMessages(uids);
+      deleteLocalMessages(uids);
+    });
+    function addLocalMessages(uids){
+      var messages_to_process = uids.length;
+      uids.forEach(function(uid, index){
+        dbHandler.getMailFromLocalBox(mailbox_name, uid, function(result){
+          if(!result){
+            imapHandler.getMessageWithUID(uid, function(mail_obj){
+              mail_obj.uid = uid;
+              dbHandler.saveMailToLocalBox('INBOX', mail_obj, function(){
+                checkEnd(index);
               });
-            }
-            else{
-              checkEnd(index);
-            }
-          });
-        });
-        function checkEnd(index){
-          if(index === messages_to_process-1){
-            console.log('sync complete');
-            if(callback){
-              callback();
-            }
+            });
           }
+          else{
+            checkEnd(index);
+          }
+        });
+      });
+      function checkEnd(index){
+        if(index === messages_to_process-1){
+          console.log('sync complete');
+          if(callback){
+            callback();
+          }
+        }
+      }
+    }
+    function deleteLocalMessages(uids){
+      dbHandler.getMessagesFromMailbox('INBOX', function(mail_object){
+        if(uids.indexOf(mail_object.uid)===-1){
+          dbHandler.deleteMessage('INBOX', mail_object.uid);
         }
       });
     }
+  },
+  deleteMessage:function(box_name, uid, callback){
+    console.log('deleting local '+box_name+':'+uid);
+    var request = indexedDB.open('slatemail');
+    request.onsuccess = function(){
+      var db = request.result;
+      var objectStore = db.transaction("box_"+box_name,'readwrite').objectStore("box_"+box_name);
+      var delete_request = objectStore.delete(uid);
+      delete_request.onsuccess = function(){
+        console.log(box_name+':'+uid+' deleted');
+        if(callback){
+          callback();
+        }
+      };
+    };
   },
   getMessagesFromMailbox:function(box_name, onMessage, onEnd){
     console.log('get messages');
     var request = indexedDB.open('slatemail');
     request.onsuccess = function (e){
       var db = request.result;
-      var objectStore = db.transaction("box_"+box_name).objectStore("box_INBOX");
+      var objectStore = db.transaction("box_"+box_name).objectStore("box_"+box_name);
       objectStore.openCursor(null, 'prev').onsuccess = function(event) {
         var cursor = event.target.result;
         if (cursor) {
