@@ -1,8 +1,11 @@
 var MailParser = require("mailparser").MailParser;
-var imapHandler = new require("./modules/imapHandler.js");
+var imapHandler = require("./imapHandler.js");
 var fs = require('fs');
-
+var test;
 var dbHandler = {
+  feedIndexedDB:function(injected){
+    indexedDB = injected;
+  },
   deleteDB:function(db_name, callback){
     var req = indexedDB.deleteDatabase(db_name);
     req.onsuccess = function () {
@@ -438,4 +441,5 @@ var dbHandler = {
   }
 };
 
+module.exports = dbHandler;
 // var Inbox = new inbox_library.Inbox(CREDENTIALS, dbHandler.test);

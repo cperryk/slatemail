@@ -1,39 +1,38 @@
 var fs = require('fs');
-var MailParser = require("mailparser").MailParser;
-var Box = require('./modules/mailboxView.js');
-var MessageViewer = require('./modules/messageView.js');
-var imapHandler = new require("./modules/imapHandler.js");
-
-
 var $ = require('jquery');
+var mailboxView = require('./modules/mailboxView.js');
+var messageView = require('./modules/messageView.js');
+var imapHandler = require('./modules/imapHandler.js');
+var dbHandler = require('./modules/dbHandler.js');
 
 $(function(){
-  var viewer = new MessageViewer();
 
-  updateBox();
+  initialize();
 
-
-  function updateBox(){
-    console.log('updatingBox');
-    printMail();
-    dbHandler.syncBox('INBOX', function(){
-      setTimeout(updateBox, 60000);
-    });
+  function initialize(){
+    dbHandler.feedIndexedDB(window.indexedDB); //hack-ish, but needed
+    mailboxView.onSelect(emailSelected);
+    update();
   }
-
-  var box = new Box({
-    on_select:emailSelected
-  });
 
   function emailSelected(uid){
     dbHandler.getMailFromLocalBox('INBOX', uid, function(mail_obj){
-      viewer.clear();
+      messageView.clear();
       dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
         markRead(mail_objs);
-        viewer.displayMessages(mail_objs);
+        messageView.displayMessages(mail_objs);
       });
     });
   }
+
+  function update(){
+    console.log('updatingBox');
+    printMail();
+    dbHandler.syncBox('INBOX', function(){
+      setTimeout(update, 60000);
+    });
+  }
+
   function markRead(mail_objs){
     mail_objs.forEach(function(mail_obj){
       if(mail_obj.flags.indexOf('\\Seen')===-1){
@@ -41,14 +40,13 @@ $(function(){
       }
     });
   }
-
   function printMail(){
     var printed_threads = [];
     dbHandler.getMessagesFromMailbox('INBOX',function(mail_object){
       if(printed_threads.indexOf(mail_object.thread_id)>-1){
         return;
       }
-      box.printMessage(mail_object);
+      mailboxView.printMessage(mail_object);
       printed_threads.push(mail_object.thread_id);
     });
   }

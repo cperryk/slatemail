@@ -1,9 +1,6 @@
 var $ = require('jquery');
 
-function MessageViewer(){
-
-}
-MessageViewer.prototype = {
+var messageView = {
   formatHTML: function(html){
     var stage = $('<div>')
         .hide()
@@ -29,7 +26,7 @@ MessageViewer.prototype = {
   displayMessages: function(mail_objs){
     var self = this;
     mail_objs.forEach(function(mail_obj){
-      self.displayMessage(mail_obj);
+      messageView.displayMessage(mail_obj);
     });
   },
   getToString: function(message_data){
@@ -38,7 +35,7 @@ MessageViewer.prototype = {
     var arr = [];
     to.forEach(function(rec){
       if(rec.name){
-        arr.push(self.parseName(rec.name));
+        arr.push(messageView.parseName(rec.name));
       }
       else{
         arr.push(rec.address);
@@ -47,7 +44,7 @@ MessageViewer.prototype = {
     return arr.join(', ');
   },
   getFromString:function(message_data){
-    return this.parseName(message_data.from[0].name || message_data.from[0].address);
+    return messageView.parseName(message_data.from[0].name || message_data.from[0].address);
   },
   parseName:function(s){
     s = s.replace(/"/g,"");
@@ -65,11 +62,11 @@ MessageViewer.prototype = {
 
     $('<p>')
       .addClass('from')
-      .html(this.getFromString(message_data))
+      .html(messageView.getFromString(message_data))
       .appendTo(container);
     $('<p>')
       .addClass('to')
-      .html('To: '+this.getToString(message_data))
+      .html('To: '+messageView.getToString(message_data))
       .appendTo(container);
 
     var iframe = window.document.createElement('iframe');
@@ -82,7 +79,7 @@ MessageViewer.prototype = {
     iframe.contentWindow.document.write(
       '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
         '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
-        this.formatHTML(html)+
+        messageView.formatHTML(html)+
         '<\/body><\/html>'
     );
     iframe.contentWindow.document.close();
@@ -114,4 +111,4 @@ MessageViewer.prototype = {
   }
 };
 
-module.exports = MessageViewer;
+module.exports = messageView;

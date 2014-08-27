@@ -16,7 +16,6 @@ var imapHandler = {
     // };
     conf.port = 993;
     conf.tls = true;
-    console.log(conf);
     imap = new Imap(conf);
     imap.connect();
     imap.once('ready',function(){
@@ -73,7 +72,6 @@ var imapHandler = {
   					});
   				});
   				msg.once('attributes', function(attrs) {
-            console.log(attrs);
   					uid = attrs.uid;
             flags = (function(){
               var out = [];

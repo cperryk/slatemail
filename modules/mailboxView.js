@@ -1,18 +1,14 @@
 var $ = require('jquery');
 var favicon = require('favicon');
 var favicon_urls = {};
+var onSelectEmail;
 
-function Box(conf){
-  this.conf = conf;
-  var self = this;
-  this.addEventListeners();
-}
-Box.prototype = {
+mailboxView = {
   addEventListeners:function(){
     var self = this;
     $(function(){
       $('#inbox').on('click','.inbox_email',function(){
-        self.select($(this));
+        mailboxView.select($(this));
       });
     });
   },
@@ -25,7 +21,7 @@ Box.prototype = {
     }
     $('<div>')
       .addClass('from')
-      .html(this.parseName(mail_object.headers.from))
+      .html(mailboxView.parseName(mail_object.headers.from))
       .appendTo(message_wrapper);
     $('<div>')
       .addClass('subject')
@@ -33,10 +29,10 @@ Box.prototype = {
       .appendTo(message_wrapper);
     $('<div>')
       .addClass('text_preview')
-      .html(this.getPreviewText(mail_object))
+      .html(mailboxView.getPreviewText(mail_object))
       .appendTo(message_wrapper);
-    this.insertFavicon(message_wrapper, mail_object);
-    this.lasted_printed_date = mail_object.date;
+    mailboxView.insertFavicon(message_wrapper, mail_object);
+    mailboxView.lasted_printed_date = mail_object.date;
     message_wrapper.appendTo('#inbox');
   },
   insertFavicon:function(message_wrapper, mail_object){
@@ -68,14 +64,14 @@ Box.prototype = {
   },
   select:function(inbox_email){
     var self = this;
-    if(this.selected_email){
-      this.selected_email.removeClass('selected');
+    if(mailboxView.selected_email){
+      mailboxView.selected_email.removeClass('selected');
     }
     inbox_email.addClass('selected');
-    if(this.conf.on_select){
-      self.conf.on_select(inbox_email.data('uid'));
+    if(onSelectEmail){
+      onSelectEmail(inbox_email.data('uid'));
     }
-    this.selected_email = inbox_email;
+    mailboxView.selected_email = inbox_email;
   },
   getPreviewText:function(mail_object){
     /**
@@ -100,5 +96,12 @@ Box.prototype = {
     }
     return s[0];
   },
+  onSelect:function(fnc){
+    console.log('go');
+    onSelectEmail = fnc;
+  }
 };
-module.exports = Box;
+
+mailboxView.addEventListeners();
+
+module.exports = mailboxView;
