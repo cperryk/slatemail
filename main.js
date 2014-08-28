@@ -7,7 +7,7 @@ var dbHandler = require('./modules/dbHandler.js');
 
 $(function(){
 
-  var BOX = 'List/Slate Ed';
+  var BOX = 'INBOX';
   initialize();
 
   function initialize(){
@@ -30,11 +30,11 @@ $(function(){
 
   function update(){
     console.log('updatingBox');
-    dbHandler.syncBox(BOX, function(){
+    //dbHandler.syncBox(BOX, function(){
       mailboxView.clear();
       printMail();
-      setTimeout(update, 60000);
-    });
+      //setTimeout(update, 60000);
+    //});
     // dbHandler.syncBoxes();
   }
 

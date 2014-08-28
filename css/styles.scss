@@ -1,24 +1,42 @@
 body{
 	font-family: 'Gotham';
 }
-#inbox{
+#left_pane{
 	width:300px;
 	height:100%;
-	display: inline-block;
 	left:0px;
-	z-index:2;
-	overflow:scroll;
-	position:fixed;
 	top:0px;
-	left:0px;
+	position:fixed;
 	border-right:1px solid #c7c7c7;
-	.date_separator{
-		padding:1em;
-		text-transform:uppercase;
-		font-size:0.7em;
-		color:#006e76;
+	#box_selector{
+		height:0.8em;
+		font-size:0.8em;
+		width:94%;
 		border-bottom:1px solid #c7c7c7;
-		text-align:center;
+		padding:0.5em 3%;
+		position:absolute;
+		top:0px;
+		left:0px;
+		background:rgba(255,255,255,0.95);
+		z-index:2;
+		box-shadow:0px 3px 3px rgba(0,0,0,0.05);
+	}
+	#inbox{
+		position:absolute;
+		top:0px;
+		left:0px;
+		width:100%;
+		display: inline-block;
+		overflow:scroll;
+		height:100%;
+		.date_separator{
+			padding:1em;
+			text-transform:uppercase;
+			font-size:0.7em;
+			color:#006e76;
+			border-bottom:1px solid #c7c7c7;
+			text-align:center;
+		}
 	}
 }
 #message_viewer{
@@ -78,9 +96,7 @@ body{
 	}
 	.date{
 		position: absolute;
-		right:0px;
 		padding:0.5em;
-		top:0px;
 		font-size:0.6em;
 	}
 	.icon{
