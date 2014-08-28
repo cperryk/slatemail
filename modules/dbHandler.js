@@ -75,18 +75,18 @@ var dbHandler = {
   },
   saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
     console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid);
-    console.log(mail_obj);
+    // console.log(mail_obj);
     dbHandler.saveAttachments(mailbox_name, mail_obj, function(){
       var tx = db.transaction("box_"+mailbox_name,"readwrite");
       var store = tx.objectStore("box_"+mailbox_name);
       store.put(mail_obj);
-      console.log('database insertion successful');
+      // console.log('database insertion successful');
       dbHandler.threadMail(mailbox_name, mail_obj, callback);
     });
   },
   threadMail:function(mailbox_name, mail_obj, callback){
     var mail_uid = mail_obj.uid;
-    console.log('threading message '+mailbox_name+':'+mail_uid);
+    // console.log('threading message '+mailbox_name+':'+mail_uid);
     traceInReplyTo(function(thread_id){
       if(!thread_id){
         traceReferences(function(thread_id){
@@ -238,17 +238,37 @@ var dbHandler = {
     console.log('syncing: '+mailbox_name);
     dbHandler.createLocalBox(mailbox_name, function(){
       imapHandler.getMessageCount(mailbox_name, function(message_count){
-        console.log('message count: '+message_count);
-        imapHandler.getUIDsFlags(mailbox_name, function(msgs){
-          // msgs is an array of objects containing only uids and flags
-          console.log(msgs);
-          //addLocalMessages(msgs);
-          //deleteLocalMessages(msgs);
+        imapHandler.getUIDsFlags(mailbox_name, function(msgs){ // msgs is an array of objects containing only uids and flags
+          deleteLocalMessages(msgs, function(){
+            syncChunk(msgs, 0, message_count, function(){
+              console.log('sync complete');
+              if(callback){
+                callback();
+              }
+            });
+          });
         });
       });
     });
-    function addLocalMessages(msgs){
+    function syncChunk(msgs, limitx, message_count, callback){
+      console.log('sync chunk '+limitx+','+message_count);
+      console.clear();
+      var max_msg = Math.min(message_count, limitx+50);
+      var chunk = msgs.slice(limitx, max_msg);
+      addLocalMessages(chunk, function(){
+        if(max_msg < message_count){
+          syncChunk(msgs, max_msg, message_count, callback);
+        }
+        else{
+          if(callback){
+            callback();
+          }
+        }
+      });
+    }
+    function addLocalMessages(msgs, callback){
       var messages_to_process = msgs.length;
+      console.log('messages to process: '+messages_to_process);
       msgs.forEach(function(msg, index){
         dbHandler.getMailFromLocalBox(mailbox_name, msg.uid, function(result){
           if(!result){ // no message found in local
@@ -269,14 +289,14 @@ var dbHandler = {
       });
       function checkEnd(index){
         if(index === messages_to_process-1){
-          console.log('sync complete');
           if(callback){
             callback();
           }
         }
       }
     }
-    function deleteLocalMessages(msgs){
+    function deleteLocalMessages(msgs, callback){
+      console.log('deleting local messages');
       var uids = (function(){
         var out = [];
         msgs.forEach(function(msg){
@@ -284,9 +304,14 @@ var dbHandler = {
         });
         return out;
       }());
+      var end = false;
       dbHandler.getMessagesFromMailbox(mailbox_name, function(mail_object){
         if(uids.indexOf(mail_object.uid)===-1){
           dbHandler.deleteMessage(mailbox_name, mail_object.uid);
+        }
+      }, function(){
+        if(callback){
+          callback();
         }
       });
     }
@@ -295,6 +320,14 @@ var dbHandler = {
     imapHandler.getBoxes(function(boxes){
       console.log(boxes);
     });
+  },
+  countMessages:function(box_name, callback){
+    console.log('counting local messages');
+    var object_store = db.transcation('box_'+box_name,'readonly').objectStore('box_'+box_name);
+    var count_request = object_store.count();
+    count_request.onsuccess = function(){
+      console.log(count_request.result);
+    };
   },
   deleteMessage:function(box_name, uid, callback){
     console.log('deleting local '+box_name+':'+uid);

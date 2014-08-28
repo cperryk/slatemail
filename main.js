@@ -46,6 +46,7 @@ $(function(){
     });
   }
   function printMail(){
+    console.log('printing mail');
     var printed_threads = [];
     dbHandler.getMessagesFromMailbox(BOX,function(mail_object){
       if(printed_threads.indexOf(mail_object.thread_id)>-1){

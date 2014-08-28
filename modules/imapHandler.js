@@ -50,7 +50,6 @@ var imapHandler = {
 	},
 	getUIDsFlags:function(box_name, callback){
 		console.log('get inbox message ids');
-		// returns a list of objects representing emails in the inbox. These objects include both the email's UID and its Message ID
 		imapHandler.connect(function(){
   		var message_identifiers = [];
   		imapHandler.openBox(box_name, function(box){
@@ -98,7 +97,7 @@ var imapHandler = {
 		});
 	},
 	getMessagesWithSearchCriteria:function(conf){
-		console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
+		// console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
 		imapHandler.openBox(conf.box_name, function(box){
 			imap.search(conf.criteria, function(err,results){
 				if(err || !results || results.length === 0){
