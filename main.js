@@ -7,7 +7,7 @@ var dbHandler = require('./modules/dbHandler.js');
 
 $(function(){
 
-  var BOX = 'INBOX';
+  var BOX = 'List/Slate Ed';
   initialize();
 
   function initialize(){

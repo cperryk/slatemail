@@ -1,9 +1,10 @@
 var MailParser = require("mailparser").MailParser;
 var imapHandler = require("./imapHandler.js");
 var fs = require('fs');
-var test;
+
 var box_names = [];
 var db;
+
 var dbHandler = {
   feedIndexedDB:function(injected){
     indexedDB = injected;
@@ -236,9 +237,14 @@ var dbHandler = {
   syncBox:function(mailbox_name, callback){
     console.log('syncing: '+mailbox_name);
     dbHandler.createLocalBox(mailbox_name, function(){
-      imapHandler.getUIDsFlags(mailbox_name, function(msgs){
-        addLocalMessages(msgs);
-        deleteLocalMessages(msgs);
+      imapHandler.getMessageCount(mailbox_name, function(message_count){
+        console.log('message count: '+message_count);
+        imapHandler.getUIDsFlags(mailbox_name, function(msgs){
+          // msgs is an array of objects containing only uids and flags
+          console.log(msgs);
+          //addLocalMessages(msgs);
+          //deleteLocalMessages(msgs);
+        });
       });
     });
     function addLocalMessages(msgs){

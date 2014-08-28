@@ -55,27 +55,11 @@ var imapHandler = {
   		var message_identifiers = [];
   		imapHandler.openBox(box_name, function(box){
   			var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
-  			var f = imap.seq.fetch(range_string, { bodies: ['HEADER.FIELDS (MESSAGE-ID)'] });
+  			var f = imap.seq.fetch(range_string);
   			f.on('message', function(msg, seqno) {
   				var message_id;
   				var uid;
           var flags;
-  				msg.on('body', function(stream, info) {
-  					var buffer = '', count = 0;
-  					stream.on('data', function(chunk) {
-  						count += chunk.length;
-  						buffer += chunk.toString('utf8');
-  					});
-  					stream.once('end', function() {
-  						if (info.which !== 'TEXT'){
-  							var Imap = require('Imap');
-  							var headers = Imap.parseHeader(buffer);
-  							if(headers && headers['message-id']){
-  								message_id = headers['message-id'][0];
-  							}
-  						}
-  					});
-  				});
   				msg.once('attributes', function(attrs) {
   					uid = attrs.uid;
             flags = (function(){
@@ -90,13 +74,11 @@ var imapHandler = {
             }());
   				});
   				msg.once('end', function() {
-  					if(message_id && uid){
-  						message_identifiers.push({
-                // message_id:message_id,
-  						 	uid:uid,
-                flags:flags
-  						});
-  					}
+						message_identifiers.push({
+              // message_id:message_id,
+						 	uid:uid,
+              flags:flags
+						});
   				});
   			});
   			f.once('error', function(err) {
@@ -175,6 +157,13 @@ var imapHandler = {
     imapHandler.connect(function(){
       imap.getBoxes(function(err, boxes){
         callback(boxes);
+      });
+    });
+  },
+  getMessageCount:function(box_name, callback){
+    imapHandler.connect(function(){
+      imapHandler.openBox(box_name, function(box){
+        callback(box.messages.total);
       });
     });
   }
