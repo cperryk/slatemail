@@ -32,28 +32,28 @@ var imapHandler = {
 		console.log('disconnecting');
 		imap.end();
 	},
-	openInbox:function(callback){
-    if(imap.opened_box === 'INBOX'){
+	openBox:function(box_name, callback){
+    if(imap.opened_box === box_name){
       callback(imap._box);
       return;
     }
     console.log('OPENING BOX');
-		imap.openBox('INBOX', false, function(err, box){
+		imap.openBox(box_name, false, function(err, box){
 			if (err){
 				throw err;
 			}
 			else{
-        imap.opened_box = 'INBOX';
+        imap.opened_box = box_name;
 				callback(box);
 			}
 		});
 	},
-	getUIDsFlags:function(callback,range_string){
+	getUIDsFlags:function(box_name, callback){
 		console.log('get inbox message ids');
 		// returns a list of objects representing emails in the inbox. These objects include both the email's UID and its Message ID
 		imapHandler.connect(function(){
   		var message_identifiers = [];
-  		imapHandler.openInbox(function(box){
+  		imapHandler.openBox(box_name, function(box){
   			var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
   			var f = imap.seq.fetch(range_string, { bodies: ['HEADER.FIELDS (MESSAGE-ID)'] });
   			f.on('message', function(msg, seqno) {
@@ -107,15 +107,16 @@ var imapHandler = {
   		});
     }); // end imap.connect
 	},
-	getMessageWithUID:function(uid, callback){
+	getMessageWithUID:function(box_name, uid, callback){
 		imapHandler.getMessagesWithSearchCriteria({
+      box_name:box_name,
 			criteria:[['UID',parseInt(uid,10)]],
 			callback_on_message:callback
 		});
 	},
 	getMessagesWithSearchCriteria:function(conf){
 		console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
-		imapHandler.openInbox(function(box){
+		imapHandler.openBox(conf.box_name, function(box){
 			imap.search(conf.criteria, function(err,results){
 				if(err || !results || results.length === 0){
 					console.log('no results found');
@@ -158,15 +159,22 @@ var imapHandler = {
 
 		});
 	},
-  markSeen:function(uid, callback){
+  markSeen:function(box_name, uid, callback){
     console.log('marking seen: '+uid);
     imapHandler.connect(function(){
-      imapHandler.openInbox(function(){
+      imapHandler.openBox(box_name, function(){
         imap.addFlags(uid,['Seen'],function(err){
           if(callback){
             callback();
           }
         });
+      });
+    });
+  },
+  getBoxes:function(callback){
+    imapHandler.connect(function(){
+      imap.getBoxes(function(err, boxes){
+        callback(boxes);
       });
     });
   }

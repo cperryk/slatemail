@@ -2,6 +2,7 @@ var MailParser = require("mailparser").MailParser;
 var imapHandler = require("./imapHandler.js");
 var fs = require('fs');
 var test;
+var box_names = [];
 var dbHandler = {
   feedIndexedDB:function(injected){
     indexedDB = injected;
@@ -45,13 +46,19 @@ var dbHandler = {
     console.log('creating local mailbox: '+mailbox_name);
     var request = indexedDB.open('slatemail');
     request.onsuccess = function (e){
-      var database = e.target.result;
-      var version =  parseInt(database.version);
-      database.close();
+      var db = e.target.result;
+      if(db.objectStoreNames.contains("box_"+mailbox_name)){
+        if(callback){
+          callback();
+          return;
+        }
+      }
+      var version =  parseInt(db.version);
+      db.close();
       var secondRequest = indexedDB.open('slatemail', version+1);
       secondRequest.onupgradeneeded = function (e) {
-        var database = e.target.result;
-        var objectStore = database.createObjectStore('box_'+mailbox_name, {
+        var db = e.target.result;
+        var objectStore = db.createObjectStore('box_'+mailbox_name, {
             keyPath: 'uid'
         });
         objectStore.createIndex("message_id", "messageId", { unique: false });
@@ -64,6 +71,9 @@ var dbHandler = {
           callback();
         }
       };
+    };
+    request.onerror = function(){
+      console.log('erorr creating lcoal mailbox');
     };
   },
   saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
@@ -258,16 +268,18 @@ var dbHandler = {
   },
   syncBox:function(mailbox_name, callback){
     console.log('syncing: '+mailbox_name);
-    imapHandler.getUIDsFlags(function(msgs){
-      addLocalMessages(msgs);
-      deleteLocalMessages(msgs);
+    dbHandler.createLocalBox(mailbox_name, function(){
+      imapHandler.getUIDsFlags(mailbox_name, function(msgs){
+        addLocalMessages(msgs);
+        deleteLocalMessages(msgs);
+      });
     });
     function addLocalMessages(msgs){
       var messages_to_process = msgs.length;
       msgs.forEach(function(msg, index){
         dbHandler.getMailFromLocalBox(mailbox_name, msg.uid, function(result){
           if(!result){ // no message found in local
-            imapHandler.getMessageWithUID(msg.uid, function(mail_obj){
+            imapHandler.getMessageWithUID(mailbox_name, msg.uid, function(mail_obj){
               mail_obj.uid = msg.uid;
               mail_obj.flags = msg.flags;
               dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
@@ -306,6 +318,11 @@ var dbHandler = {
       });
     }
   },
+  syncBoxes:function(){
+    imapHandler.getBoxes(function(boxes){
+      console.log(boxes);
+    });
+  },
   deleteMessage:function(box_name, uid, callback){
     console.log('deleting local '+box_name+':'+uid);
     var request = indexedDB.open('slatemail');
@@ -326,7 +343,13 @@ var dbHandler = {
     var request = indexedDB.open('slatemail');
     request.onsuccess = function (e){
       var db = request.result;
-      var objectStore = db.transaction("box_"+box_name).objectStore("box_"+box_name);
+      console.log(db);
+      if(!db.objectStoreNames.contains("box_"+box_name)){
+        console.log('local box does not exist');
+        callback(false);
+      }
+      var tx = db.transaction("box_"+box_name);
+      var objectStore = tx.objectStore("box_"+box_name);
       objectStore.openCursor(null, 'prev').onsuccess = function(event) {
         var cursor = event.target.result;
         if (cursor) {
@@ -429,4 +452,3 @@ var dbHandler = {
 };
 
 module.exports = dbHandler;
-// var Inbox = new inbox_library.Inbox(CREDENTIALS, dbHandler.test);

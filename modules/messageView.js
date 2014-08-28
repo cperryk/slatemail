@@ -19,7 +19,7 @@ var messageView = {
           .end();
     return stage.html();
   },
-  clear: function(){
+  clear:function(){
     $('#message_viewer').empty();
     return this;
   },

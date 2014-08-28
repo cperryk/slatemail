@@ -21,8 +21,8 @@ body {
     text-align: center; }
 
 #message_viewer {
-  padding: 2em;
-  width: 700px;
+  padding: 0 1em;
+  width: 800px;
   height: 100%;
   left: 310px;
   top: 0px;
@@ -36,11 +36,11 @@ body {
     margin: 0px;
     color: gray; }
   #message_viewer .envelope {
-    margin: 1em 0;
-    padding: 0.5em;
+    margin: 1.5em 0;
+    padding: 2%;
     border: 1px solid #c7c7c7;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    width: 100%; }
+    width: 96%; }
     #message_viewer .envelope iframe {
       padding: 0px;
       border: none;

@@ -7,6 +7,7 @@ var dbHandler = require('./modules/dbHandler.js');
 
 $(function(){
 
+  var BOX = 'INBOX';
   initialize();
 
   function initialize(){
@@ -16,8 +17,7 @@ $(function(){
   }
 
   function emailSelected(uid){
-    dbHandler.getMailFromLocalBox('INBOX', uid, function(mail_obj){
-      messageView.clear();
+    dbHandler.getMailFromLocalBox(BOX, uid, function(mail_obj){
       dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
         markRead(mail_objs);
         messageView.clear();
@@ -28,22 +28,24 @@ $(function(){
 
   function update(){
     console.log('updatingBox');
-    printMail();
-    dbHandler.syncBox('INBOX', function(){
+    dbHandler.syncBox(BOX, function(){
+      mailboxView.clear();
+      printMail();
       setTimeout(update, 60000);
     });
+    // dbHandler.syncBoxes();
   }
 
   function markRead(mail_objs){
     mail_objs.forEach(function(mail_obj){
       if(mail_obj.flags.indexOf('\\Seen')===-1){
-        imapHandler.markSeen(mail_obj.uid);
+        imapHandler.markSeen(BOX, mail_obj.uid);
       }
     });
   }
   function printMail(){
     var printed_threads = [];
-    dbHandler.getMessagesFromMailbox('INBOX',function(mail_object){
+    dbHandler.getMessagesFromMailbox(BOX,function(mail_object){
       if(printed_threads.indexOf(mail_object.thread_id)>-1){
         return;
       }
