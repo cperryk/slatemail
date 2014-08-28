@@ -12,8 +12,10 @@ $(function(){
 
   function initialize(){
     dbHandler.feedIndexedDB(window.indexedDB); //hack-ish, but needed
-    mailboxView.onSelect(emailSelected);
-    update();
+    dbHandler.connect(function(){
+      mailboxView.onSelect(emailSelected);
+      update();
+    });
   }
 
   function emailSelected(uid){
