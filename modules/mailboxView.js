@@ -41,7 +41,9 @@ mailboxView = {
   },
   insertDateSeparator:function(mail_object){
     var date_string = mailboxView.getDateString(mail_object.date);
+    console.log(date_string, last_printed_date);
     if(date_string && date_string!==last_printed_date){
+      console.log('print');
       mailboxView.printDateSeparator(date_string);
       last_printed_date = date_string;
     }
@@ -50,7 +52,7 @@ mailboxView = {
     var today = new Date();
     var days_diff = Math.abs(Math.round(daysDiff(today, date)));
     var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-
+    console.log(days_diff);
     if(days_diff===0){
       return 'today';
     }

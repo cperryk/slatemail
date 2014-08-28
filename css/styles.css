@@ -25,6 +25,7 @@ body {
     top: 0px;
     left: 0px;
     width: 100%;
+    padding-top: 1.6em;
     display: inline-block;
     overflow: scroll;
     height: 100%; }
@@ -34,7 +35,8 @@ body {
       font-size: 0.7em;
       color: #006e76;
       border-bottom: 1px solid #c7c7c7;
-      text-align: center; }
+      text-align: center;
+      background: url(../graphics/stripe.png); }
 
 #message_viewer {
   padding: 0 1em;
