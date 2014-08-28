@@ -14,6 +14,9 @@ mailboxView = {
       $('#inbox').on('click','.inbox_email',function(){
         mailboxView.select($(this));
       });
+      $('#box_selector').click(function(){
+        var new_box = window.prompt('What box do you want?');
+      });
     });
   },
   printMessage:function(mail_object){

@@ -11,7 +11,6 @@ $(function(){
   initialize();
 
   function initialize(){
-    dbHandler.feedIndexedDB(window.indexedDB); //hack-ish, but needed
     dbHandler.connect(function(){
       mailboxView.onSelect(emailSelected);
       update();
@@ -30,11 +29,11 @@ $(function(){
 
   function update(){
     console.log('updatingBox');
-    //dbHandler.syncBox(BOX, function(){
+    dbHandler.syncBox(BOX, function(){
       mailboxView.clear();
       printMail();
       //setTimeout(update, 60000);
-    //});
+    });
     // dbHandler.syncBoxes();
   }
 

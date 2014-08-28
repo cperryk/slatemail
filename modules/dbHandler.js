@@ -4,11 +4,10 @@ var fs = require('fs');
 
 var box_names = [];
 var db;
+var indexedDB = window.indexedDB;
 
 var dbHandler = {
-  feedIndexedDB:function(injected){
-    indexedDB = injected;
-  },
+
   deleteDB:function(db_name, callback){
     var req = indexedDB.deleteDatabase(db_name);
     req.onsuccess = function () {
