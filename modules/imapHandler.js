@@ -54,7 +54,8 @@ var imapHandler = {
 		imapHandler.connect(function(){
   		var message_identifiers = [];
   		imapHandler.openBox(box_name, function(box){
-  			var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
+  			//var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
+  			var range_string = 1+':'+box.messages.total;
   			var f = imap.seq.fetch(range_string);
   			f.on('message', function(msg, seqno) {
   				var message_id;
