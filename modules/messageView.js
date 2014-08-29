@@ -1,4 +1,6 @@
 var $ = require('jquery');
+var fs = require('fs');
+var message_css = fs.readFileSync('css/message.css','utf8');
 
 var messageView = {
   formatHTML: function(html){
@@ -17,6 +19,11 @@ var messageView = {
         .find('#signature')
           .remove()
           .end();
+    stage.find('hr')
+      .nextAll()
+        .remove()
+        .end()
+      .remove();
     return stage.html();
   },
   clear:function(){
@@ -88,8 +95,9 @@ var messageView = {
   },
   displayMessage: function(message_data){
 
-    var container = window.document.createElement('div');
-    container.className = 'envelope';
+    var container = $('<div>')
+      .addClass('envelope')
+      .appendTo('#messages');
 
     $('<p>')
       .addClass('from')
@@ -100,27 +108,38 @@ var messageView = {
       .html('To: '+messageView.getToString(message_data))
       .appendTo(container);
 
-    var iframe = window.document.createElement('iframe');
-    container.appendChild(iframe);
 
-    var html = message_data.html || message_data.text;
-    window.document.getElementById('messages').appendChild(container);
+    var iframe_wrapper = $('<div>')
+      .addClass('iframe_wrapper')
+      .appendTo(container);
+    var iframe = $('<iframe>')
+      .attr('frameborder',0)
+      .attr('scrolling','no')
+      .css('height','100%')
+      .appendTo(iframe_wrapper)
+      .contents()
+        .find('head')
+          .html('<style>'+message_css+'</style>')
+          .end();
 
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(
-      '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
-        '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
-        messageView.formatHTML(html)+
-        '<\/body><\/html>'
-    );
-    iframe.contentWindow.document.close();
-    iframe.attributes.frameborder = 0;
+    var injected_wrapper = $('<div>')
+      .appendTo(iframe.contents().find('body'));
 
-    $('iframe')
-      .load(function(){
-        autoResize(iframe);
-      });
-    autoResize(iframe);
+    injected_wrapper
+      .html(messageView.formatHTML(message_data.html || message_data.text));
+    
+    var height = injected_wrapper.outerHeight();
+    console.log('height: '+height);
+    iframe_wrapper.css('height',height);
+
+    // iframe.contentWindow.document.open();
+    // iframe.contentWindow.document.write(
+    //   '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
+    //     '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
+    //     messageView.formatHTML(html)+
+    //     '<\/body><\/html>'
+    // );
+
 
     function autoResize(iframe){
         var newheight;

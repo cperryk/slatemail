@@ -47,6 +47,8 @@ body {
   top: 0px;
   position: fixed;
   overflow: scroll; }
+  #message_viewer .iframe_wrapper {
+    margin-top: 1em; }
   #message_viewer .from {
     font-size: 2em;
     margin: 0px; }
