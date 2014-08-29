@@ -13,6 +13,7 @@ mailboxView = {
     $(function(){
       $('#inbox').on('click','.inbox_email',function(){
         mailboxView.select($(this));
+        $(this).removeClass('unseen');
       });
     });
   },

@@ -4,18 +4,26 @@ var mailboxView = require('./modules/mailboxView.js');
 var messageView = require('./modules/messageView.js');
 var imapHandler = require('./modules/imapHandler.js');
 var dbHandler = require('./modules/dbHandler.js');
+var Q = require('q');
 
 $(function(){
 
   var BOX;
-  initialize();
+  //initialize();
 
-  // dbHandler.connect(function(){
-  //   dbHandler.createLocalBox('test');
-  //   dbHandler.getUIDsFromMailbox('INBOX', function(uid){
-  //     console.log(uid);
+//4318
+
+
+  // imapHandler.connectAndOpen('List/Slate Ed')
+  //   .then(function(box){
+  //     return imapHandler.getMessageWithUID('List/Slate Ed',4381,function(mail_object){
+  //       console.log(mail_object);
+  //     });
   //   });
-  // });
+
+
+
+  initialize();
 
   function initialize(){
     addEventListeners();
