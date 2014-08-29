@@ -64,6 +64,19 @@ body {
       padding: 0px;
       border: none;
       width: 100%; }
+  #message_viewer.with_top #messages {
+    margin-top: 6em; }
+  #message_viewer #top {
+    padding: 1em 0;
+    text-align: center;
+    border-bottom: 1px solid #e7e7e7;
+    position: fixed;
+    width: 800px;
+    background: rgba(255, 255, 255, 0.95); }
+    #message_viewer #top #thread_subject {
+      font-size: 1.5em; }
+    #message_viewer #top #message_count {
+      font-size: 1em; }
 
 .inbox_email {
   padding: 0.5em 0.5em;

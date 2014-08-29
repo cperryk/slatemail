@@ -31,7 +31,6 @@ deleteDB:function(db_name, callback){
 	};
 },
 connect:function(callback){
-	console.log('connecting');
 	var request = indexedDB.open("slatemail");
 	request.onupgradeneeded = function(){
 		console.log('upgrade needed');
@@ -40,7 +39,6 @@ connect:function(callback){
 		console.log('database created with threads store');
 	};
 	request.onsuccess = function(){
-		console.log('success');
 		db = request.result;
 		if(callback){
 			callback();

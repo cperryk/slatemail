@@ -20,7 +20,11 @@ var messageView = {
     return stage.html();
   },
   clear:function(){
-    $('#message_viewer').empty();
+    $('#message_viewer')
+      .removeClass('with_top');
+    $('#messages').empty();
+    $('#top')
+      .hide();
     return this;
   },
   displayMessages: function(mail_objs){
@@ -28,19 +32,38 @@ var messageView = {
     mail_objs.forEach(function(mail_obj){
       messageView.displayMessage(mail_obj);
     });
+    if(mail_objs.length>1){
+      messageView.displayTop(mail_objs[0].subject, mail_objs.length);
+    }
+  },
+  displayTop: function(subject, message_count){
+    console.log('displaying subject');
+    console.log(subject);
+    $('#thread_subject')
+      .html(subject);
+    $('#message_count')
+      .html('Messages: '+message_count);
+    $('#top')
+      .show();
+    $('#message_viewer').addClass('with_top');
   },
   getToString: function(message_data){
     var self = this;
     var to = message_data.to;
     var arr = [];
-    to.forEach(function(rec){
+    for(var i=0;i<to.length;i++){
+      var rec = to[i];
       if(rec.name){
         arr.push(messageView.parseName(rec.name));
       }
       else{
         arr.push(rec.address);
       }
-    });
+      if(i===5 && to.length > 6){
+        arr.push('and '+(to.length-i-1)+' others');
+        break;
+      }
+    }
     return arr.join(', ');
   },
   getFromString:function(message_data){
@@ -73,7 +96,7 @@ var messageView = {
     container.appendChild(iframe);
 
     var html = message_data.html || message_data.text;
-    window.document.getElementById('message_viewer').appendChild(container);
+    window.document.getElementById('messages').appendChild(container);
 
     iframe.contentWindow.document.open();
     iframe.contentWindow.document.write(

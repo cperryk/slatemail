@@ -54,6 +54,7 @@ $(function(){
     dbHandler.connect(function(){
       dbHandler.getMailFromLocalBox(BOX, uid, function(mail_obj){
         dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
+          console.log(mail_objs);
           markRead(mail_objs);
           messageView.clear();
           messageView.displayMessages(mail_objs);

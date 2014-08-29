@@ -71,6 +71,25 @@ body{
 			width:100%;
 		}
 	}
+	&.with_top{
+		#messages{
+			margin-top:6em;
+		}
+	}
+	#top{
+		padding:1em 0;
+		text-align:center;
+		border-bottom:1px solid #e7e7e7;
+		position:fixed;
+		width:800px;
+		background:rgba(255,255,255,0.95);
+		#thread_subject{
+			font-size:1.5em;
+		}
+		#message_count{
+			font-size:1em;
+		}
+	}
 }
 .inbox_email{
 	padding:0.5em 0.5em;
