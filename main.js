@@ -5,10 +5,10 @@ var messageView = require('./modules/messageView.js');
 var imapHandler = require('./modules/imapHandler.js');
 var dbHandler = require('./modules/dbHandler.js');
 var Q = require('q');
+var BOX;
 
 $(function(){
 
-  var BOX;
   //initialize();
 
 //4318
@@ -22,7 +22,13 @@ $(function(){
   //   });
 
 
-
+  dbHandler.connect()
+    .then(function(){
+      return dbHandler.getMailFromLocalBox('INBOX',37637);
+    })
+    .then(function(mail_object){
+      console.log(mail_object);
+    });
   initialize();
 
   function initialize(){
@@ -36,7 +42,7 @@ $(function(){
       if(!box_name){
         return;
       }
-      dbHandler.connect(function(){
+      dbHandler.connect().then(function(){
         selectBox(box_name);
       });
     });
@@ -51,32 +57,35 @@ $(function(){
   }
 
   function emailSelected(uid){
-    dbHandler.connect(function(){
-      dbHandler.getMailFromLocalBox(BOX, uid, function(mail_obj){
-        dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
-          console.log(mail_objs);
-          markRead(mail_objs);
-          messageView.clear();
-          messageView.displayMessages(mail_objs);
-        });
+    console.log('----------------------------------------------');
+    dbHandler.connect()
+      .then(function(){
+        return dbHandler.getMailFromLocalBox(BOX,uid);
+      })
+      .then(function(mail_obj){
+        console.log(mail_obj);
+        return dbHandler.getThreadMessages(mail_obj.thread_id);
+      })
+      .then(function(mail_objs){
+        markRead(mail_objs);
+        messageView.clear();
+        messageView.displayMessages(mail_objs);
       });
-    });
   }
 
   function update(){
-    dbHandler.connect(function(){
+    dbHandler.connect().then(function(){
       console.log('updatingBox');
       mailboxView.clear();
       printMail();
       dbHandler.syncBox(BOX, function(){
         printMail();
-        //setTimeout(update, 60000);
       });
-      // dbHandler.syncBoxes();
     });
   }
 
   function markRead(mail_objs){
+    console.log('marking read');
     mail_objs.forEach(function(mail_obj){
       if(mail_obj.flags.indexOf('\\Seen')===-1){
         imapHandler.markSeen(BOX, mail_obj.uid);

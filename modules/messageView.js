@@ -32,17 +32,25 @@ var messageView = {
     mail_objs.forEach(function(mail_obj){
       messageView.displayMessage(mail_obj);
     });
-    if(mail_objs.length>1){
-      messageView.displayTop(mail_objs[0].subject, mail_objs.length);
-    }
+    messageView.displayTop(mail_objs);
   },
-  displayTop: function(subject, message_count){
-    console.log('displaying subject');
-    console.log(subject);
+  displayTop: function(mail_objs){
+    var subject = mail_objs[0].subject;
+    var message_count = mail_objs.length;
+    var attachments_count = (function(){
+      var c = 0;
+      mail_objs.forEach(function(mail_obj){
+        console.log(mail_obj);
+        if(mail_obj.attachments){
+          c += mail_obj.attachments.length;
+        }
+      });
+      return c;
+    }());
     $('#thread_subject')
       .html(subject);
     $('#message_count')
-      .html('Messages: '+message_count);
+      .html('Messages: '+message_count+', Attachments: '+attachments_count);
     $('#top')
       .show();
     $('#message_viewer').addClass('with_top');

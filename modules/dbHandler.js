@@ -31,6 +31,7 @@ deleteDB:function(db_name, callback){
 	};
 },
 connect:function(callback){
+	var def = Q.defer();
 	var request = indexedDB.open("slatemail");
 	request.onupgradeneeded = function(){
 		console.log('upgrade needed');
@@ -40,10 +41,9 @@ connect:function(callback){
 	};
 	request.onsuccess = function(){
 		db = request.result;
-		if(callback){
-			callback();
-		}
+		def.resolve();
 	};
+	return def.promise;
 },
 createLocalBox:function(mailbox_name, callback){
 	var deferred = Q.defer();
@@ -202,19 +202,22 @@ getMailFromBoxWithMessageId:function(mailbox_name, message_id, callback){
 		}
 	};
 },
-getMailFromLocalBox:function(mailbox_name, uid, callback){
+getMailFromLocalBox:function(mailbox_name, uid){
+	// console.log('getting mail from local box '+mailbox_name+': '+uid);
+	var def = Q.defer();
 	var tx = db.transaction("box_"+mailbox_name,"readonly");
 	var store = tx.objectStore("box_"+mailbox_name);
 	var request = store.get(uid);
 	request.onsuccess = function(){
 		var matching = request.result;
 		if(matching!==undefined){
-			callback(request.result);
+			def.resolve(request.result);
 		}
 		else{
-			callback(false);
+			def.resolve(false);
 		}
 	};
+	return def.promise;
 },
 updateFlags:function(box_name, uid, flags, callback){
 	console.log('updating flags on '+box_name+':'+uid);
@@ -350,20 +353,21 @@ syncBox:function(mailbox_name, callback){
 	function addLocalMessages(msgs, callback){
 		var messages_to_process = msgs.length;
 		msgs.forEach(function(msg, index){
-			dbHandler.getMailFromLocalBox(mailbox_name, msg.uid, function(result){
-				if(!result){ // no message found in local
-					imapHandler.getMessageWithUID(mailbox_name, msg.uid, function(mail_obj){
-						mail_obj.uid = msg.uid;
-						mail_obj.flags = msg.flags;
-						dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
-							checkEnd(index);
+			dbHandler.getMailFromLocalBox(mailbox_name, msg.uid)
+				.then(function(result){
+					if(!result){ // no message found in local
+						imapHandler.getMessageWithUID(mailbox_name, msg.uid, function(mail_obj){
+							mail_obj.uid = msg.uid;
+							mail_obj.flags = msg.flags;
+							dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
+								checkEnd(index);
+							});
 						});
-					});
-				}
-				else{
-					checkEnd(index);
-				}
-			});
+					}
+					else{
+						checkEnd(index);
+					}
+				});
 		});
 		function checkEnd(index){
 			if(index === messages_to_process-1){
@@ -472,31 +476,36 @@ getMessagesFromMailbox:function(box_name, onMessage, onEnd){
 	};
 },
 getThread:function(thread_id, callback){
+	var def = Q.defer();
 	var objectStore = db.transaction('threads','readonly').objectStore('threads');
 	var get_request = objectStore.get(thread_id);
 	get_request.onsuccess = function(){
 		var matching = get_request.result;
-		callback(matching);
+		def.resolve(matching);
 	};
+	return def.promise;
 },
-getThreadMessages:function(thread_id, callback){
-	dbHandler.getThread(thread_id, function(thread_data){
-		var message_umis = thread_data.messages;
-		var messages_to_get = message_umis.length;
-		var mail_objs = [];
-		message_umis.forEach(function(umi, index){
-			umi = umi.split(':');
-			var mailbox_name = umi[0];
-			var uid = parseInt(umi[1],10);
-			dbHandler.getMailFromLocalBox(mailbox_name, uid, function(mail_obj){
-				mail_objs.push(mail_obj);
-				if(mail_objs.length === messages_to_get){
-					mail_objs.sort(sortbyuid);
-					callback(mail_objs);
-				}
-			});
+getThreadMessages:function(thread_id){
+	var def = Q.defer();
+	dbHandler.getThread(thread_id)
+		.then(function(thread_data){
+			var message_umis = thread_data.messages;
+			var messages_to_get = message_umis.length;
+			var mail_objs = [];
+			message_umis.forEach(function(umi, index){
+				umi = umi.split(':');
+				var mailbox_name = umi[0];
+				var uid = parseInt(umi[1],10);
+				dbHandler.getMailFromLocalBox(mailbox_name, uid)
+					.then(function(mail_obj){
+						mail_objs.push(mail_obj);
+						if(mail_objs.length === messages_to_get){
+							mail_objs.sort(sortbyuid);
+							def.resolve(mail_objs);
+						}
+					});
+				});
 		});
-	});
 	function sortbyuid(a,b){
 		if(a.uid > b.uid){
 			return -1;
@@ -505,6 +514,7 @@ getThreadMessages:function(thread_id, callback){
 			return 1;
 		}
 	}
+	return def.promise;
 },
 saveAttachments:function(box_name, mail_object, callback){
 	if(!mail_object.attachments){
