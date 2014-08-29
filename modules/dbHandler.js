@@ -237,13 +237,12 @@ var dbHandler = {
     console.log('---------------- syncing: '+mailbox_name);
     
     var msgs;
-    var message_count;
     imapHandler.getUIDsFlags(mailbox_name)
       .then(function(msgs){
         this.msgs = msgs;
         return deleteLocalMessages(msgs);
       })
-      .then(function(message_count){
+      .then(function(){
         return syncChunks(this.msgs);
       })
       .then(function(){
