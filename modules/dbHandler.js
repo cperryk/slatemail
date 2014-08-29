@@ -2,6 +2,7 @@ var MailParser = require("mailparser").MailParser;
 var imapHandler = require("./imapHandler.js");
 var fs = require('fs-extra');
 var step = require('step');
+var Q = require('q');
 var box_names = [];
 var db;
 var indexedDB = window.indexedDB;
@@ -47,12 +48,10 @@ var dbHandler = {
     };
   },
   createLocalBox:function(mailbox_name, callback){
+    var deferred = Q.defer();
     console.log('creating local box');
     if(db.objectStoreNames.contains("box_"+mailbox_name)){
-      if(callback){
-        callback();
-        return;
-      }
+      deferred.resolve();
     }
     var version =  parseInt(db.version);
     db.close();
@@ -69,10 +68,9 @@ var dbHandler = {
     };
     open_request.onsuccess = function (e) {
       console.log('local mailbox '+mailbox_name+'created');
-      if(callback){
-        callback();
-      }
+      deferred.resolve();
     };
+    return deferred.promise;
   },
   saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
     process.stdout.write('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
@@ -237,25 +235,23 @@ var dbHandler = {
   },
   syncBox:function(mailbox_name, callback){
     console.log('---------------- syncing: '+mailbox_name);
-    dbHandler.createLocalBox(mailbox_name, function(){
-      console.log('local box accessed or created');
-      imapHandler.getMessageCount(mailbox_name, function(message_count){
-        console.log('message count: '+message_count);
-        imapHandler.getUIDsFlags(mailbox_name, function(msgs){ // msgs is an array of objects containing only uids and flags (descriptors)
-          console.log('msgs retrieved');
-          deleteLocalMessages(msgs, function(){
-            console.log('syncing chunks');
-            syncChunk(msgs, 0, message_count, function(){
-              saveUIDs(msgs);
-              if(callback){
-                callback();
-              }
-            });
-          });
-        });
+    
+    var msgs;
+    var message_count;
+    imapHandler.getUIDsFlags(mailbox_name)
+      .then(function(msgs){
+        this.msgs = msgs;
+        return deleteLocalMessages(msgs);
+      })
+      .then(function(message_count){
+        return syncChunks(this.msgs);
+      })
+      .then(function(){
+        return saveUIDs(this.msgs);
       });
-    });
-    function saveUIDs(msgs){
+
+    function saveUIDs(msgs, callback){
+      var deferred = Q.defer();
       var uids = (function(){
         var out = [];
         msgs.forEach(function(msg){
@@ -266,12 +262,19 @@ var dbHandler = {
       var file_name = './uids/'+mailbox_name+'_uids.json';
       var data = JSON.stringify(uids);
       fs.outputFile(file_name, data, function(err){
-        console.log(err);
+        deferred.resolve();
       });
+      return deferred.promise;
+    }
+    function syncChunks(msgs){
+      var deferred = Q.defer();
+      syncChunk(msgs, 0, msgs.length, function(){
+        deferred.resolve();
+      });
+      return deferred.promise;
     }
     function syncChunk(msgs, limitx, message_count, callback){
       console.log('sync chunk '+limitx+','+message_count);
-      // console.clear();
       var max_msg = Math.min(message_count, limitx+50);
       var chunk = msgs.slice(limitx, max_msg);
       addLocalMessages(chunk, function(){
@@ -316,7 +319,7 @@ var dbHandler = {
     function deleteLocalMessages(msgs, callback){
       console.log(' ');
       console.log('deleting local messages');
-
+      var deferred = Q.defer();
       var uids = (function(){
         var out = {};
         msgs.forEach(function(msg){
@@ -325,9 +328,6 @@ var dbHandler = {
         return out;
       }());
       var end = false;
-      var t1 = new Date();
-      console.log(t1);
-
       var existing_uids;
       fs.exists('uids/'+mailbox_name+'_uids.json', function(exists){
         if(exists){
@@ -338,20 +338,14 @@ var dbHandler = {
                 dbHandler.deleteMessage(mailbox_name, uid);
               }
             });
-            if(callback){
-              var t2 = new Date();
-              console.log(t2);
-              callback();
-            }
+            deferred.resolve();
           });
         }
         else{
-          if(callback){
-            callback();
-          }
+          deferred.resolve();
         }
       });
-
+      return deferred.promise;
       // console.log(t1);
       // dbHandler.getUIDsFromMailbox(mailbox_name, function(uid){
       //   // if((uid in uids) === false){

@@ -1,5 +1,6 @@
 var Imap = require('imap');
 var MailParser = require("mailparser").MailParser;
+var Q = require('q');
 var imap;
 var imapHandler = {
   connect:function(callback){
@@ -19,7 +20,7 @@ var imapHandler = {
     imap = new Imap(conf);
     imap.connect();
     imap.once('ready',function(){
-      console.log(imap);
+      
       console.log('ready');
       if(callback){
         callback();
@@ -50,7 +51,7 @@ var imapHandler = {
 		});
 	},
 	getUIDsFlags:function(box_name, callback){
-		console.log('get inbox message ids');
+		var deferred = Q.defer();
 		imapHandler.connect(function(){
   		var message_identifiers = [];
   		imapHandler.openBox(box_name, function(box){
@@ -85,10 +86,11 @@ var imapHandler = {
   			f.once('error', function(err) {
   			});
   			f.once('end', function() {
-  				callback(message_identifiers);
+  				deferred.resolve(message_identifiers);
   			});
   		});
-    }); // end imap.connect
+    }); // end imap.Connection
+    return deferred.promise;
 	},
 	getMessageWithUID:function(box_name, uid, callback){
 		imapHandler.getMessagesWithSearchCriteria({
@@ -162,11 +164,13 @@ var imapHandler = {
     });
   },
   getMessageCount:function(box_name, callback){
+    var deferred = Q.defer();
     imapHandler.connect(function(){
       imapHandler.openBox(box_name, function(box){
-        callback(box.messages.total);
+        deferred.resolve(box.messages.total);
       });
     });
+    return deferred.promise;
   }
 };
 
