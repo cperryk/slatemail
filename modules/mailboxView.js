@@ -14,9 +14,6 @@ mailboxView = {
       $('#inbox').on('click','.inbox_email',function(){
         mailboxView.select($(this));
       });
-      $('#box_selector').click(function(){
-        var new_box = window.prompt('What box do you want?');
-      });
     });
   },
   printMessage:function(mail_object){
@@ -28,7 +25,7 @@ mailboxView = {
     }
     $('<div>')
       .addClass('from')
-      .html(mailboxView.parseName(mail_object.headers.from))
+      .html(mailboxView.parseName(mail_object.from))
       .appendTo(message_wrapper);
     $('<div>')
       .addClass('subject')
@@ -44,9 +41,7 @@ mailboxView = {
   },
   insertDateSeparator:function(mail_object){
     var date_string = mailboxView.getDateString(mail_object.date);
-    console.log(date_string, last_printed_date);
     if(date_string && date_string!==last_printed_date){
-      console.log('print');
       mailboxView.printDateSeparator(date_string);
       last_printed_date = date_string;
     }
@@ -55,7 +50,6 @@ mailboxView = {
     var today = new Date();
     var days_diff = Math.abs(Math.round(daysDiff(today, date)));
     var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    console.log(days_diff);
     if(days_diff===0){
       return 'today';
     }
@@ -138,17 +132,28 @@ mailboxView = {
     }
     return false;
   },
-  parseName:function(s){
-    s = s.replace(/"/g,"");
-    s = s.split(',');
-    if(s.length>1){
-      s.reverse();
-      return s.join(' ');
+  parseName:function(from_header){
+    if(!from_header || from_header.length === 0){
+      return '';
     }
-    return s[0];
+    if(from_header[0].name){
+      s = from_header[0].name;
+      s = s.replace(/"/g,"");
+      s = s.split(',');
+      if(s.length>1){
+        s.reverse();
+        return s.join(' ');
+      }
+      else{
+        return s;
+      }
+    }
+    else{
+      return from_header[0].address;
+    }
+    return '';
   },
   onSelect:function(fnc){
-    console.log('go');
     onSelectEmail = fnc;
   }
 };

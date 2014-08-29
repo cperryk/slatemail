@@ -19,6 +19,7 @@ var imapHandler = {
     imap = new Imap(conf);
     imap.connect();
     imap.once('ready',function(){
+      console.log(imap);
       console.log('ready');
       if(callback){
         callback();

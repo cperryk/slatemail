@@ -20,6 +20,7 @@ body{
 		background:rgba(255,255,255,0.95);
 		z-index:2;
 		box-shadow:0px 3px 3px rgba(0,0,0,0.05);
+		cursor:pointer;
 	}
 	#inbox{
 		position:absolute;
@@ -77,6 +78,7 @@ body{
 	cursor:pointer;
 	overflow: hidden;
 	position: relative;
+	-webkit-user-select:none;
 	&.unseen{
 		background-color:#ffeeee;
 	}

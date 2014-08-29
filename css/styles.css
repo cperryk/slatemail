@@ -19,7 +19,8 @@ body {
     left: 0px;
     background: rgba(255, 255, 255, 0.95);
     z-index: 2;
-    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.05); }
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.05);
+    cursor: pointer; }
   #left_pane #inbox {
     position: absolute;
     top: 0px;
@@ -69,7 +70,8 @@ body {
   border-bottom: 1px solid #c7c7c7;
   cursor: pointer;
   overflow: hidden;
-  position: relative; }
+  position: relative;
+  -webkit-user-select: none; }
   .inbox_email.unseen {
     background-color: #ffeeee; }
   .inbox_email.selected {

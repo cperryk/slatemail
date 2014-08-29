@@ -7,34 +7,64 @@ var dbHandler = require('./modules/dbHandler.js');
 
 $(function(){
 
-  var BOX = 'INBOX';
+  var BOX;
   initialize();
 
+  // dbHandler.connect(function(){
+  //   dbHandler.createLocalBox('test');
+  //   dbHandler.getUIDsFromMailbox('INBOX', function(uid){
+  //     console.log(uid);
+  //   });
+  // });
+
   function initialize(){
-    dbHandler.connect(function(){
-      mailboxView.onSelect(emailSelected);
-      update();
+    addEventListeners();
+    selectBox('INBOX');
+  }
+
+  function addEventListeners(){
+    $('#box_selector').click(function(){
+      var box_name = window.prompt('What box do you want?');
+      if(!box_name){
+        return;
+      }
+      dbHandler.connect(function(){
+        selectBox(box_name);
+      });
     });
+    mailboxView.onSelect(emailSelected);
+  }
+
+  function selectBox(box_name){
+    BOX = box_name;
+    messageView.clear();
+    $('#box_selector').html(box_name);
+    update();
   }
 
   function emailSelected(uid){
-    dbHandler.getMailFromLocalBox(BOX, uid, function(mail_obj){
-      dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
-        markRead(mail_objs);
-        messageView.clear();
-        messageView.displayMessages(mail_objs);
+    dbHandler.connect(function(){
+      dbHandler.getMailFromLocalBox(BOX, uid, function(mail_obj){
+        dbHandler.getThreadMessages(mail_obj.thread_id, function(mail_objs){
+          markRead(mail_objs);
+          messageView.clear();
+          messageView.displayMessages(mail_objs);
+        });
       });
     });
   }
 
   function update(){
-    console.log('updatingBox');
-    dbHandler.syncBox(BOX, function(){
+    dbHandler.connect(function(){
+      console.log('updatingBox');
       mailboxView.clear();
       printMail();
-      //setTimeout(update, 60000);
+      dbHandler.syncBox(BOX, function(){
+        printMail();
+        //setTimeout(update, 60000);
+      });
+      // dbHandler.syncBoxes();
     });
-    // dbHandler.syncBoxes();
   }
 
   function markRead(mail_objs){
