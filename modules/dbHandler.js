@@ -275,7 +275,7 @@ syncBox:function(mailbox_name, callback){
 			return out;
 		}());
 		var def = Q.defer();
-		var file_path = './uids/'+mailbox_name+'_uids.json';
+		var file_path = './descriptors/'+mailbox_name+'_uids.json';
 		fs.exists(file_path, function(exists){
 			if(exists){
 				fs.readJson(file_path, 'utf8', function(err, existing_msgs){
@@ -317,7 +317,7 @@ syncBox:function(mailbox_name, callback){
 			});
 			return out;
 		}());
-		var file_name = './uids/'+mailbox_name+'_uids.json';
+		var file_name = './descriptors/'+mailbox_name+'_uids.json';
 		var data = JSON.stringify(uids);
 		fs.outputFile(file_name, data, function(err){
 			deferred.resolve();
