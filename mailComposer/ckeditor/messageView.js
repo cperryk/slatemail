@@ -24,6 +24,8 @@ var messageView = {
         .remove()
         .end()
       .remove();
+    stage.find('blockquote')
+      .remove();
     return stage.html();
   },
   clear:function(){
@@ -93,6 +95,12 @@ var messageView = {
     }
     return s[0];
   },
+  parseDate:function(date){
+    console.log('what the holy fuck');
+    console.log(date);
+    var d = new Date(date);
+    return d.toDateString();
+  },
   displayMessage: function(message_data){
 
     var container = $('<div>')
@@ -107,11 +115,17 @@ var messageView = {
       .addClass('to')
       .html('To: '+messageView.getToString(message_data))
       .appendTo(container);
+    var d = $('<div>')
+      .addClass('date')
+      .html(messageView.parseDate(message_data.date))
+      .appendTo(container);
+    console.log(d[0]);
 
 
     var iframe_wrapper = $('<div>')
       .addClass('iframe_wrapper')
       .appendTo(container);
+
     var iframe = $('<iframe>')
       .attr('frameborder',0)
       .attr('scrolling','no')
@@ -129,35 +143,8 @@ var messageView = {
       .html(messageView.formatHTML(message_data.html || message_data.text));
     
     var height = injected_wrapper.outerHeight();
-    console.log('height: '+height);
     iframe_wrapper.css('height',height);
 
-    // iframe.contentWindow.document.open();
-    // iframe.contentWindow.document.write(
-    //   '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional //EN" "http://www.w3.org/TR/html4/loose.dtd">'+
-    //     '<html><head><link rel="stylesheet" href="css/message.css"><\/head><body>'+
-    //     messageView.formatHTML(html)+
-    //     '<\/body><\/html>'
-    // );
-
-
-    function autoResize(iframe){
-        var newheight;
-        var newwidth;
-        if(!iframe.contentWindow){
-          return;
-        }
-        if(!iframe.contentWindow.document){
-          return;
-        }
-        if(!iframe.contentWindow.document.body){
-          return;
-        }
-        newheight=iframe.contentWindow.document.body.scrollHeight;
-        //newwidth=iframe.contentWindow.document.body.scrollWidth;
-        iframe.height= (newheight) + "px";
-        //iframe.width= (newwidth) + "px";
-    }
   }
 };
 

@@ -2,12 +2,11 @@ body {
   font-family: 'Gotham'; }
 
 #left_pane {
-  width: 300px;
+  width: 20%;
   height: 100%;
   left: 0px;
   top: 0px;
-  position: fixed;
-  border-right: 1px solid #c7c7c7; }
+  position: fixed; }
   #left_pane #box_selector {
     height: 0.8em;
     font-size: 0.8em;
@@ -32,57 +31,108 @@ body {
     height: 100%; }
     #left_pane #inbox .date_separator {
       padding: 1em;
+      cursor: pointer;
       text-transform: uppercase;
       font-size: 0.7em;
       color: #006e76;
-      border-bottom: 1px solid #c7c7c7;
       text-align: center;
-      background: url(../graphics/stripe.png); }
+      background: #e3e3e3;
+      -webkit-user-select: none; }
 
 #message_viewer {
-  padding: 0 1em;
-  width: 800px;
+  background: url(../graphics/stripe.png);
+  width: 80%;
   height: 100%;
-  left: 310px;
+  left: 20%;
   top: 0px;
+  border-left: 1px solid #c7c7c7;
   position: fixed;
   overflow: scroll; }
-  #message_viewer .iframe_wrapper {
-    margin-top: 1em; }
-  #message_viewer .from {
-    font-size: 2em;
+
+.message_view .envelope {
+  background-color: white;
+  margin: 1.5em 0;
+  padding: 2%;
+  border: 1px solid #c7c7c7;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+  width: 96%;
+  position: relative; }
+  .message_view .envelope:first-child {
+    margin-top: 0; }
+  .message_view .envelope iframe {
+    padding: 0px;
+    border: none;
+    width: 100%; }
+.message_view .headers {
+  position: relative;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #e3e3e3; }
+  .message_view .headers .from {
+    font-size: 1.5em;
     margin: 0px; }
-  #message_viewer .to {
-    font-size: 0.8em;
+  .message_view .headers .to {
+    font-size: 0.75em;
+    line-height: 1.2;
     margin: 0px;
     color: gray; }
-  #message_viewer .envelope {
-    margin: 1.5em 0;
-    padding: 2%;
-    border: 1px solid #c7c7c7;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
-    width: 96%; }
-    #message_viewer .envelope iframe {
-      padding: 0px;
-      border: none;
-      width: 100%; }
-  #message_viewer.with_top #messages {
-    margin-top: 6em; }
-  #message_viewer #top {
-    padding: 1em 0;
-    text-align: center;
-    border-bottom: 1px solid #e7e7e7;
-    position: fixed;
-    width: 800px;
-    background: rgba(255, 255, 255, 0.95); }
-    #message_viewer #top #thread_subject {
-      font-size: 1.5em; }
-    #message_viewer #top #message_count {
-      font-size: 1em; }
+  .message_view .headers .action_btns {
+    position: absolute;
+    bottom: -0.5em;
+    margin: 0;
+    width: 100%;
+    text-align: center; }
+    .message_view .headers .action_btns .inner_wrapper {
+      border: 1px solid #e3e3e3; }
+    .message_view .headers .action_btns .action_btn {
+      text-transform: uppercase;
+      background-color: white;
+      padding: 0 0.5em;
+      cursor: pointer;
+      border-right: 1px solid #e3e3e3; }
+      .message_view .headers .action_btns .action_btn:last-child {
+        border-right: 0; }
+.message_view .date {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 0.5em;
+  font-size: 0.8em;
+  color: gray; }
+.message_view .selected {
+  border: 1px solid yellow; }
+.message_view .iframe_wrapper {
+  margin-top: 1em; }
+.message_view.with_top .messages {
+  margin-top: 6em; }
+.message_view .messages {
+  width: 96%;
+  padding: 2%; }
+.message_view .top {
+  width: inherit;
+  padding: 1em 0;
+  text-align: center;
+  border-bottom: 1px solid #e7e7e7;
+  position: fixed;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 2; }
+  .message_view .top .thread_subject {
+    font-size: 1.5em; }
+  .message_view .top .message_count {
+    font-size: 1em; }
+  .message_view .top .btn_reply, .message_view .top .btn_forward {
+    padding: 0.3em;
+    outline: 1px solid #c7c7c7;
+    margin: 0.5em;
+    line-height: 2.5em;
+    text-transform: uppercase;
+    background-color: #e3e3e3;
+    border-radius: 2px;
+    font-size: 0.75em;
+    cursor: pointer; }
 
 .inbox_email {
   padding: 0.5em 0.5em;
-  border-bottom: 1px solid #c7c7c7;
+  border-bottom: 1px solid #e3e3e3;
   cursor: pointer;
   overflow: hidden;
   position: relative;
@@ -95,12 +145,16 @@ body {
     font-weight: bold;
     margin-bottom: 0.2em; }
   .inbox_email .subject {
-    font-size: 0.8em; }
+    font-size: 0.8em;
+    line-height: 1.2; }
   .inbox_email .text_preview {
     padding: 0.3em 0;
     font-size: 0.7em;
     line-height: 1.2;
-    color: #a5a5a5; }
+    max-height: 2em;
+    color: #a5a5a5;
+    max-height: 2em;
+    overflow: hidden; }
   .inbox_email .date {
     position: absolute;
     padding: 0.5em;

@@ -57,14 +57,26 @@ mailboxView = {
     if(days_diff===1){
       return 'yestersday';
     }
-    if(days_diff===2 && days_diff < 7){
+    if(days_diff>=2 && days_diff < 7){
       return days_of_week[date.getDay()];
     }
     if(days_diff >= 7 && days_diff < 14){
       return 'One week ago';
     }
     if(days_diff >= 14){
-      return 'Two weeks or more';
+      return 'Two weeks ago';
+    }
+    if(days_diff >= 30){
+      return 'One month ago';
+    }
+    if(days_diff >= 60){
+      return 'Two months ago';
+    }
+    if(days_diff >= 90){
+      return 'Three months ago';
+    }
+    if(days_diff >= 360){
+      return 'One year ago';
     }
     return false;
 
@@ -79,7 +91,19 @@ mailboxView = {
     $('<div>')
       .addClass('date_separator')
       .html(s)
-      .appendTo('#inbox');
+      .appendTo('#inbox')
+      .click(function(){
+        if($(this).hasClass('collapsed')){
+          $(this).nextUntil('.date_separator')
+            .show();
+          $(this).removeClass('collapsed');
+        }
+        else{
+          $(this).nextUntil('.date_separator')
+            .hide();
+          $(this).addClass('collapsed');
+        }
+      });
   },
   insertFavicon:function(message_wrapper, mail_object){
     var url = getFaviconUrl(mail_object, function(url){
@@ -89,7 +113,10 @@ mailboxView = {
       var img = $('<img>')
         .attr('src', url)
         .addClass('icon')
-        .prependTo(message_wrapper);
+        .load(function(){
+          $(this).prependTo(message_wrapper);
+        });
+
     });
     function getFaviconUrl(mail_object, callback){
       if(!mail_object.from){
@@ -114,6 +141,7 @@ mailboxView = {
       mailboxView.selected_email.removeClass('selected');
     }
     inbox_email.addClass('selected');
+    console.log(onSelectEmail);
     if(onSelectEmail){
       onSelectEmail(inbox_email.data('uid'));
     }
@@ -126,10 +154,10 @@ mailboxView = {
      * @param {object} mail_object
      */
     if(mail_object.text){
-      return mail_object.text.replace(/[\n\r]/g, '').slice(0,100);
+      return mail_object.text.replace(/[\n\r]/g, ' ').slice(0,125);
     }
     if(mail_object.html){
-      return mail_object.html.replace(/[\n\r]/g, '').slice(0,100);
+      return mail_object.html.replace(/[\n\r]/g, ' ').slice(0,125);
     }
     return false;
   },

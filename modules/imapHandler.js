@@ -11,7 +11,7 @@ var imapHandler = {
     }
     console.log('connecting...');
     var def = Q.defer();
-    var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json'));
+    var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json')).internal;
     // conf.debug = function(s){
     //   console.log(s);
     // };

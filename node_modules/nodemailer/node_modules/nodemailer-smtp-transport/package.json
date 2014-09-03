@@ -1,0 +1,58 @@
+{
+  "name": "nodemailer-smtp-transport",
+  "version": "0.1.12",
+  "description": "SMTP transport for Nodemailer",
+  "main": "src/smtp-transport.js",
+  "scripts": {
+    "test": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/andris9/nodemailer-smtp-transport.git"
+  },
+  "keywords": [
+    "SMTP",
+    "Nodemailer"
+  ],
+  "author": {
+    "name": "Andris Reinman"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andris9/nodemailer-smtp-transport/issues"
+  },
+  "homepage": "http://github.com/andris9/nodemailer-smtp-transport",
+  "dependencies": {
+    "nodemailer-wellknown": "^0.1.1",
+    "smtp-connection": "^0.1.7"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-mocha-test": "~0.10.0",
+    "sinon": "^1.9.0",
+    "simplesmtp": "^0.3.32"
+  },
+  "gitHead": "8deec3da75bd34fca0076aae7155aab3ddc27eae",
+  "_id": "nodemailer-smtp-transport@0.1.12",
+  "_shasum": "d4b5ff9e8308f01e8f63f10f014bda8aa8e21f5e",
+  "_from": "nodemailer-smtp-transport@^0.1.11",
+  "_npmVersion": "1.4.14",
+  "_npmUser": {
+    "name": "andris",
+    "email": "andris@node.ee"
+  },
+  "maintainers": [
+    {
+      "name": "andris",
+      "email": "andris@node.ee"
+    }
+  ],
+  "dist": {
+    "shasum": "d4b5ff9e8308f01e8f63f10f014bda8aa8e21f5e",
+    "tarball": "http://registry.npmjs.org/nodemailer-smtp-transport/-/nodemailer-smtp-transport-0.1.12.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/nodemailer-smtp-transport/-/nodemailer-smtp-transport-0.1.12.tgz"
+}

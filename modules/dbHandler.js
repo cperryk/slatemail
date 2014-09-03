@@ -254,6 +254,7 @@ updateFlags:function(box_name, uid, flags, callback){
 },
 syncBox:function(mailbox_name, callback){
 	console.log('---------------- syncing: '+mailbox_name+' ----------------');
+	var def = Q.defer();
 	imapHandler.getUIDsFlags(mailbox_name)
 		.then(function(msgs){
 			this.msgs = msgs;
@@ -267,7 +268,11 @@ syncBox:function(mailbox_name, callback){
 		})
 		.then(function(){
 			return saveUIDs(this.msgs);
+		})
+		.then(function(){
+			def.resolve();
 		});
+		return def.promise;
 
 	function updateFlags(msgs){
 		msgs = (function(){

@@ -1,0 +1,62 @@
+{
+  "name": "hyperquest",
+  "version": "0.3.0",
+  "description": "make streaming http requests",
+  "main": "index.js",
+  "dependencies": {
+    "through": "~2.2.0",
+    "duplexer": "~0.1.0"
+  },
+  "devDependencies": {
+    "tap": "~0.4.0"
+  },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/hyperquest.git"
+  },
+  "homepage": "https://github.com/substack/hyperquest",
+  "keywords": [
+    "stream",
+    "http",
+    "transport",
+    "request",
+    "get",
+    "post",
+    "put",
+    "delete",
+    "duplex",
+    "pooling"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/substack/hyperquest/issues"
+  },
+  "_id": "hyperquest@0.3.0",
+  "dist": {
+    "shasum": "4c3c06c074755e921f09a2db51aea5e6e7ee155f",
+    "tarball": "http://registry.npmjs.org/hyperquest/-/hyperquest-0.3.0.tgz"
+  },
+  "_from": "hyperquest@^0.3.0",
+  "_npmVersion": "1.4.4",
+  "_npmUser": {
+    "name": "substack",
+    "email": "mail@substack.net"
+  },
+  "maintainers": [
+    {
+      "name": "substack",
+      "email": "mail@substack.net"
+    }
+  ],
+  "directories": {},
+  "_shasum": "4c3c06c074755e921f09a2db51aea5e6e7ee155f",
+  "_resolved": "https://registry.npmjs.org/hyperquest/-/hyperquest-0.3.0.tgz"
+}

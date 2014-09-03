@@ -1,15 +1,26 @@
 var fs = require('fs');
 var $ = require('jquery');
 var mailboxView = require('./modules/mailboxView.js');
-var messageView = require('./modules/messageView.js');
+var MessageView = require('./modules/messageView.js');
 var imapHandler = require('./modules/imapHandler.js');
 var dbHandler = require('./modules/dbHandler.js');
+var MailComposer = require('./MailComposer/MailComposer.js');
 var Q = require('q');
+var gui = require('nw.gui');
 var BOX;
 
 $(function(){
 
-  //initialize();
+  $('#btn_new_mail').click(function(){
+    new MailComposer({
+      to:'cperryk@gmail.com',
+      subject:'Test subject',
+      cc:'Test cc',
+      body:'Test body'
+    });
+  });
+
+  initialize();
 
 //4318
 
@@ -22,18 +33,19 @@ $(function(){
   //   });
 
 
-  dbHandler.connect()
-    .then(function(){
-      return dbHandler.getMailFromLocalBox('INBOX',37637);
-    })
-    .then(function(mail_object){
-      console.log(mail_object);
-    });
-  initialize();
+  // dbHandler.connect()
+  //   .then(function(){
+  //     return dbHandler.getMailFromLocalBox('INBOX',37637);
+  //   })
+  //   .then(function(mail_object){
+  //     console.log(mail_object);
+  //   });
+  // initialize();
 
   function initialize(){
-    addEventListeners();
+    console.log('go go gadget');
     selectBox('INBOX');
+    addEventListeners();
   }
 
   function addEventListeners(){
@@ -46,12 +58,17 @@ $(function(){
         selectBox(box_name);
       });
     });
+    $(window).keydown(function(e){
+      if(e.keyCode===78 && e.metaKey){
+        new MailComposer();
+      }
+    });
     mailboxView.onSelect(emailSelected);
   }
 
   function selectBox(box_name){
     BOX = box_name;
-    messageView.clear();
+    $('#message_viewer').empty();
     $('#box_selector').html(box_name);
     update();
   }
@@ -68,8 +85,7 @@ $(function(){
       })
       .then(function(mail_objs){
         markRead(mail_objs);
-        messageView.clear();
-        messageView.displayMessages(mail_objs);
+        new MessageView($('#message_viewer'), mail_objs, BOX);
       });
   }
 
@@ -78,9 +94,10 @@ $(function(){
       console.log('updatingBox');
       mailboxView.clear();
       printMail();
-      dbHandler.syncBox(BOX, function(){
-        printMail();
-      });
+      dbHandler.syncBox(BOX)
+        .then(function(){
+          printMail();
+        });
     });
   }
 
