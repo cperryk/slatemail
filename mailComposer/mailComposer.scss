@@ -3,13 +3,13 @@ body{
 	margin:0;
 }
 .headers{
-	margin-top:5em;
+	margin:60px 2% 0 2%;
 	p{
-		margin:2em;
 		border-bottom:1px solid #c7c7c7;
 		font-size:14px;
 		line-height:100%;
 		overflow: scroll;
+		cursor: text;
 		.label{
 			color:gray;
 			text-transform: uppercase;
@@ -27,19 +27,32 @@ body{
 		}
 	}
 }
-#cke_textarea1 .cke_top{
-	position: fixed;
-	top: 0px;
-	width: 98%;
-	margin: 0;
-	padding: 1%;
+#message_body{
+	margin:2%;
+	width:96%;
+	min-height:100px;
+	height:100%;
 }
-#cke_1_bottom{
-	display:none;
+
+#cke_1_top{
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
 }
+#cke_message_body{
+	display: block !important;
+}
+#message_body:focus {
+	outline: 0;
+}
+
 .btn_send{
 	cursor:pointer;
 	width:100%;
+	position:fixed;
+	bottom:0em;
+	left:0em;
 	text-align:center;
 	background-color: #e3e3e3;
 	padding:0.5em 0;

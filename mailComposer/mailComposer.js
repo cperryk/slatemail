@@ -16,37 +16,17 @@ function MailComposer(conf){
 			$(function(){
 				var doc = $(win.document);
 				var text_area = doc.find('textarea').get(0);
-				var editor_config = {
-					toolbarGroups:
-						[
-							// { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-							{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-							{ name: 'links' },
-							{ name: 'insert' },
-							// { name: 'forms' },
-							{ name: 'tools' },
-							// { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-							{ name: 'others' },
-							// '/',
-							// { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-							{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-							// { name: 'styles' },
-							{ name: 'colors' },
-							{ name: 'about' }
-						],
-						startupFocus:conf && conf.in_reply_to,
-						removePlugins:'elementspath',
-						scayt_autoStartup:true,
-						uiColor: '#e3e3e3'
-					};
 
 				self.CKEDITOR = win.CKEDITOR;
-				self.CKEDITOR.replace(text_area, editor_config);
+				// self.CKEDITOR.replace(text_area, editor_config);
 				self.container = doc;
 				self.preload(conf);
 				self.addEventListeners();
 				if(!(conf && conf.in_reply_to)){
 					doc.find('.input_to').focus();
+				}
+				else{
+					doc.find('#message_body').focus();
 				}
 			});
 		});
