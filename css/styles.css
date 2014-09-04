@@ -31,6 +31,9 @@ body {
     height: 100%; }
     #left_pane #inbox .date_separator {
       padding: 1em;
+      margin: 1em 0 0 0;
+      border-top: 1px solid #c7c7c7;
+      border-bottom: 1px solid #c7c7c7;
       cursor: pointer;
       text-transform: uppercase;
       font-size: 0.7em;
@@ -38,6 +41,8 @@ body {
       text-align: center;
       background: #e3e3e3;
       -webkit-user-select: none; }
+      #left_pane #inbox .date_separator .triangle {
+        font-size: 0.8em; }
 
 #message_viewer {
   background: url(../graphics/stripe.png);

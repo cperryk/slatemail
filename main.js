@@ -11,6 +11,15 @@ var BOX;
 
 $(function(){
 
+  // $(document).click(function(){
+  //   var win = window.open('test.html');
+  //   var Win = gui.Window.get(win);
+  //   Win.focus();
+  //   Win.on('document-end',function(){
+  //     Win.window.document.write('Done!');
+  //   });
+  // });
+
   $('#btn_new_mail').click(function(){
     new MailComposer({
       to:'cperryk@gmail.com',

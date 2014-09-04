@@ -90,18 +90,20 @@ mailboxView = {
   printDateSeparator:function(s){
     $('<div>')
       .addClass('date_separator')
-      .html(s)
+      .html('<span class="triangle">&#9660;</span> <span class="date_string">'+s+'</span>')
       .appendTo('#inbox')
       .click(function(){
         if($(this).hasClass('collapsed')){
           $(this).nextUntil('.date_separator')
             .show();
           $(this).removeClass('collapsed');
+          $(this).find('.triangle').html('&#9660;');
         }
         else{
           $(this).nextUntil('.date_separator')
             .hide();
           $(this).addClass('collapsed');
+          $(this).find('.triangle').html('&#9654;');
         }
       });
   },
@@ -141,7 +143,6 @@ mailboxView = {
       mailboxView.selected_email.removeClass('selected');
     }
     inbox_email.addClass('selected');
-    console.log(onSelectEmail);
     if(onSelectEmail){
       onSelectEmail(inbox_email.data('uid'));
     }

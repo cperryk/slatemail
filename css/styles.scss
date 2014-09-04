@@ -32,6 +32,9 @@ body{
 		height:100%;
 		.date_separator{
 			padding:1em;
+			margin:1em 0 0 0;
+			border-top:1px solid #c7c7c7;
+			border-bottom:1px solid #c7c7c7;
 			cursor:pointer;
 			text-transform:uppercase;
 			font-size:0.7em;
@@ -39,6 +42,9 @@ body{
 			text-align:center;
 			background:#e3e3e3;
 			-webkit-user-select:none;
+			.triangle{
+				font-size:0.8em;
+			}
 		}
 	}
 }

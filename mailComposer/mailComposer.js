@@ -4,23 +4,24 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var fs = require('fs-extra');
 var CKEDITOR;
 function MailComposer(conf){
+
 	var self = this;
 	if(!conf || !conf.container){
 		console.log('creating new window');
 		var gui = window.gui;
-		var win = gui.Window.open('mailComposer/mailComposer.html', {
-			focus: true
-		});
-		this.win = win;
-		win.on('document-end',function(){
-			console.log('go!');
-			self.container = $(win.window.document);
-			self.container.ready(function(){
-				var text_area = self.container.find('textarea').get(0);
-				CKEDITOR = win.window.CKEDITOR;
-				console.log(CKEDITOR);
-				// CKEDITOR.replace(text_area, {autoGrow_onStartup:true});
-				win.removeAllListeners('document-end');
+		var win = window.open('mailComposer/mailComposer.html');
+		var Win = gui.Window.get(win);
+		Win.focus();
+		console.log('wtf');
+		console.log(Win);
+		Win.once('document-end',function(){
+			$(function(){
+				var doc = $(win.document);
+				var text_area = doc.find('textarea').get(0);
+				doc.find('.input_to').focus();
+				CKEDITOR = win.CKEDITOR;
+				CKEDITOR.replace(text_area, {autoGrow_onStartup:true});
+				self.container = doc;
 				self.preload(conf);
 				self.addEventListeners();
 			});
