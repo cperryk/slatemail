@@ -1,7 +1,9 @@
 body{
 	font-family:'Gotham',verdana;
+	margin:0;
 }
 .headers{
+	margin-top:5em;
 	p{
 		margin:2em;
 		border-bottom:1px solid #c7c7c7;
@@ -24,8 +26,21 @@ body{
 			}
 		}
 	}
-	.btn_send{
-		cursor:pointer;
-		width:100%;
-	}
+}
+#cke_textarea1 .cke_top{
+	position: fixed;
+	top: 0px;
+	width: 98%;
+	margin: 0;
+	padding: 1%;
+}
+#cke_1_bottom{
+	display:none;
+}
+.btn_send{
+	cursor:pointer;
+	width:100%;
+	text-align:center;
+	background-color: #e3e3e3;
+	padding:0.5em 0;
 }

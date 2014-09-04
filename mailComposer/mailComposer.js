@@ -16,12 +16,38 @@ function MailComposer(conf){
 			$(function(){
 				var doc = $(win.document);
 				var text_area = doc.find('textarea').get(0);
-				doc.find('.input_to').focus();
+				var editor_config = {
+					toolbarGroups:
+						[
+							// { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+							{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+							{ name: 'links' },
+							{ name: 'insert' },
+							// { name: 'forms' },
+							{ name: 'tools' },
+							// { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
+							{ name: 'others' },
+							// '/',
+							// { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+							{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+							// { name: 'styles' },
+							{ name: 'colors' },
+							{ name: 'about' }
+						],
+						startupFocus:conf && conf.in_reply_to,
+						removePlugins:'elementspath',
+						scayt_autoStartup:true,
+						uiColor: '#e3e3e3'
+					};
+
 				self.CKEDITOR = win.CKEDITOR;
-				self.CKEDITOR.replace(text_area, {autoGrow_onStartup:true});
+				self.CKEDITOR.replace(text_area, editor_config);
 				self.container = doc;
 				self.preload(conf);
 				self.addEventListeners();
+				if(!(conf && conf.in_reply_to)){
+					doc.find('.input_to').focus();
+				}
 			});
 		});
 	}
@@ -65,8 +91,8 @@ MailComposer.prototype = {
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
 		var body = this.CKEDITOR.instances.textarea1.getData();
-    var credentials = fs.readJsonSync('credentials/credentials2.json').external;
-   	var mail_options = {
+		var credentials = fs.readJsonSync('credentials/credentials2.json').external;
+		var mail_options = {
 			from: credentials.auth.user,
 			to: to,
 			subject: subject,
@@ -107,7 +133,7 @@ $(function() {
 			html: body
 		};
 		console.log(mail_options);
-    var credentials = fs.readJsonSync('credentials/credentials2.json').external;
+		var credentials = fs.readJsonSync('credentials/credentials2.json').external;
 		var transporter = nodemailer.createTransport(credentials);
 
 		// transporter.sendMail(mail_options, function(error, info) {

@@ -1,24 +1,41 @@
 body {
-  font-family: 'Gotham',verdana; }
+  font-family: 'Gotham',verdana;
+  margin: 0; }
 
-.headers p {
-  margin: 2em;
-  border-bottom: 1px solid #c7c7c7;
-  font-size: 14px;
-  line-height: 100%;
-  overflow: scroll; }
-  .headers p .label {
-    color: gray;
-    text-transform: uppercase;
-    font-size: 10px;
-    vertical-align: bottom; }
-  .headers p .field {
-    margin-left: 0.5em;
-    min-width: 1px;
-    vertical-align: top;
-    overflow: hidden; }
-    .headers p .field:focus {
-      outline: 0; }
-.headers .btn_send {
+.headers {
+  margin-top: 5em; }
+  .headers p {
+    margin: 2em;
+    border-bottom: 1px solid #c7c7c7;
+    font-size: 14px;
+    line-height: 100%;
+    overflow: scroll; }
+    .headers p .label {
+      color: gray;
+      text-transform: uppercase;
+      font-size: 10px;
+      vertical-align: bottom; }
+    .headers p .field {
+      margin-left: 0.5em;
+      min-width: 1px;
+      vertical-align: top;
+      overflow: hidden; }
+      .headers p .field:focus {
+        outline: 0; }
+
+#cke_textarea1 .cke_top {
+  position: fixed;
+  top: 0px;
+  width: 98%;
+  margin: 0;
+  padding: 1%; }
+
+#cke_1_bottom {
+  display: none; }
+
+.btn_send {
   cursor: pointer;
-  width: 100%; }
+  width: 100%;
+  text-align: center;
+  background-color: #e3e3e3;
+  padding: 0.5em 0; }
