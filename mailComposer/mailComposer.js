@@ -4,23 +4,21 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var fs = require('fs-extra');
 var CKEDITOR;
 function MailComposer(conf){
-
+	this.conf = conf;
 	var self = this;
 	if(!conf || !conf.container){
 		console.log('creating new window');
 		var gui = window.gui;
 		var win = window.open('mailComposer/mailComposer.html');
-		var Win = gui.Window.get(win);
-		Win.focus();
-		console.log('wtf');
-		console.log(Win);
-		Win.once('document-end',function(){
+		this.Win = gui.Window.get(win);
+		this.Win.focus();
+		this.Win.once('document-end',function(){
 			$(function(){
 				var doc = $(win.document);
 				var text_area = doc.find('textarea').get(0);
 				doc.find('.input_to').focus();
-				CKEDITOR = win.CKEDITOR;
-				CKEDITOR.replace(text_area, {autoGrow_onStartup:true});
+				self.CKEDITOR = win.CKEDITOR;
+				self.CKEDITOR.replace(text_area, {autoGrow_onStartup:true});
 				self.container = doc;
 				self.preload(conf);
 				self.addEventListeners();
@@ -30,7 +28,9 @@ function MailComposer(conf){
 }
 MailComposer.prototype = {
 	addEventListeners:function(){
+		console.log('adding event listeners');
 		var self = this;
+		console.log(this.container.find('.btn_send')[0]);
 		this.container.find('.btn_send')
 			.click(function(){
 				self.send();
@@ -58,11 +58,13 @@ MailComposer.prototype = {
 		}
 	},
 	send:function(){
+		console.log('sending');
+		console.log(this);
 		var self = this;
 		var from = this.container.find('.input_from').html();
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
-		var body = CKEDITOR.instances.editor1.getData();
+		var body = this.CKEDITOR.instances.textarea1.getData();
     var credentials = fs.readJsonSync('credentials/credentials2.json').external;
    	var mail_options = {
 			from: credentials.auth.user,
@@ -70,6 +72,9 @@ MailComposer.prototype = {
 			subject: subject,
 			html: body
 		};
+		if(this.conf.in_reply_to){
+			mail_options.inReplyTo = this.conf.in_reply_to;
+		}
 		console.log(mail_options);
 		var transporter = nodemailer.createTransport(smtpTransport(credentials));
 		console.log(transporter);
@@ -80,7 +85,7 @@ MailComposer.prototype = {
 			} else {
 				console.log('Message sent: ' + info.response);
 			}
-			self.win.close();
+			self.Win.close();
 		});
 	}
 };

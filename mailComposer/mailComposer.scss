@@ -7,7 +7,7 @@ body{
 		border-bottom:1px solid #c7c7c7;
 		font-size:14px;
 		line-height:100%;
-		height:14px;
+		overflow: scroll;
 		.label{
 			color:gray;
 			text-transform: uppercase;
@@ -18,9 +18,14 @@ body{
 			margin-left:0.5em;
 			min-width:1px;
 			vertical-align: top;
+			overflow: hidden;
 			&:focus{
 				outline:0;
 			}
 		}
+	}
+	.btn_send{
+		cursor:pointer;
+		width:100%;
 	}
 }

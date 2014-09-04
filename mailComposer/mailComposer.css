@@ -6,7 +6,7 @@ body {
   border-bottom: 1px solid #c7c7c7;
   font-size: 14px;
   line-height: 100%;
-  height: 14px; }
+  overflow: scroll; }
   .headers p .label {
     color: gray;
     text-transform: uppercase;
@@ -15,6 +15,10 @@ body {
   .headers p .field {
     margin-left: 0.5em;
     min-width: 1px;
-    vertical-align: top; }
+    vertical-align: top;
+    overflow: hidden; }
     .headers p .field:focus {
       outline: 0; }
+.headers .btn_send {
+  cursor: pointer;
+  width: 100%; }

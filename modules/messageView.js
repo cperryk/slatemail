@@ -42,6 +42,9 @@ MessageView.prototype = {
   },
   printTop: function(mail_objs){
     var subject = mail_objs[0].subject;
+    if(subject==='<no subject>'){
+      subject = '(no subject)';
+    }
     var message_count = mail_objs.length;
     var attachments_count = (function(){
       var c = 0;
@@ -57,16 +60,23 @@ MessageView.prototype = {
       .html(subject)
       .appendTo(this.top_wrapper);
     var wrapper = $('<div>')
-      .addClass('message_count')
-      .html(message_count+' Message'+(message_count>1?'s':'')+', '+
-        attachments_count+' Attachment'+(attachments_count>1?'s':''))
-      .appendTo(this.top_wrapper);
+      .addClass('message_count');
+    var message_count_wrapper = $('<span>')
+      .html(message_count+' Message'+(message_count>1?'s':''))
+      .appendTo(wrapper);
+    if(attachments_count > 0){
+      wrapper.append(', ');
+      var attachment_count_wrapper = $('<span>')
+        .html(attachments_count+' Attachment'+(attachments_count>1?'s':''))
+        .appendTo(wrapper);
+    }
+    wrapper.appendTo(this.top_wrapper);
     // var wrapper = $('<div>')
     //   .appendTo(this.top_wrapper);
-    this.btn_reply = $('<span>')
-      .addClass('btn_reply')
-      .html('reply all')
-      .appendTo(wrapper);
+    // this.btn_reply = $('<span>')
+    //   .addClass('btn_reply')
+    //   .html('reply all')
+    //   .appendTo(wrapper);
     // this.btn_forward = $('<span>')
     //   .addClass('btn_forward')
     //   .html('forward')
@@ -84,11 +94,7 @@ MessageView.prototype = {
     this.btn_forward.click(function(){
       self.forward();
     });
-    console.log($(window));
     $(window).keypress(function(e){
-      console.log(e);
-      console.log(e.keyCode);
-      console.log(e.metaKey);
       if(e.keyCode === 114 && e.metaKey){
         self.reply();
       }
@@ -97,7 +103,6 @@ MessageView.prototype = {
   },
   reply:function(){
     var latest_message = this.messages[0];
-    console.log(latest_message);
     var conf = {};
     conf.to = latest_message.from[0].address;
     conf.subject = latest_message.subject;
@@ -105,10 +110,8 @@ MessageView.prototype = {
       conf.cc = latest_message.cc;
     }
     new MailComposer(conf);
-    console.log(latest_message);
   },
   forward:function(){
-    console.log('forwarding');
   },
 };
 
@@ -210,13 +213,18 @@ Message.prototype = {
     return d.toDateString();
   },
   prepHTML: function(message_data, box_name){
-    var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, '<br/>');
     var stage = $('<div>')
       .hide()
       .html(html)
-      .find('.gmail_quote,#OLK_SRC_BODY_SECTION,.gmail_extra,#signature,blockquote,#message-coda')
+      .find('.gmail_quote,#OLK_SRC_BODY_SECTION,#signature,blockquote,#message-coda,#Signature')
         .remove()
         .end();
+    stage.find('*').each(function(){
+      if($(this).prop('tagName').indexOf('@')>-1){
+        $(this).remove();
+      }
+    });
     stage
       .find('hr')
         .nextAll()
@@ -320,20 +328,44 @@ Message.prototype = {
       self.removeActionBtns();
     });
   },
+  getReplyConf:function(){
+    var message_data = this.message_data;
+    return {
+      to: message_data.from[0].address,
+      subject: message_data.subject,
+      in_reply_to: message_data.messageId
+    };
+  },
   reply:function(){
-    new MailComposer({
-      to:this.message_data.from,
-      subject:this.message_data.subject
-    });
+    var conf = this.getReplyConf();
+    new MailComposer(conf);
   },
   replyAll:function(){
-    var conf = {};
-    conf.subject = this.message_data.subject;
-    conf.to = this.message_data.from;
-    if(this.message_data.cc){
-      conf.cc = this.message_data.cc;
-    }
+    var self = this;
+    var conf = this.getReplyConf();
+    conf.cc = (function(){
+      var message_data = self.message_data;
+      var cc;
+      var to;
+      var out = [];
+      if(message_data.cc){
+        cc = self.getRecipientList(message_data.cc);
+        out.push(cc.join(', '));
+      }
+      if(message_data.to){
+        to = self.getRecipientList(message_data.to);
+        out.push(to.join(', '));
+      }
+      return out.join(', ');
+    }());
     new MailComposer(conf);
+  },
+  getRecipientList:function(arr){
+    var out = [];
+    arr.forEach(function(ent){
+      out.push(ent.address);
+    });
+    return out;
   },
   forward:function(){
 

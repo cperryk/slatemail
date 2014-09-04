@@ -13,9 +13,6 @@ var messageView = {
         .find('#OLK_SRC_BODY_SECTION')
           .remove()
           .end()
-        .find('.gmail_extra')
-          .remove()
-          .end()
         .find('#signature')
           .remove()
           .end();

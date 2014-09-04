@@ -123,7 +123,11 @@ body {
   .message_view .top .thread_subject {
     font-size: 1.5em; }
   .message_view .top .message_count {
-    font-size: 1em; }
+    font-size: 0.8em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5em; }
   .message_view .top .btn_reply, .message_view .top .btn_forward {
     padding: 0.3em;
     outline: 1px solid #c7c7c7;
