@@ -9,22 +9,43 @@ CKEDITOR.editorConfig = function( config ) {
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
 	// The toolbar groups arrangement, optimized for two toolbar rows.
+	// config.toolbarGroups = [
+	// 	{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+	// 	{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+	// 	{ name: 'links' },
+	// 	{ name: 'insert' },
+	// 	{ name: 'forms' },
+	// 	{ name: 'tools' },
+	// 	{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
+	// 	{ name: 'others' },
+	// 	'/',
+	// 	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+	// 	{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+	// 	{ name: 'styles' },
+	// 	{ name: 'colors' },
+	// 	{ name: 'about' }
+	// ];
+	// 
 	config.toolbarGroups = [
-		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+		// { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
 		{ name: 'links' },
 		{ name: 'insert' },
-		{ name: 'forms' },
+		// { name: 'forms' },
 		{ name: 'tools' },
-		{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
+		// { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
 		{ name: 'others' },
-		'/',
-		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-		{ name: 'styles' },
+		// '/',
+		// { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+		// { name: 'styles' },
 		{ name: 'colors' },
 		{ name: 'about' }
 	];
+
+	config.removePlugins = 'elementspath';
+	config.scayt_autoStartup = true;
+	config.uiColor =  '#e3e3e3';
 
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
