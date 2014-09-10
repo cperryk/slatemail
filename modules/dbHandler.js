@@ -6,6 +6,11 @@ var Q = require('q');
 var box_names = [];
 var db;
 var indexedDB = window.indexedDB;
+var async = require('async');
+
+// careful. console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
+
+// to-do: build routine to ensure deleted mailboxes are deleted locally
 
 var dbHandler = {
 
@@ -36,7 +41,8 @@ connect:function(callback){
 	request.onupgradeneeded = function(){
 		console.log('upgrade needed');
 		db = request.result;
-		var store = db.createObjectStore("threads", {keyPath:"thread_id", autoIncrement: true});
+		db.createObjectStore("threads", {keyPath:"thread_id", autoIncrement: true});
+		db.createObjectStore("contacts", {keyPath:"address"});
 		console.log('database created with threads store');
 	};
 	request.onsuccess = function(){
@@ -45,20 +51,25 @@ connect:function(callback){
 	};
 	return def.promise;
 },
-createLocalBox:function(mailbox_name, callback){
-	var deferred = Q.defer();
+ensureLocalBox:function(mailbox_name, callback){
+	var def = Q.defer();
 	console.log('creating local box');
 	if(db.objectStoreNames.contains("box_"+mailbox_name)){
-		deferred.resolve();
+		def.resolve();
+		return def.promise;
 	}
 	var version =  parseInt(db.version);
+	console.log(db);
+	console.log('closing database');
 	db.close();
+	console.log(db);
+	console.log('opening databse');
 	var open_request = indexedDB.open('slatemail', version+1);
 	open_request.onupgradeneeded = function () {
 		console.log('upgrade needed');
-		var db = open_request.result;
+		db = open_request.result;
 		var objectStore = db.createObjectStore('box_'+mailbox_name, {
-				keyPath: 'uid'
+			keyPath: 'uid'
 		});
 		objectStore.createIndex("message_id", "messageId", { unique: false });
 		objectStore.createIndex("subject", "subject", { unique: false });
@@ -66,9 +77,9 @@ createLocalBox:function(mailbox_name, callback){
 	};
 	open_request.onsuccess = function (e) {
 		console.log('local mailbox '+mailbox_name+'created');
-		deferred.resolve();
+		def.resolve();
 	};
-	return deferred.promise;
+	return def.promise;
 },
 saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
 	console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
@@ -80,6 +91,22 @@ saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
 		// console.log('database insertion successful');
 		dbHandler.threadMail(mailbox_name, mail_obj, callback);
 	});
+	// saveContact(mail_obj);
+},
+saveContact:function(mail_obj){
+	var sender = mail_obj.from[0];
+	var sender_name = sender.name;
+	var sender_address = sender.address;
+	var data_to_store = {
+		address:sender_address,
+		name:sender_name
+	};
+	var tx = db.transaction("contacts","readonly");
+	var store = tx.objectStore("contacts");
+	var request = store.put(data_to_store);
+	request.onsuccess = function(){
+		console.log('contact stored: '+sender_address);
+	};
 },
 threadMail:function(mailbox_name, mail_obj, callback){
 	var mail_uid = mail_obj.uid;
@@ -252,27 +279,80 @@ updateFlags:function(box_name, uid, flags, callback){
 		return true;
 	}
 },
+syncAll:function(){
+	console.log('syncing all boxes');
+	imapHandler.getBoxes()
+		.then(function(boxes){
+			var box_names = [];
+			for(var i in boxes){
+				box_names.push(i);
+			}
+			// var fncs = [];
+			// box_names.forEach(function(box_name){
+			// 	fncs.push(function(callback){
+			// 		dbHandler.syncBox(box_name, callback);
+			// 	});
+			// });
+			// console.log(fncs);
+			// async.series(fncs);
+			var promises = [];
+			box_names.forEach(function(box_name){
+				promises.push(function(callback){
+					return dbHandler.syncBox(box_name);
+				});
+			});
+			console.log(promises);
+			console.log('go!');
+			Q.all(promises);
+		});
+},
 syncBox:function(mailbox_name, callback){
 	console.log('---------------- syncing: '+mailbox_name+' ----------------');
 	var def = Q.defer();
-	imapHandler.getUIDsFlags(mailbox_name)
+	dbHandler.ensureLocalBox(mailbox_name)
+		.then(function(){
+			console.log('local box created; proceeding');
+			return imapHandler.getUIDsFlags(mailbox_name);
+		})
 		.then(function(msgs){
+			if(msgs.length===0){
+				console.log('throwing');
+				throw new Error("No messages");
+			}
 			this.msgs = msgs;
 			return deleteLocalMessages(msgs);
 		})
 		.then(function(){
+			console.log('downloading new mail');
 			return downloadNewMail(this.msgs);
 		})
 		.then(function(){
+			console.log('updating flags');
 			return updateFlags(this.msgs);
 		})
 		.then(function(){
+			console.log('saving uids');
 			return saveUIDs(this.msgs);
 		})
 		.then(function(){
-			def.resolve();
+			console.log('resolving');
+			if(callback){
+				callback(null, true);
+			}
+			else{
+				def.resolve();
+			}
+		})
+		.catch(function(error){
+			console.log(error);
+			if(callback){
+				callback(null,true);
+			}
+			else{
+				def.resolve();
+			}
 		});
-		return def.promise;
+	return def.promise;
 
 	function updateFlags(msgs){
 		msgs = (function(){
@@ -341,7 +421,7 @@ syncBox:function(mailbox_name, callback){
 		return deferred.promise;
 	}
 	function syncChunk(msgs, limitx, message_count, callback){
-		console.log('sync chunk '+limitx+','+message_count);
+		console.log('--- sync chunk '+limitx+','+message_count);
 		var max_msg = Math.min(message_count, limitx+100);
 		var chunk = msgs.slice(limitx, max_msg);
 		addLocalMessages(chunk, function(){
@@ -358,18 +438,25 @@ syncBox:function(mailbox_name, callback){
 	function addLocalMessages(msgs, callback){
 		var messages_to_process = msgs.length;
 		msgs.forEach(function(msg, index){
+			//  console.log('- processing: '+msg.uid);
 			dbHandler.getMailFromLocalBox(mailbox_name, msg.uid)
 				.then(function(result){
-					if(!result){ // no message found in local
-						imapHandler.getMessageWithUID(mailbox_name, msg.uid, function(mail_obj){
-							mail_obj.uid = msg.uid;
-							mail_obj.flags = msg.flags;
-							dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
-								checkEnd(index);
+					if(!result){
+						//  console.log(msg.uid+' not found; retrieving');
+						imapHandler.getMessageWithUID(mailbox_name, msg.uid)
+							.then(function(mail_obj){
+								//  console.log(msg.uid+"'s mail object retrieved from remote server");
+								mail_obj.uid = msg.uid;
+								mail_obj.flags = msg.flags;
+								//  console.log('saving '+msg.uid+" to local store");
+								dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
+									//  console.log('saved '+msg.uid+' to local store');
+									checkEnd(index);
+								});
 							});
-						});
 					}
 					else{
+						// console.log('found, proceeding...');
 						checkEnd(index);
 					}
 				});

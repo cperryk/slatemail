@@ -2,3 +2,12 @@ body {
   margin: 0px;
   font-family: 'Gotham';
   line-height: 1.4; }
+
+.message_attachments {
+  text-align: center; }
+  .message_attachments .message_attachment {
+    display: inline-block;
+    margin: 0.5em;
+    padding: 0.5em;
+    border: 1px solid #c7c7c7;
+    cursor: pointer; }

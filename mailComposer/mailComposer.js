@@ -4,6 +4,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var fs = require('fs-extra');
 var CKEDITOR;
 function MailComposer(conf){
+	console.log('new mail composer...');
 	this.conf = conf;
 	var self = this;
 	if(!conf || !conf.container){
@@ -43,13 +44,11 @@ MailComposer.prototype = {
 			});
 	},
 	preload:function(conf){
+		console.log('preloading');
+		console.log(conf);
 		if(!conf){
 			return;
 		}
-		// if(conf.from){
-		// 	this.container.find('.input_from')
-		// 		.html(conf.from);
-		// }
 		if(conf.to){
 			this.container.find('.input_to')
 				.html(conf.to);
@@ -62,15 +61,20 @@ MailComposer.prototype = {
 			this.container.find('.input_cc')
 				.html(conf.cc);
 		}
+
+		// to-do: CKEDITOR replaces this
+		if(conf.body){
+			this.container.find('#message_body')
+				.html(conf.body);
+		}
 	},
 	send:function(){
 		console.log('sending');
 		console.log(this);
 		var self = this;
-		var from = this.container.find('.input_from').html();
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
-		var body = this.CKEDITOR.instances.textarea1.getData();
+		var body = this.CKEDITOR.instances.message_body.getData();
 		var credentials = fs.readJsonSync('credentials/credentials2.json').external;
 		var mail_options = {
 			from: credentials.auth.user,
@@ -78,7 +82,7 @@ MailComposer.prototype = {
 			subject: subject,
 			html: body
 		};
-		if(this.conf.in_reply_to){
+		if(this.conf && this.conf.in_reply_to){
 			mail_options.inReplyTo = this.conf.in_reply_to;
 		}
 		console.log(mail_options);

@@ -53,9 +53,11 @@ var imapHandler = {
     console.log('opening box: '+box_name+'...');
 		imap.openBox(box_name, false, function(err, box){
 			if (err){
+        console.log(err);
 				throw err;
 			}
 			else{
+        console.log('box opened');
         imap.opened_box = box_name;
 				def.resolve(box);
 			}
@@ -102,16 +104,17 @@ var imapHandler = {
   		});
     return def.promise;
 	},
-	getMessageWithUID:function(box_name, uid, callback){
+	getMessageWithUID:function(box_name, uid){
+    // console.log('getting message with uid: '+uid);
 		var def = Q.defer();
+    var message;
     imapHandler.getMessagesWithSearchCriteria({
       box_name:box_name,
 			criteria:[['UID',parseInt(uid,10)]],
-			callback_on_message:callback,
-		})
-    .then(function(){
-      def.resolve();
-    });
+			callback_on_message:function(mail_obj){
+        def.resolve(mail_obj);
+      },
+		});
     return def.promise;
 	},
 	getMessagesWithSearchCriteria:function(conf){
@@ -168,11 +171,14 @@ var imapHandler = {
     return def.promise;
   },
   getBoxes:function(callback){
-    imapHandler.connect(function(){
-      imap.getBoxes(function(err, boxes){
-        callback(boxes);
+    var def = Q.defer();
+    imapHandler.connect()
+      .then(function(){
+        imap.getBoxes(function(err, boxes){
+          def.resolve(boxes);
+        });
       });
-    });
+    return def.promise;
   },
   getMessageCount:function(box_name, callback){
     var deferred = Q.defer();
