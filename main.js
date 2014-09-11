@@ -9,7 +9,6 @@ var Q = require('q');
 var gui = require('nw.gui');
 var BOX;
 
-
 $(function(){
 
 	initialize();
@@ -25,9 +24,10 @@ $(function(){
 			if(!box_name){
 				return;
 			}
-			dbHandler.connect().then(function(){
-				selectBox(box_name);
-			});
+			dbHandler.connect()
+				.then(function(){
+					selectBox(box_name);
+				});
 		});
 		$(window).keydown(function(e){
 			if(e.keyCode===78 && e.metaKey){
@@ -45,7 +45,6 @@ $(function(){
 	}
 
 	function emailSelected(uid){
-		console.log('----------------------------------------------');
 		dbHandler.connect()
 			.then(function(){
 				return dbHandler.getMailFromLocalBox(BOX,uid);
@@ -57,24 +56,37 @@ $(function(){
 			.then(function(mail_objs){
 				markRead(mail_objs);
 				new MessageView($('#message_viewer'), mail_objs, BOX);
+			})
+			.catch(function(error){
+				console.log(error);
 			});
+		console.log('binding');
+		$(window).on('keypress',function(e){
+			if(e.keyCode === 100){
+				var selected_uid = mailboxView.selected_email.data('uid');
+				dbHandler.markComplete(BOX, selected_uid);
+				mailboxView.selected_email.slideUp();
+			}
+		});
 	}
 
 	function update(){
 		dbHandler
 			.connect()
 			.then(function(){
-				mailboxView.clear();
 				printMail();
-				// dbHandler.syncBox('Sent Items')
-				// 	.then(function(){
-				// 		dbHandler.syncBox(BOX);
-				// 	})
-				// 	.then(function(){
-				// 		printMail();
-				// 	});
-				// dbHandler.syncAll();
+				regularSync();
 			});
+	}
+
+	function regularSync(){
+		dbHandler.syncBox('INBOX')
+			.then(function(){
+				printMail();
+				setTimeout(function(){
+					regularSync();
+				},60000)
+			})
 	}
 
 	function markRead(mail_objs){
@@ -85,8 +97,9 @@ $(function(){
 			}
 		});
 	}
+
 	function printMail(){
-		console.log('printing mail');
+		mailboxView.clear();
 		var printed_threads = [];
 		dbHandler.getMessagesFromMailbox(BOX,function(mail_object){
 			if(printed_threads.indexOf(mail_object.thread_id)>-1){

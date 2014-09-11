@@ -281,30 +281,31 @@ updateFlags:function(box_name, uid, flags, callback){
 },
 syncAll:function(){
 	console.log('syncing all boxes');
+	var def = Q.defer();
 	imapHandler.getBoxes()
 		.then(function(boxes){
 			var box_names = [];
 			for(var i in boxes){
 				box_names.push(i);
 			}
-			// var fncs = [];
-			// box_names.forEach(function(box_name){
-			// 	fncs.push(function(callback){
-			// 		dbHandler.syncBox(box_name, callback);
-			// 	});
-			// });
-			// console.log(fncs);
-			// async.series(fncs);
-			var promises = [];
-			box_names.forEach(function(box_name){
-				promises.push(function(callback){
-					return dbHandler.syncBox(box_name);
-				});
+			var ind = 0;
+			syncBox(box_names, 0, function(){
+				console.log('syncAll complete');
+				def.resolve();
 			});
-			console.log(promises);
-			console.log('go!');
-			Q.all(promises);
+			function syncBox(box_names, current_index, callback){
+				dbHandler.syncBox(box_names[current_index])
+					.then(function(){
+						if(current_index === box_names.length-1){
+							callback();
+						}
+						else{
+							syncBox(box_names, current_index+1, callback);
+						}
+					});
+			}
 		});
+	return def.promise;
 },
 syncBox:function(mailbox_name, callback){
 	console.log('---------------- syncing: '+mailbox_name+' ----------------');
@@ -479,13 +480,17 @@ syncBox:function(mailbox_name, callback){
 			});
 			return out;
 		}());
-		fs.exists('uids/'+mailbox_name+'_uids.json', function(exists){
+		console.log(uids[426800]);
+		fs.exists('descriptors/'+mailbox_name+'_uids.json', function(exists){
 			if(exists){
-				fs.readFile('uids/'+mailbox_name+'_uids.json','utf8',function(err,data){
+				fs.readFile('descriptors/'+mailbox_name+'_uids.json','utf8',function(err,data){
 					var existing_msgs = JSON.parse(data);
+					console.log(existing_msgs);
 					existing_msgs.forEach(function(msg){
+						console.log(msg[0]);
+						console.log(msg[0] in uids);
 						if(msg[0] in uids === false){
-							// dbHandler.deleteMessage(mailbox_name, msg[0]);
+							dbHandler.deleteMessage(mailbox_name, msg[0]);
 						}
 					});
 					def.resolve();
@@ -648,6 +653,18 @@ saveAttachments:function(box_name, mail_object, callback){
 			}
 		});
 	}
+},
+markComplete:function(box_name, uid){
+	console.log('marking complete: '+box_name+':'+uid);
+	var def = Q.defer();
+		imapHandler.move(box_name, 'complete', uid);
+//		.catch(function(error){
+//			console.log(error);
+//		})
+//		.fin(function(){
+//			def.resolve();
+//		});
+	return def.promise;
 }
 
 };

@@ -82,18 +82,18 @@ body {
     color: gray; }
   .message_view .headers .action_btns {
     position: absolute;
-    bottom: -0.3em;
+    bottom: 0em;
     margin: 0;
     width: 100%;
-    height: 1em;
-    font-size: 0.8em;
+    height: 0.75em;
+    font-size: 0.75em;
     text-align: center; }
     .message_view .headers .action_btns .action_btns_wrapper {
+      background-color: white;
       display: inline-block;
       border: 1px solid #e3e3e3; }
     .message_view .headers .action_btns .action_btn {
       text-transform: uppercase;
-      background-color: white;
       padding: 0 0.5em;
       cursor: pointer;
       border-right: 1px solid #e3e3e3;
@@ -121,7 +121,7 @@ body {
   width: inherit;
   padding: 1em 0;
   text-align: center;
-  border-bottom: 1px solid #e7e7e7;
+  border-bottom: 1px solid #c7c7c7;
   position: fixed;
   background: rgba(255, 255, 255, 0.95);
   z-index: 2; }

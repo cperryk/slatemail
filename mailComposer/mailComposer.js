@@ -12,8 +12,9 @@ function MailComposer(conf){
 		var gui = window.gui;
 		var win = window.open('mailComposer/mailComposer.html');
 		this.Win = gui.Window.get(win);
-		this.Win.focus();
 		this.Win.once('document-end',function(){
+			console.log('focusing');
+			self.Win.focus();
 			$(function(){
 				var doc = $(win.document);
 				var text_area = doc.find('textarea').get(0);
@@ -64,13 +65,12 @@ MailComposer.prototype = {
 
 		// to-do: CKEDITOR replaces this
 		if(conf.body){
-			this.container.find('#message_body')
-				.html(conf.body);
+//			this.container.find('#message_body')
+//				.html(conf.body);
+			this.CKEDITOR.instances.message_body.setData(conf.body);
 		}
 	},
 	send:function(){
-		console.log('sending');
-		console.log(this);
 		var self = this;
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
@@ -101,52 +101,3 @@ MailComposer.prototype = {
 };
 
 module.exports = MailComposer;
-
-/*
-$(function() {
-
-	function send() {
-		var from = $('#input_from');
-		var to = $('#input_to');
-		var subject = $('#input_subject');
-		var body = CKEDITOR.instances.editor1.getData();
-		var mail_options = {
-			from: from,
-			to: to,
-			subject: subject,
-			html: body
-		};
-		console.log(mail_options);
-		var credentials = fs.readJsonSync('credentials/credentials2.json').external;
-		var transporter = nodemailer.createTransport(credentials);
-
-		// transporter.sendMail(mail_options, function(error, info) {
-		// 	if (error) {
-		// 		console.log(error);
-		// 	} else {
-		// 		console.log('Message sent: ' + info.response);
-		// 	}
-		// });
-	}
-
-
-	var $ = require('jquery');
-var nodemailer = require('nodemailer');
-var fs = require('fs-extra');
-
-$(function() {
-	CKEDITOR.replace('editor1', {
-		autoGrow_onStartup: true
-		// uiColor:'#AADC6E'
-	});
-	$('.headers p')
-		.click(function() {
-			console.log('yay');
-			$(this).find('.field').focus();
-		});
-
-});
-
-
-});
-*/

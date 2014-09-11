@@ -1,3 +1,4 @@
+'use strict';
 var $ = require('jquery');
 var fs = require('fs');
 var message_css = fs.readFileSync('css/message.css','utf8');
@@ -32,6 +33,8 @@ MessageView.prototype = {
 		return this;
 	},
 	printMessages: function(mail_objs, box_name){
+		console.log('printing messages');
+		console.log(mail_objs);
 		var self = this;
 		mail_objs.sort(function(a,b){
 			if(a.date > b.date){
@@ -109,6 +112,7 @@ MessageView.prototype = {
 };
 
 function Message(message_data, box_name, par){
+	console.log('new message');
 	var self = this;
 	this.message_data = message_data;
 	this.mailbox = box_name;
@@ -118,14 +122,15 @@ function Message(message_data, box_name, par){
 		.appendTo(par.messages_wrapper);
 
 
-	// $('<div>')
-	// 	.addClass('btn_reveal')
-	// 	.appendTo(container)
-	// 	.html('reveal')
-	// 	.click(function(){
-	// 		self.reveal();
-	// 	});
-	
+	$('<div>')
+		.addClass('btn_reveal')
+		.appendTo(this.container)
+		.html('reveal')
+		.click(function(){
+			$(this).remove();
+			self.reveal();
+		});
+
 	this.printHeaders();
 	this.printAttachmentIcons();
 	this.printBody(box_name);
@@ -158,6 +163,8 @@ Message.prototype = {
 			.appendTo(container);
 
 		this.headers_wrapper = wrapper;
+
+		return this;
 	},
 	printBody:function(box_name){
 		var message_data = this.message_data;
@@ -177,6 +184,7 @@ Message.prototype = {
 		this.injected_wrapper = $('<div>')
 			.html(this.prepHTML(message_data, box_name))
 			.appendTo(iframe.contents().find('body'));
+		return this;
 	},
 	printAttachmentIcons:function(){
 		var self = this;
@@ -192,16 +200,13 @@ Message.prototype = {
 				.html(attachment.fileName)
 				.appendTo(wrapper)
 				.click(function(){
-					exec('pwd',function(err,data){
-						console.log(data);
-					});
 					var path = ['attachments', self.mailbox, self.message_data.uid, attachment.fileName].join('/');
 					var command = 'open '+path.replace(/ /g,'\\ ');
-					console.log(command);
 					exec(command);
 				});
 		});
 		wrapper.appendTo(this.container);
+		return this;
 	},
 	getToString: function(message_data, cc){
 		var self = this;
@@ -228,9 +233,16 @@ Message.prototype = {
 	resizeFrame:function(){
 		var height = this.injected_wrapper.outerHeight();
 		this.iframe_wrapper.css('height',height);
+		return this;
 	},
 	getFromString:function(message_data){
-		return this.parseName(message_data.from[0].name || message_data.from[0].address);
+		if (message_data.from) {
+			return this.parseName(message_data.from[0].name || message_data.from[0].address);
+		}
+		if (message_data.headers.sender){
+			return message_data.headers.sender;
+		}
+		return false;
 	},
 	parseName:function(s){
 		s = s.replace(/"/g,"");
@@ -312,7 +324,6 @@ Message.prototype = {
 						}
 					}
 				});
-
 		return stage.html();
 	},
 	select:function(){
@@ -416,18 +427,25 @@ Message.prototype = {
 		new MailComposer(conf);
 	},
 	getPeopleList:function(arr){
+		console.log('getting people list');
+		console.log(arr);
 		var self = this;
 		var out = [];
 		arr.forEach(function(ent){
 			out.push(self.getPersonString(ent));
 		});
+		console.log('returning people list');
+		console.log(out);
 		return out;
 	},
 	getPeopleString:function(arr){
+		console.log('get people string');
+		console.log(arr);
 		var out = this.getPeopleList(arr);
 		return out.join(', ');
 	},
 	getPersonString:function(user){
+		console.log('getting person string');
 		var s = '';
 		if(user.name){
 			s += '"'+user.name+'"';
@@ -438,6 +456,7 @@ Message.prototype = {
 		else{
 			s += user.address;
 		}
+		console.log('returning '+s);
 		return s;
 	},
 	forward:function(){
@@ -453,9 +472,11 @@ Message.prototype = {
 			$('<p>')
 				.html('To: '+this.getPeopleString(message_data.to))
 				.appendTo(stage);
-			$('<p>')
-				.html('CC: '+this.getPeopleString(message_data.cc))
-				.appendTo(stage);
+			if (message_data.cc) {
+				$('<p>')
+					.html('CC: ' + this.getPeopleString(message_data.cc))
+					.appendTo(stage);
+			}
 		}
 		else{
 			var text = message_data.text;
