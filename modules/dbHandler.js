@@ -43,6 +43,7 @@ connect:function(callback){
 		db = request.result;
 		db.createObjectStore("threads", {keyPath:"thread_id", autoIncrement: true});
 		db.createObjectStore("contacts", {keyPath:"address"});
+		db.createObjectStore('projects', {keyPath: 'name'});
 		console.log('database created with threads store');
 	};
 	request.onsuccess = function(){
@@ -51,29 +52,41 @@ connect:function(callback){
 	};
 	return def.promise;
 },
+ensureProjectStore:function(){
+	var def = Q.defer();
+	if(db.objectStoreNames.contains('projects')){
+		def.resolve();
+		return def.promise;
+	}
+	var version =  parseInt(db.version);
+	db.close();
+	var open_request = indexedDB.open('slatemail',version+1);
+	open_request.onupgradeneeded = function(){
+		db = open_request.result;
+		db.createObjectStore('projects', {keyPath:'name'});
+	};
+	open_request.onsuccess = function(){
+		def.resolve();
+	};
+	return def.promise;
+},
 ensureLocalBox:function(mailbox_name, callback){
 	var def = Q.defer();
-	console.log('creating local box');
 	if(db.objectStoreNames.contains("box_"+mailbox_name)){
 		def.resolve();
 		return def.promise;
 	}
 	var version =  parseInt(db.version);
-	console.log(db);
-	console.log('closing database');
 	db.close();
-	console.log(db);
-	console.log('opening databse');
 	var open_request = indexedDB.open('slatemail', version+1);
 	open_request.onupgradeneeded = function () {
-		console.log('upgrade needed');
 		db = open_request.result;
-		var objectStore = db.createObjectStore('box_'+mailbox_name, {
+		var object_store = db.createObjectStore('box_'+mailbox_name, {
 			keyPath: 'uid'
 		});
-		objectStore.createIndex("message_id", "messageId", { unique: false });
-		objectStore.createIndex("subject", "subject", { unique: false });
-		objectStore.createIndex("uid","uid", {unique:true});
+		object_store.createIndex("message_id", "messageId", { unique: false });
+		object_store.createIndex("subject", "subject", { unique: false });
+		object_store.createIndex("uid","uid", {unique:true});
 	};
 	open_request.onsuccess = function (e) {
 		console.log('local mailbox '+mailbox_name+'created');
@@ -115,8 +128,15 @@ threadMail:function(mailbox_name, mail_obj, callback){
 		if(!thread_id){
 			traceReferences(function(thread_id){
 				if(!thread_id){
-					saveMailObjectToNewThread(mail_obj, function(thread_id){
-						updateMailWithThreadID(mailbox_name, mail_uid, thread_id, callback);
+					traceSubject(function(thread_id){
+						if(!thread_id){
+							saveMailObjectToNewThread(mail_obj, function(thread_id){
+								updateMailWithThreadID(mailbox_name, mail_uid, thread_id, callback);
+							});
+						}
+						else{
+							saveToExistingThread(thread_id, callback);
+						}
 					});
 				}
 				else{
@@ -128,6 +148,7 @@ threadMail:function(mailbox_name, mail_obj, callback){
 			saveToExistingThread(thread_id, callback);
 		}
 	});
+
 	function saveToExistingThread(thread_id, callback){
 		var tx = db.transaction("threads","readwrite");
 		var store = tx.objectStore("threads");
@@ -175,6 +196,9 @@ threadMail:function(mailbox_name, mail_obj, callback){
 		else{
 			traceMessage(mail_obj.references, 0, callback);
 		}
+	}
+	function traceSubject(callback){
+		callback(false);
 	}
 	function traceMessage(message_ids, current_index, callback){
 		var message_id = message_ids[current_index];
@@ -255,7 +279,7 @@ updateFlags:function(box_name, uid, flags, callback){
 		var data = get_request.result;
 		if(!arraysEqual(data.flags, flags)){
 			data.flags = flags;
-			var update_request = store.put(data);				
+			var update_request = store.put(data);
 			update_request.onsuccess = function(){
 				console.log('flag updated');
 				if(callback){
@@ -480,15 +504,14 @@ syncBox:function(mailbox_name, callback){
 			});
 			return out;
 		}());
-		console.log(uids[426800]);
 		fs.exists('descriptors/'+mailbox_name+'_uids.json', function(exists){
 			if(exists){
 				fs.readFile('descriptors/'+mailbox_name+'_uids.json','utf8',function(err,data){
 					var existing_msgs = JSON.parse(data);
 					console.log(existing_msgs);
 					existing_msgs.forEach(function(msg){
-						console.log(msg[0]);
-						console.log(msg[0] in uids);
+						// console.log(msg[0]);
+						// console.log(msg[0] in uids);
 						if(msg[0] in uids === false){
 							dbHandler.deleteMessage(mailbox_name, msg[0]);
 						}
@@ -572,7 +595,23 @@ getMessagesFromMailbox:function(box_name, onMessage, onEnd){
 		}
 	};
 },
-getThread:function(thread_id, callback){
+getThreads:function(thread_ids){
+	var def = Q.defer();
+	var thread_objs = [];
+	thread_ids.forEach(function(thread_id,index){
+		console.log(thread_id);
+		dbHandler.getThread(thread_id)
+			.then(function(thread_obj){
+				thread_objs.push(thread_obj);
+				if(index === thread_ids.length-1){
+					def.resolve(thread_objs);
+				}
+			});
+	});
+	return def.promise;
+},
+getThread:function(thread_id){
+	console.log('getting thread: '+thread_id);
 	var def = Q.defer();
 	var objectStore = db.transaction('threads','readonly').objectStore('threads');
 	var get_request = objectStore.get(thread_id);
@@ -582,27 +621,32 @@ getThread:function(thread_id, callback){
 	};
 	return def.promise;
 },
-getThreadMessages:function(thread_id){
+getThreadMessages:function(thread_obj){
 	var def = Q.defer();
-	dbHandler.getThread(thread_id)
-		.then(function(thread_data){
-			var message_umis = thread_data.messages;
-			var messages_to_get = message_umis.length;
-			var mail_objs = [];
-			message_umis.forEach(function(umi, index){
-				umi = umi.split(':');
-				var mailbox_name = umi[0];
-				var uid = parseInt(umi[1],10);
-				dbHandler.getMailFromLocalBox(mailbox_name, uid)
-					.then(function(mail_obj){
-						mail_objs.push(mail_obj);
-						if(mail_objs.length === messages_to_get){
-							mail_objs.sort(sortbyuid);
-							def.resolve(mail_objs);
-						}
-					});
-				});
+	var message_umis = thread_obj.messages;
+	var messages_to_get = message_umis.length;
+	var mail_objs = [];
+	message_umis.forEach(function(umi, index){
+		umi = umi.split(':');
+		var mailbox_name = umi[0];
+		var uid = parseInt(umi[1],10);
+		dbHandler.getMailFromLocalBox(mailbox_name, uid)
+			.then(function(mail_obj){
+				mail_objs.push(mail_obj);
+				if(mail_objs.length === messages_to_get){
+					mail_objs.sort(sortByDate);
+					def.resolve(mail_objs);
+				}
+			});
 		});
+	function sortByDate(a,b){
+		if(a.date > b.date){
+			return -1;
+		}
+		else{
+			return 1;
+		}
+	}
 	function sortbyuid(a,b){
 		if(a.uid > b.uid){
 			return -1;
@@ -657,13 +701,152 @@ saveAttachments:function(box_name, mail_object, callback){
 markComplete:function(box_name, uid){
 	console.log('marking complete: '+box_name+':'+uid);
 	var def = Q.defer();
-		imapHandler.move(box_name, 'complete', uid);
-//		.catch(function(error){
-//			console.log(error);
-//		})
-//		.fin(function(){
-//			def.resolve();
-//		});
+	dbHandler.getMailFromLocalBox(box_name, uid)
+		.then(function(mail_obj){
+			return dbHandler.getThread(mail_obj.thread_id);
+		})
+		.then(function(thread){
+			thread.messages.forEach(function(message_id){
+				moveToComplete(message_id);
+			});
+			def.resolve();
+		});
+	function moveToComplete(message_id){
+		var box_name = message_id.split(':')[0];
+		var uid = message_id.split(':')[1];
+		if(box_name!=='complete'){
+			imapHandler.move(box_name, 'complete', uid)
+				.then(function(){
+					dbHandler.deleteMessage(box_name,uid);
+				});
+		}
+	}
+	return def.promise;
+},
+ensureProject:function(project_name){
+	console.log('ensuring project: '+project_name);
+	var def = Q.defer();
+	var tx = db.transaction('projects',"readwrite");
+	var store = tx.objectStore('projects');
+	var blank_project = {
+		threads:[]
+	};
+	var get_request = store.get(project_name);
+	get_request.onsuccess = function(){
+		console.log('success');
+		var data = get_request.result;
+		if(data===undefined){
+			var put_request = store.put({
+				name:project_name,
+				threads:[]
+			});
+			put_request.onsuccess = function(){
+				console.log('project '+project_name+' created');
+				def.resolve();
+			};
+			put_request.onerror = function(){
+				console.log('error ensuring project: '+project);
+				console.log(event);
+			};
+		}
+		else{
+			def.resolve();
+		}
+	};
+	get_request.onerror = function(event){
+		console.log('error ensuring project: '+project);
+		console.log(event);
+	};
+	// var request = store.put(blank_project);
+	// request.onsuccess = function(){
+	// 	def.resolve();
+	// };
+	return def.promise;
+},
+putInProject:function(box_name, uid, project_name){
+	console.log('putting '+box_name+':'+uid+' in project: '+project_name);
+	dbHandler.ensureProjectStore()
+		.then(function(){
+			return dbHandler.ensureProject(project_name);
+		})
+		.then(function(){
+			return dbHandler.getMailFromLocalBox(box_name, uid);
+		})
+		.then(function(message_obj){
+			console.log('adding thread id to project object');
+			var def = Q.defer();
+			var tx = db.transaction('projects','readwrite');
+			var store = tx.objectStore('projects');
+			var get_request = store.get(project_name);
+			get_request.onsuccess = function(){
+				var project = get_request.result;
+				if(project.threads.indexOf(message_obj.thread_id)===-1){
+					project.threads.push(message_obj.thread_id);
+					var put_request = store.put(project);
+					put_request.onsuccess = function(){
+						def.resolve(message_obj);
+					};
+					put_request.onerror = function(err){
+						console.log('error updating project');
+						console.log(err);
+					};
+				}
+				else{
+					def.resolve(message_obj);
+				}
+			};
+			get_request.onerror = function(err){
+				console.log('error updating project');
+				console.log(err);
+			};
+			return def.promise;
+		})
+		.then(function(message_obj){
+			console.log('updating thread object');
+			console.log(message_obj);
+			var def = Q.defer();
+			var thread_id = message_obj.thread_id;
+			var tx = db.transaction('threads', 'readwrite');
+			var store = tx.objectStore('threads');
+			var get_request = store.get(thread_id);
+			get_request.onsuccess = function(){
+				var thread_obj = get_request.result;
+				if(thread_obj.project_id === project_name){
+					def.resolve();
+				}
+				else{
+					thread_obj.project_id = project_name;
+					var put_request  = store.put(thread_obj);
+					put_request.onsuccess = function(){
+						def.resolve();
+					};
+					put_request.onerror = function(err){
+						console.log(err);
+					};
+				}
+			};
+			get_request.onerror = function(err){
+				console.log(err);
+			};
+			return def.promise;
+		})
+		.catch(function(error){
+			console.log(error);
+		});
+},
+getProject:function(project_name){
+	var def = Q.defer();
+	var tx = db.transaction('projects','readonly');
+	var store = tx.objectStore('projects');
+	var get_request = store.get(project_name);
+	get_request.onsuccess = function(){
+		var result = get_request.result;
+		def.resolve(result);
+	};
+	get_request.onerror = function(err){
+		console.log('could not retrieve project: '+project_name);
+		console.log(err);
+	};
 	return def.promise;
 }
 

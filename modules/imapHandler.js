@@ -113,7 +113,7 @@ var imapHandler = {
 			criteria:[['UID',parseInt(uid,10)]],
 			callback_on_message:function(mail_obj){
 				def.resolve(mail_obj);
-			},
+			}
 		});
 		return def.promise;
 	},

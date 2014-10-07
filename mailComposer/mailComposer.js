@@ -41,6 +41,7 @@ MailComposer.prototype = {
 		console.log(this.container.find('.btn_send')[0]);
 		this.container.find('.btn_send')
 			.click(function(){
+				$(this).unbind('click');
 				self.send();
 			});
 	},

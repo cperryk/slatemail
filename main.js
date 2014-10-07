@@ -2,6 +2,7 @@ var fs = require('fs');
 var $ = require('jquery');
 var mailboxView = require('./modules/mailboxView.js');
 var MessageView = require('./modules/messageView.js');
+var ProjectView = require('./modules/projectView.js');
 var imapHandler = require('./modules/imapHandler.js');
 var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
@@ -43,29 +44,54 @@ $(function(){
 		$('#box_selector').html(box_name);
 		update();
 	}
-
+	function openProjectView(){
+		$('#project_viewer').show();
+		$('#message_viewer').css('width','60%');
+	}
+	function closeProjectView(){
+		$('#project_viewer').hide();
+		$('#message_viewer').css('width','80%');
+	}
 	function emailSelected(uid){
 		dbHandler.connect()
 			.then(function(){
 				return dbHandler.getMailFromLocalBox(BOX,uid);
 			})
 			.then(function(mail_obj){
-				console.log(mail_obj);
-				return dbHandler.getThreadMessages(mail_obj.thread_id);
+				return dbHandler.getThread(mail_obj.thread_id);
 			})
-			.then(function(mail_objs){
-				markRead(mail_objs);
-				new MessageView($('#message_viewer'), mail_objs, BOX);
+			.then(function(thread_obj){
+				if(thread_obj.project_id){
+					openProjectView();
+					new ProjectView(thread_obj.project_id);
+				}
+				else{
+					closeProjectView();
+				}
+				return dbHandler.getThreadMessages(thread_obj);
+			})
+			.then(function(messages){
+				markRead(messages);
+				new MessageView($('#message_viewer'), messages, BOX);
 			})
 			.catch(function(error){
 				console.log(error);
 			});
-		console.log('binding');
-		$(window).on('keypress',function(e){
-			if(e.keyCode === 100){
-				var selected_uid = mailboxView.selected_email.data('uid');
-				dbHandler.markComplete(BOX, selected_uid);
-				mailboxView.selected_email.slideUp();
+		$(window).unbind('keypress').on('keypress',function(e){
+			console.log('key press');
+			if(e.keyCode === 100 ){ // d
+				(function(){
+					var selected_uid = mailboxView.selected_email.data('uid');
+					dbHandler.markComplete(BOX, selected_uid);
+					mailboxView.selected_email.slideUp();
+				}());
+			}
+			else if(e.keyCode === 112){ // p
+				(function(){
+					var project_name = prompt('What project would you like to put this in?');
+					var selected_uid = mailboxView.selected_email.data('uid');
+					dbHandler.putInProject(BOX, selected_uid, project_name);
+				}());
 			}
 		});
 	}
@@ -80,17 +106,19 @@ $(function(){
 	}
 
 	function regularSync(){
-		dbHandler.syncBox('INBOX')
-			.then(function(){
-				printMail();
-				setTimeout(function(){
-					regularSync();
-				},60000)
-			})
+		return;
+		// dbHandler.syncBox('INBOX')
+		// 	.then(function(){
+		// 		printMail();
+		// 		setTimeout(function(){
+		// 			regularSync();
+		// 		},60000);
+		// 	});
 	}
 
 	function markRead(mail_objs){
 		console.log('marking read');
+		console.log(mail_objs);
 		mail_objs.forEach(function(mail_obj){
 			if(mail_obj.flags.indexOf('\\Seen')===-1){
 				imapHandler.markSeen(BOX, mail_obj.uid);

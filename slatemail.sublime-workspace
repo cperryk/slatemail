@@ -1,0 +1,1655 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"view",
+				"view_space"
+			],
+			[
+				"max-",
+				"max-height"
+			],
+			[
+				"days_",
+				"days_printed"
+			],
+			[
+				"days",
+				"days_printed"
+			],
+			[
+				"day",
+				"daysInMonth"
+			],
+			[
+				"real_esca",
+				"mysql_real_escape_string"
+			],
+			[
+				"real",
+				"real_escape_string"
+			],
+			[
+				"mem",
+				"memcache_id"
+			],
+			[
+				"data",
+				"data_path"
+			],
+			[
+				"cur",
+				"current_index"
+			],
+			[
+				"message",
+				"message_data"
+			],
+			[
+				"append",
+				"appendTo"
+			],
+			[
+				"appn",
+				"appendTo"
+			],
+			[
+				"db",
+				"dbHandler"
+			],
+			[
+				"getPer",
+				"getPeopleString"
+			],
+			[
+				"tool",
+				"toolbarGroups"
+			],
+			[
+				"edito",
+				"editor_config"
+			],
+			[
+				"inre",
+				"inReplyTo"
+			],
+			[
+				"onsel",
+				"onSelectEmail"
+			],
+			[
+				"selecte",
+				"selected_message"
+			],
+			[
+				"att",
+				"attachments_count"
+			],
+			[
+				"lates",
+				"latest_message"
+			],
+			[
+				"latest",
+				"latest_message"
+			],
+			[
+				"getTo",
+				"getFromString"
+			],
+			[
+				"content",
+				"content_id"
+			],
+			[
+				"text",
+				"text_area"
+			],
+			[
+				"getMa",
+				"getMailFromLocalBox"
+			],
+			[
+				"conne",
+				"connectAndOpen"
+			],
+			[
+				"connect",
+				"connectAndOpen"
+			],
+			[
+				"getUI",
+				"getMessageWithUID"
+			],
+			[
+				"existign",
+				"existing_uids"
+			],
+			[
+				"puzzle",
+				"puzzle_complete"
+			],
+			[
+				"remove",
+				"removeFingerClickListener"
+			],
+			[
+				"prelo",
+				"preload"
+			],
+			[
+				"prel",
+				"preloadImages"
+			],
+			[
+				"appen",
+				"appendTo"
+			],
+			[
+				"email",
+				"emailShare"
+			],
+			[
+				"twit",
+				"twitterShare"
+			],
+			[
+				"faceb",
+				"facebookShare"
+			],
+			[
+				"window",
+				"window_scroll_top"
+			],
+			[
+				"conta",
+				"container_scroll_top"
+			],
+			[
+				"scroll",
+				"scroll_top"
+			],
+			[
+				"scrol",
+				"scrollTop"
+			],
+			[
+				"overlay",
+				"overlay_wrapper"
+			],
+			[
+				"sound",
+				"sound_directory"
+			],
+			[
+				"sound_i",
+				"sound_directory"
+			],
+			[
+				"sound_",
+				"sound_directory"
+			],
+			[
+				"type",
+				"types"
+			],
+			[
+				"piano",
+				"piano_overlays"
+			],
+			[
+				"top",
+				"top_bar"
+			],
+			[
+				"existi",
+				"existing_data"
+			],
+			[
+				"exis",
+				"existing_data"
+			],
+			[
+				"death",
+				"death_files"
+			],
+			[
+				"played",
+				"played_notes"
+			],
+			[
+				"NOTE_",
+				"NOTE_SEQUENCE"
+			],
+			[
+				"query",
+				"query_string"
+			],
+			[
+				"get",
+				"getPeopleWhoDiedByYear"
+			],
+			[
+				"END",
+				"END_YEAR"
+			],
+			[
+				"callba",
+				"callback_on_message"
+			],
+			[
+				"clal",
+				"callback_on_end"
+			],
+			[
+				"callb",
+				"callback_on_end"
+			],
+			[
+				"call",
+				"callback_on_message"
+			],
+			[
+				"callbac",
+				"callback_on_end"
+			],
+			[
+				"callback",
+				"callback_on_message"
+			],
+			[
+				"messag",
+				"message_data"
+			],
+			[
+				"mess",
+				"message_data"
+			],
+			[
+				"search",
+				"searchAtUID"
+			],
+			[
+				"messa",
+				"message_object"
+			],
+			[
+				"parse",
+				"parseHeader"
+			],
+			[
+				"max",
+				"maximum_uid"
+			],
+			[
+				"connec",
+				"connectAndOpenInbox"
+			],
+			[
+				"message_id",
+				"message_identifiers"
+			],
+			[
+				"no",
+				"nowrap"
+			],
+			[
+				"fetc",
+				"fetchMessage"
+			],
+			[
+				"imap",
+				"imapFunctions"
+			],
+			[
+				"getINbox",
+				"getInboxUIDs"
+			],
+			[
+				"impa",
+				"imapFunctions"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"twitter",
+				"twitter_identifier"
+			],
+			[
+				"followed_by",
+				"followed_by_slatesters"
+			],
+			[
+				"target",
+				"target_img_index"
+			],
+			[
+				"poup",
+				"popup_wrapper"
+			],
+			[
+				"popu",
+				"popup_wrapper"
+			],
+			[
+				"eleme",
+				"element_d"
+			],
+			[
+				"PART",
+				"PART_D"
+			],
+			[
+				"PAR",
+				"PART_C"
+			],
+			[
+				"random",
+				"randomFromArray"
+			],
+			[
+				"rando",
+				"randomFromArray"
+			],
+			[
+				"ranom",
+				"randomFromArray"
+			],
+			[
+				"add",
+				"addEventListeners"
+			],
+			[
+				"st",
+				"stdout"
+			],
+			[
+				"resize",
+				"resizeCallback"
+			],
+			[
+				"attach",
+				"attached_elements"
+			],
+			[
+				"acti",
+				"activateMarker"
+			],
+			[
+				"pop",
+				"popup_wrapper"
+			],
+			[
+				"cot",
+				"container"
+			],
+			[
+				"new",
+				"new_index"
+			],
+			[
+				"active",
+				"active_marker"
+			],
+			[
+				"story",
+				"story_btns_container"
+			],
+			[
+				"inl",
+				"inline-block"
+			],
+			[
+				"str_rep",
+				"str_replace"
+			],
+			[
+				"question",
+				"question_index"
+			],
+			[
+				"loca",
+				"locationVar"
+			],
+			[
+				"corr",
+				"correct_answer"
+			],
+			[
+				"average",
+				"average_score"
+			],
+			[
+				"sel",
+				"mysqli_select_db"
+			],
+			[
+				"correct",
+				"correct_here"
+			],
+			[
+				"answer",
+				"answeredAlready"
+			],
+			[
+				"starbucks",
+				"starbucks_marker_icon"
+			],
+			[
+				"remo",
+				"removeClass"
+			],
+			[
+				"qu",
+				"quiz_UI"
+			],
+			[
+				"questo",
+				"question_index"
+			],
+			[
+				"city",
+				"city_lat_lons"
+			],
+			[
+				"cit",
+				"city_lat_lons"
+			],
+			[
+				"quest",
+				"question_index"
+			],
+			[
+				"answers",
+				"answers_remaining"
+			],
+			[
+				"ans",
+				"answers_available"
+			],
+			[
+				"answ",
+				"answers_remaining"
+			],
+			[
+				"str_re",
+				"str_replace"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "modules/dbHandler.js",
+			"settings":
+			{
+				"buffer_size": 18309,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/messageView.js",
+			"settings":
+			{
+				"buffer_size": 12477,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var $ = require('jquery');\nvar nodemailer = require('nodemailer');\nvar smtpTransport = require('nodemailer-smtp-transport');\nvar fs = require('fs-extra');\nvar CKEDITOR;\nfunction MailComposer(conf){\n	console.log('new mail composer...');\n	this.conf = conf;\n	var self = this;\n	if(!conf || !conf.container){\n		console.log('creating new window');\n		var gui = window.gui;\n		var win = window.open('mailComposer/mailComposer.html');\n		this.Win = gui.Window.get(win);\n		this.Win.once('document-end',function(){\n			console.log('focusing');\n			self.Win.focus();\n			$(function(){\n				var doc = $(win.document);\n				var text_area = doc.find('textarea').get(0);\n\n				self.CKEDITOR = win.CKEDITOR;\n				// self.CKEDITOR.replace(text_area, editor_config);\n				self.container = doc;\n				self.preload(conf);\n				self.addEventListeners();\n				if(!(conf && conf.in_reply_to)){\n					doc.find('.input_to').focus();\n				}\n				else{\n					doc.find('#message_body').focus();\n				}\n			});\n		});\n	}\n}\nMailComposer.prototype = {\n	addEventListeners:function(){\n		console.log('adding event listeners');\n		var self = this;\n		console.log(this.container.find('.btn_send')[0]);\n		this.container.find('.btn_send')\n			.click(function(){\n				$(this).unbind('click');\n				self.send();\n			});\n	},\n	preload:function(conf){\n		console.log('preloading');\n		console.log(conf);\n		if(!conf){\n			return;\n		}\n		if(conf.to){\n			this.container.find('.input_to')\n				.html(conf.to);\n		}\n		if(conf.subject){\n			this.container.find('.input_subject')\n				.html(conf.subject);\n		}\n		if(conf.cc){\n			this.container.find('.input_cc')\n				.html(conf.cc);\n		}\n\n		// to-do: CKEDITOR replaces this\n		if(conf.body){\n//			this.container.find('#message_body')\n//				.html(conf.body);\n			this.CKEDITOR.instances.message_body.setData(conf.body);\n		}\n	},\n	send:function(){\n		var self = this;\n		var to = this.container.find('.input_to').html();\n		var subject = this.container.find('.input_subject').html();\n		var body = this.CKEDITOR.instances.message_body.getData();\n		var credentials = fs.readJsonSync('credentials/credentials2.json').external;\n		var mail_options = {\n			from: credentials.auth.user,\n			to: to,\n			subject: subject,\n			html: body\n		};\n		if(this.conf && this.conf.in_reply_to){\n			mail_options.inReplyTo = this.conf.in_reply_to;\n		}\n		console.log(mail_options);\n		var transporter = nodemailer.createTransport(smtpTransport(credentials));\n		console.log(transporter);\n\n		transporter.sendMail(mail_options, function(error, info) {\n			if (error) {\n				console.log(error);\n			} else {\n				console.log('Message sent: ' + info.response);\n			}\n			self.Win.close();\n		});\n	}\n};\n\nmodule.exports = MailComposer;\n",
+			"file": "mailComposer/mailComposer.js",
+			"file_size": 2648,
+			"file_write_time": 130570939310000000,
+			"settings":
+			{
+				"buffer_size": 2648,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/imapHandler.js",
+			"settings":
+			{
+				"buffer_size": 6005,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 375.0,
+		"selected_items":
+		[
+			[
+				"gr",
+				"Grunt"
+			],
+			[
+				"save ",
+				"Project: Save As"
+			],
+			[
+				"gru",
+				"Grunt"
+			],
+			[
+				"forma",
+				"Format: Javascript"
+			],
+			[
+				"form",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"nog",
+				"Snippet: noHighlight"
+			],
+			[
+				"grunt",
+				"Grunt: Kill Running Tasks"
+			],
+			[
+				"mobile",
+				"Snippet: mobile media query"
+			],
+			[
+				"set syntax: live",
+				"Set Syntax: LiveScript"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"grun",
+				"Grunt"
+			],
+			[
+				"json",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"beau",
+				"HTMLBeautify"
+			],
+			[
+				"beua",
+				"Javascript Beautify"
+			],
+			[
+				"beauty",
+				"Javascript Beautify"
+			],
+			[
+				"beaut",
+				"Javascript Beautify"
+			],
+			[
+				"format",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"conver tto ",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"convert tos",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"grut",
+				"Grunt: Kill Running Tasks"
+			],
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"meda",
+				"Snippet: mobile media query"
+			],
+			[
+				"convert",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"conver tto sp",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"reid",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"media",
+				"Snippet: mobile media query"
+			],
+			[
+				"set syntax: ya",
+				"Set Syntax: YAML"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"wrap",
+				"Word Wrap: Toggle"
+			],
+			[
+				"tabs",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"conver tot ta",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"conver tot a",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"no",
+				"Snippet: noHighlight"
+			],
+			[
+				"color",
+				"ColorSchemeSelector: Next Color Scheme"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remove pa",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"select col",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"select theme",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"random",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"randomc",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"to tabs",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"no ",
+				"Snippet: noHighlight"
+			],
+			[
+				"lower",
+				"Convert Case: Lower Case"
+			],
+			[
+				"lowerc",
+				"Convert Case: Lower Case"
+			],
+			[
+				"html",
+				"HTMLBeautify"
+			],
+			[
+				"set syn",
+				"Set Syntax: HTML"
+			],
+			[
+				"set syntax: plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"set sy",
+				"Set Syntax: HTML"
+			],
+			[
+				"syntax: text",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"reind",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"noh",
+				"Snippet: noHighlight"
+			],
+			[
+				"scramble",
+				"Snippet: scrambleArray"
+			],
+			[
+				"json format",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"random fro",
+				"Snippet: random item from array"
+			],
+			[
+				"rand",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"rando",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"gurnt",
+				"Grunt"
+			],
+			[
+				"grunts",
+				"Preferences: Grunt - Settings – Default"
+			],
+			[
+				"slatred",
+				"Snippet: slatered"
+			],
+			[
+				"linting",
+				"SublimeLinter: Enable Linting"
+			],
+			[
+				"eriden",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"erid",
+				"Snippet: Insert Right Double Quotation Mark"
+			],
+			[
+				"convert to",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"scheme",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"theme",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"medai",
+				"Snippet: mobile media query"
+			],
+			[
+				"for each",
+				"Snippet: forEach polyfill"
+			],
+			[
+				"rei",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"ried",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"right doubl",
+				"Snippet: Insert Right Double Quotation Mark"
+			],
+			[
+				"emd",
+				"Snippet: Insert Em Dash"
+			],
+			[
+				"double",
+				"Snippet: Insert Right Double Quotation Mark"
+			],
+			[
+				"double ",
+				"Snippet: Insert Left Double Quotation Mark"
+			],
+			[
+				"rightu",
+				"Snippet: insert right guillmet arrows"
+			],
+			[
+				"insert right",
+				"Snippet: Insert Right Double Quotation Mark"
+			],
+			[
+				"insert left ",
+				"Snippet: Insert Left Double Quotation Mark"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"enable",
+				"Package Control: Enable Package"
+			],
+			[
+				"update",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"min",
+				"Pretty JSON: Minify (compress) JSON"
+			],
+			[
+				"comam",
+				"Snippet: commaSeparateNumber"
+			],
+			[
+				"nonb",
+				"Snippet: insert non-breaking space"
+			],
+			[
+				"slatere",
+				"Snippet: slatered"
+			],
+			[
+				"cofee compi",
+				"Coffee: Compile File"
+			],
+			[
+				"compile",
+				"Coffee: Compile File"
+			],
+			[
+				"cofeecompi",
+				"Coffee: Compile File"
+			],
+			[
+				"slatre",
+				"Snippet: slatered"
+			],
+			[
+				"reii",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"pret",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"preti",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"pretti",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"java",
+				"Javascript Beautify"
+			],
+			[
+				"word",
+				"Word Wrap: Toggle"
+			],
+			[
+				"leafl",
+				"Snippet: makeLeafletMap"
+			],
+			[
+				"zoom",
+				"Snippet: insertLeaflet.ZoomFS"
+			],
+			[
+				"leaflet",
+				"Snippet: insertLeaflet.ZoomFS"
+			],
+			[
+				"lintin",
+				"SublimeLinter: Enable Linting"
+			],
+			[
+				"slatr",
+				"Set Syntax: LaTeX Memoir"
+			],
+			[
+				"right",
+				"Snippet: insert right guillmet arrows"
+			],
+			[
+				"left",
+				"Snippet: insert left guillmet arrows"
+			],
+			[
+				"slatered",
+				"Snippet: slatered"
+			],
+			[
+				"package",
+				"Package Control: Enable Package"
+			],
+			[
+				"makel",
+				"Snippet: makeLeafletMap"
+			],
+			[
+				"leaf",
+				"Snippet: makeLeafletMap"
+			],
+			[
+				"scrambe",
+				"Snippet: scrambleArray"
+			]
+		],
+		"width": 453.0
+	},
+	"console":
+	{
+		"height": 174.0,
+		"history":
+		[
+			"clear()",
+			"clear",
+			"clear;",
+			"clear()",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": true,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/kirkcp/Documents/node_play/slatemail",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules"
+	],
+	"file_history":
+	[
+		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/getCSV.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/tracker.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-cssmin/node_modules/clean-css/node_modules/commander/index.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-htmlmin/node_modules/html-minifier/node_modules/clean-css/node_modules/commander/index.js",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/data_compile/process.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/data_compile/data.csv",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/src/outrage.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/apple/apple.cson",
+		"/Users/kirkcp/Documents/interactives/src/features/lib/js/intSharing/intSharing.scss",
+		"/Users/kirkcp/Documents/interactives/src/features/lib/js/intSharing/intSharing.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/graves.scss",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/gruntfile.js",
+		"/Users/kirkcp/Documents/interactives/server/graves/getFlowers.php",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/got/got.cson",
+		"/Users/kirkcp/Documents/interactives/server/graves/submitFlower.php",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/graves.js",
+		"/Applications/MAMP/htdocs/editorial-interactives/14-04/got_graveyard/htdocs/got_graveyard.js",
+		"/Applications/MAMP/htdocs/editorial-interactives/14-04/got_graveyard/htdocs/got_graveyard.coffee",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/grunt/node_modules/coffee-script/lib/coffee-script/command.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/grunt-s3/test/common.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/grunt-sync/complexity.json",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/grunt-contrib-clean/docs/clean-options.md",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/exec-sync/Cakefile",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/README.md",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/index.html",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/apple/apple.json",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/apple/got.cson",
+		"/Users/kirkcp/Desktop/ONA Notes",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/graves.sublime-project",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/node_modules/grunt-text-replace/lib/grunt-text-replace.js",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/got/got.json",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/SublimeGrunt.sublime-settings",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/package.json",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/.DS_Store",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/yards/got/got.json",
+		"/Users/kirkcp/Downloads/scores_fix/.ebextensions/resources.config",
+		"/Users/kirkcp/Desktop/test.css",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/news_quiz/src/news_quiz.scss",
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/news_quiz/src/assets/quiz1040.json",
+		"/Users/kirkcp/Documents/interactives2/build_system/package.json",
+		"/Users/kirkcp/Documents/interactives/build_system/package.json",
+		"/Users/kirkcp/Documents/interactives/source/features/2014/09/test/src/assets/test.cson",
+		"/Users/kirkcp/Library/Preferences/WebStorm8/colors/tomorrow-night.icls",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/bower.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/replacebyclass.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/README.md",
+		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3296/Pressfreedommap.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Junk Email/14417/PGA TOUR Rewind, YouTube.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/sync.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/http_signing.md",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/77852/Presidential Nicknames Quiz.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/attributes/prop.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/combined-stream/lib/combined_stream.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/types.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/node-uuid/benchmark/benchmark-native.c",
+		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/ncp/test/symlink-fixtures/src/dir/bar",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/sizzle/test/data/mixed_sort.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/sample.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/MIT-LICENSE.txt",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/node_modules/through/LICENSE.APACHE2",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/.sass-cache/9f04d129e58cea992d2f3f00116b63931132ec53/mailComposer.scssc",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/nodemailer-direct-transport/src/message-queue.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-expr.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/test/auth_encoded.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/node_modules/minimist/test/default_bool.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposer.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposerTemplate.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailCompser.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/153848/sex offenders.Jane.Registration.v5.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib/Connection.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/CONTRIBUTING.md",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-connection-idle-order.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sports Separation/359/MakeAll4.py",
+		"/Users/kirkcp/Documents/node_play/slatemail/uids/INBOX_uids.json",
+		"/Users/kirkcp/Desktop/oldcallbackcode",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/lib/_stream_readable.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/package.json",
+		"/Users/kirkcp/Documents/node_play/my_app_2/node_modules/mailparser/package.json",
+		"/Users/kirkcp/Documents/node_play/my_app_2/package.json",
+		"/Users/kirkcp/Documents/node_play/my_app/node_modules/mailparser/package.json",
+		"/Users/kirkcp/Documents/node_play/my_app/offlineimap/List.Slate Discuss/new/1407424641_0.72124.sc-12375.local,U=2968,FMD5=c0386a44e1258edc742ebb66890c7d7d:2,",
+		"/Users/kirkcp/Documents/interactives/lib/js/intSharing/intSharing.css",
+		"/Users/kirkcp/Documents/interactives/2014/08/illustrated_map/src/data/dessert/dessert.html",
+		"/Applications/MAMP/htdocs/editorial-interactives/interactive_server_scripts/trivia/getScores.php",
+		"/Users/kirkcp/Downloads/ard0309st/ard0309stt11.csv",
+		"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/htdocs/index.php",
+		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/savedQuizzes/quiz18 2.json",
+		"/Users/kirkcp/Downloads/ard0309st/ard0309statt01.csv",
+		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/quiz-optomized.php",
+		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/index.php",
+		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/builderService.php",
+		"/Applications/MAMP/htdocs/editorial-interactives/trivia/htdocs/trivia.css",
+		"/Users/kirkcp/Documents/interactives/2014/08/movie_poster/preview/movie_poster.css",
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.c._green.json",
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.b._brown.json",
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/connection_strings/Connect500.json",
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.j._bramlett.json",
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.j._ellis.json",
+		"/Applications/MAMP/htdocs/editorial-interactives/2013/13-09/sports_separation/htdocs/sports_separation.css"
+	],
+	"find":
+	{
+		"height": 44.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"hr",
+			"prependTo",
+			"strong",
+			"gettostring",
+			"deletemessage",
+			"markcomplete",
+			"deletemessage",
+			"DayTile",
+			"nav",
+			"YearItem",
+			"\\\"\\\"",
+			"font-size",
+			"blank_cell",
+			"months",
+			"td",
+			"tr",
+			"255",
+			"days_printed",
+			"Interactive",
+			"-",
+			"this",
+			"share",
+			"%t",
+			"target_grave.name",
+			"btn_share",
+			" ||",
+			"intsharing",
+			"btn_share",
+			"text_grab",
+			"render.html",
+			"renderhtml",
+			"classic",
+			"36",
+			"35",
+			"remove",
+			"tooltip",
+			"flower_count",
+			"unbind",
+			"cursor",
+			"img",
+			"cursor",
+			"Disc",
+			"Discontinued",
+			"Died",
+			"g4",
+			"img",
+			"    }",
+			",",
+			" '",
+			"name",
+			"http",
+			"http://www.wikiwand.com/en/IBook",
+			"http:",
+			"  ",
+			"\n",
+			"  ",
+			"setcount",
+			"memcached",
+			"getflowers",
+			"\"",
+			"get",
+			".click",
+			"afterAdd",
+			"count",
+			".html(",
+			"count",
+			"null",
+			"submitflower",
+			"randominteger",
+			"submitflower",
+			"submitflower(",
+			"submitflower",
+			"console.log",
+			"afteradd",
+			"===",
+			" ==",
+			"submitflower",
+			"group",
+			"showtooltip",
+			" sub",
+			").",
+			"graphics",
+			"}, {",
+			",\n    ",
+			"id:",
+			"\"true\"",
+			"\"false\"",
+			"\"fresh\"",
+			"fresh\"",
+			"  group:\"\",",
+			"season:",
+			"house:",
+			"\"id\"",
+			"\"url\"",
+			"\"episode\"",
+			"\"house\"",
+			"\"season\"",
+			"\"answers\": {",
+			"\"question\"",
+			"\"0\"",
+			"\"True\"",
+			"\"False\"",
+			"c7c7c7",
+			"printMail",
+			"printattachmenticons",
+			"headers",
+			".headers",
+			"addeventlisteners",
+			"printactionbtns",
+			".headers",
+			"box_name",
+			"primary_child",
+			"message_count_wrapper",
+			"'attachments",
+			"messageview",
+			"printmessages",
+			"'Show quoted text'",
+			"Show quoted text'",
+			".body",
+			".reply",
+			".reply()",
+			"reply",
+			"fncs",
+			"console",
+			"+1",
+			"JSON.stringify",
+			"100",
+			"addlocalmessages"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "modules/dbHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18309,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										18013,
+										18013
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								13726,
+								13726
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6591.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "modules/messageView.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12477,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10176,
+								10176
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 10352.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "mailComposer/mailComposer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1255,
+								1255
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 923.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "modules/imapHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6005,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5783,
+								5790
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5340.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 34.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "slatemail.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"graves.scss",
+				"src/graves.scss"
+			],
+			[
+				"dbha",
+				"modules/dbHandler.js"
+			],
+			[
+				"styles",
+				"css/styles.scss"
+			],
+			[
+				"messageview",
+				"modules/messageView.js"
+			],
+			[
+				"mailcom",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"mailcomposer.html",
+				"mailComposer/mailComposer.html"
+			],
+			[
+				"mailcompo",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"mailview",
+				"mailComposer/ckeditor/messageView.js"
+			],
+			[
+				"main",
+				"main.js"
+			],
+			[
+				"imap",
+				"modules/imapHandler.js"
+			],
+			[
+				"imaph",
+				"modules/imapHandler.js"
+			],
+			[
+				"dbh",
+				"modules/dbHandler.js"
+			],
+			[
+				"message",
+				"modules/messageView.js"
+			],
+			[
+				"mailcompser",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"imapha",
+				"modules/imapHandler.js"
+			],
+			[
+				"dbhand",
+				"modules/dbHandler.js"
+			],
+			[
+				"mailcomposer",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"mailcomp",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"mailcomposer.htlm",
+				"mailComposer/mailComposer.html"
+			],
+			[
+				"mailcomps",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"messsageview",
+				"mailComposer/ckeditor/messageView.js"
+			],
+			[
+				"mailc",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"test",
+				"mailComposer/test.html"
+			],
+			[
+				"test.html",
+				"mailComposer/test.html"
+			],
+			[
+				"mailbxo",
+				"modules/mailboxView.js"
+			],
+			[
+				"mailbox",
+				"modules/mailboxView.js"
+			],
+			[
+				"mailboxvi",
+				"modules/mailboxView.js"
+			],
+			[
+				"mailcm",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"boxview",
+				"modules/mailboxView.js"
+			],
+			[
+				"styles.css",
+				"css/styles.css"
+			],
+			[
+				"fingers",
+				"murakami/dist/fingers.json"
+			],
+			[
+				"inbox.j",
+				"inbox.js"
+			],
+			[
+				"themesong",
+				"src/quizzes/theme_song/theme_song.cson"
+			],
+			[
+				"theme",
+				"src/quizzes/theme_song/theme_song.cson"
+			],
+			[
+				"theme_s",
+				"sound/theme_songs/theme_songs.aup"
+			],
+			[
+				"first_se",
+				"src/quizzes/first_second/first_second.cson"
+			],
+			[
+				"slideshow",
+				"/Applications/MAMP/htdocs/editorial-interactives/13-02/slideshow/htdocs/slideshow.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"gay",
+				"~/Documents/interactives/src/features/2014/05/gay_marriage_map/gay_marriage_map.sublime-project"
+			],
+			[
+				"simple_quiz",
+				"~/Documents/interactives/src/features/2014/05/simple_quiz/simple_quiz.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 375.0,
+		"selected_items":
+		[
+		],
+		"width": 453.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 258.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

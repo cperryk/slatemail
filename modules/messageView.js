@@ -1,12 +1,11 @@
-'use strict';
 var $ = require('jquery');
 var fs = require('fs');
 var message_css = fs.readFileSync('css/message.css','utf8');
 var MailComposer = require('../mailComposer/mailComposer.js');
 var exec = require('child_process').exec;
+var dbHandler = require('../modules/dbHandler.js');
 
-
-function MessageView(container, messages, box_name){
+function MessageView(container, messages){
 	this.container = container
 		.empty()
 		.addClass('message_view');
@@ -17,9 +16,8 @@ function MessageView(container, messages, box_name){
 		.addClass('messages')
 		.appendTo(container);
 	this.messages = messages;
-	this.box_name = box_name;
 	this.printTop(messages)
-		.printMessages(messages, box_name)
+		.printMessages(messages)
 		.addEventListeners();
 }
 
@@ -32,7 +30,7 @@ MessageView.prototype = {
 			.hide();
 		return this;
 	},
-	printMessages: function(mail_objs, box_name){
+	printMessages: function(mail_objs){
 		console.log('printing messages');
 		console.log(mail_objs);
 		var self = this;
@@ -45,7 +43,7 @@ MessageView.prototype = {
 			}
 		});
 		mail_objs.forEach(function(mail_obj, index){
-			var message = new Message(mail_obj, box_name, self);
+			var message = new Message(mail_obj, self);
 			// if(index===0){
 			//   message.select();
 			// }
@@ -111,11 +109,10 @@ MessageView.prototype = {
 	}
 };
 
-function Message(message_data, box_name, par){
+function Message(message_data, par){
 	console.log('new message');
 	var self = this;
 	this.message_data = message_data;
-	this.mailbox = box_name;
 	this.par = par;
 	this.container = $('<div>')
 		.addClass('envelope')
@@ -133,7 +130,7 @@ function Message(message_data, box_name, par){
 
 	this.printHeaders();
 	this.printAttachmentIcons();
-	this.printBody(box_name);
+	this.printBody();
 	this.resizeFrame();
 	this.addEventListeners();
 }
@@ -166,7 +163,7 @@ Message.prototype = {
 
 		return this;
 	},
-	printBody:function(box_name){
+	printBody:function(){
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
@@ -182,7 +179,7 @@ Message.prototype = {
 					.end();
 
 		this.injected_wrapper = $('<div>')
-			.html(this.prepHTML(message_data, box_name))
+			.html(this.prepHTML(message_data))
 			.appendTo(iframe.contents().find('body'));
 		return this;
 	},
@@ -195,12 +192,13 @@ Message.prototype = {
 		var wrapper = $('<div>')
 			.addClass('message_attachments');
 		message_data.attachments.forEach(function(attachment){
+			console.log(message_data);
 			$('<div>')
 				.addClass('message_attachment')
 				.html(attachment.fileName)
 				.appendTo(wrapper)
 				.click(function(){
-					var path = ['attachments', self.mailbox, self.message_data.uid, attachment.fileName].join('/');
+					var path = ['attachments', self.message_data.uid, attachment.fileName].join('/');
 					var command = 'open '+path.replace(/ /g,'\\ ');
 					exec(command);
 				});
@@ -257,7 +255,7 @@ Message.prototype = {
 		var d = new Date(date);
 		return d.toDateString();
 	},
-	prepHTML: function(message_data, box_name){
+	prepHTML: function(message_data){
 		var btn_show = $('<span>')
 			.addClass('btn_show')
 			.html('...');
@@ -273,7 +271,14 @@ Message.prototype = {
 				.remove()
 				.end();
 
-
+		stage.find('a')
+			.click(function(e){
+				e.preventDefault();
+				var url = $(this).attr('href');
+				var command = 'open ' + url;
+				console.log(command);
+				exec(command);
+			});
 		stage
 			.find('.WordSection1')
 				.find('div')
@@ -318,7 +323,7 @@ Message.prototype = {
 						var attachment = attachments[i];
 						if(attachment.contentId === content_id){
 							var file_name = attachment.fileName;
-							var file_path = ['attachments',box_name,message_data.uid,file_name].join('/');
+							var file_path = ['attachments', message_data.uid,file_name].join('/');
 							$(this).attr('src',file_path);
 							break;
 						}
@@ -399,12 +404,33 @@ Message.prototype = {
 		});
 	},
 	getReplyConf:function(){
+		var self = this;
 		var message_data = this.message_data;
-		return {
+		var body = (function(){
+			var container = $('<div>')
+				.html(message_data.html);
+			var headers = $('<div>')
+				.append([
+					$('<br/>'),
+					/*
+					$('<hr>'),
+					$('<p>').html('<b>From:</b> '+message_data.from[0].name),
+					$('<p>').html('<b>Sent:</b> '+message_data.date),
+					$('<p>').html('<b>To:</b> '+self.getToString(message_data)),
+					$('<p>').html('<b>Subject:</b> '+message_data.subject)*/
+					$('<p>').html('On Mon, Oct 6, 2014 at 9:01 AM, Jaeah Lee <jaeah.j.lee@gmail.com> wrote:')
+				]);
+			container.prepend(headers.html());
+			return container.html();
+		}());
+		var conf = {
 			to: message_data.from[0].address,
 			subject: message_data.subject,
-			in_reply_to: message_data.messageId
+			in_reply_to: message_data.messageId,
+			body:body
 		};
+		console.log(conf);
+		return conf;
 	},
 	reply:function(){
 		var conf = this.getReplyConf();

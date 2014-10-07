@@ -192,3 +192,29 @@ body {
     width: 30px;
     height: 30px;
     margin-right: 5px; }
+
+#project_viewer {
+  position: fixed;
+  width: 20%;
+  height: 100%;
+  top: 0px;
+  right: 0px;
+  background-color: white;
+  border-left: 1px solid #c7c7c7;
+  z-index: 99;
+  display: none; }
+  #project_viewer .inner {
+    padding: 1em; }
+  #project_viewer .project_title {
+    margin: 0;
+    font-size: 2em;
+    text-align: center; }
+  #project_viewer .thread {
+    line-height: 1.2;
+    margin: 1em 0; }
+  #project_viewer .attachment {
+    line-height: 1.2;
+    margin: 1em 0; }
+  #project_viewer h3 {
+    margin-top: 1.5em;
+    border-bottom: 1px solid #e3e3e3; }
