@@ -203,18 +203,19 @@ body {
   border-left: 1px solid #c7c7c7;
   z-index: 99;
   display: none; }
-  #project_viewer .inner {
-    padding: 1em; }
   #project_viewer .project_title {
-    margin: 0;
+    padding: 1em 1em 0 1em;
+    margin: 0 0 0 0;
     font-size: 2em;
     text-align: center; }
-  #project_viewer .thread {
+  #project_viewer .thread, #project_viewer .attachment {
+    padding: 1em;
     line-height: 1.2;
-    margin: 1em 0; }
-  #project_viewer .attachment {
-    line-height: 1.2;
-    margin: 1em 0; }
+    cursor: pointer;
+    border-bottom: 1px solid #e3e3e3; }
+  #project_viewer .thread.selected {
+    background-color: #feffaf; }
   #project_viewer h3 {
-    margin-top: 1.5em;
+    padding: 1em 1em 0.5em 1em;
+    margin: 1.5em 0 0 0;
     border-bottom: 1px solid #e3e3e3; }

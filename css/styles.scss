@@ -1,3 +1,4 @@
+$selection_yellow: #feffaf;
 body{
 	font-family: 'Gotham';
 }
@@ -200,7 +201,7 @@ body{
 		background-color:#ffeeee;
 	}
 	&.selected{
-		background-color:#feffaf;
+		background-color:$selection_yellow;
 	}
 	.from{
 		font-weight: bold;
@@ -241,24 +242,26 @@ body{
 	border-left:1px solid #c7c7c7;
 	z-index:99;
 	display: none;
-	.inner{
-		padding:1em;
-	}
 	.project_title{
-		margin:0;
+		padding:1em 1em 0 1em;
+		margin:0 0 0 0;
 		font-size:2em;
 		text-align:center;
 	}
+	.thread, .attachment{
+		padding:1em;
+		line-height:1.2;
+		cursor:pointer;
+		border-bottom:1px solid #e3e3e3;
+	}
 	.thread{
-		line-height:1.2;
-		margin:1em 0;
+		&.selected{
+			background-color:$selection_yellow;
+		}
 	}
-	.attachment{
-		line-height:1.2;
-		margin:1em 0;
-	}
-	h3{
-		margin-top:1.5em;
+		h3{
+		padding:1em 1em 0.5em 1em;
+		margin:1.5em 0 0 0;
 		border-bottom:1px solid #e3e3e3;
 	}
 }

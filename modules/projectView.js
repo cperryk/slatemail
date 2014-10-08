@@ -4,17 +4,15 @@ var dbHandler = require('../modules/dbHandler.js');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 
-function ProjectView(project_name){
+function ProjectView(project_name, initial_thread){
 	this.project_name = project_name;
+	this.initial_thread = initial_thread;
 	this.container = $('#project_viewer')
 		.empty();
-	this.inner = $('<div>')
-		.addClass('inner')
-		.appendTo(this.container);
 	$('<h2>')
 		.addClass('project_title')
 		.html(project_name)
-		.appendTo(this.inner);
+		.appendTo(this.container);
 	this.attachments = [];
 	this.printThreads();
 }
@@ -23,7 +21,7 @@ ProjectView.prototype = {
 		var self = this;
 		this.thread_container = $('<div>')
 			.addClass('thread_container')
-			.appendTo(this.inner);
+			.appendTo(this.container);
 		$('<h3>')
 			.html('Threads')
 			.appendTo(this.thread_container);
@@ -44,7 +42,9 @@ ProjectView.prototype = {
 				return def.promise;
 			})
 			.fin(function(){
-				self.printAttachments();
+				if(self.attachments.length > 0){
+					self.printAttachments();
+				}
 			})
 			.catch(function(err){
 				console.log(err);
@@ -53,16 +53,20 @@ ProjectView.prototype = {
 	printThread:function(thread_obj){
 		var self = this;
 		var def = Q.defer();
+		var initial_thread = this.initial_thread;
 		dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
 				var most_recent_message = thread_messages[0];
 				console.log(thread_obj.thread_id);
-				$('<div>')
+				var thread_container = $('<div>')
 					.addClass('thread')
 					.html(most_recent_message.subject)
 					.attr('data-thread',thread_obj.thread_id)
 					.appendTo(self.thread_container)
 					.click(threadClick);
+				if(thread_obj.thread_id === initial_thread.thread_id){
+					thread_container.addClass('selected');
+				}
 				def.resolve();
 				thread_messages.forEach(function(mail_obj){
 					if(mail_obj.attachments){
@@ -71,10 +75,17 @@ ProjectView.prototype = {
 				});
 			});
 		function threadClick(){
+			$('.selected')
+				.removeClass('selected');
+			$(this)
+				.addClass('selected');
 			var thread_id = $(this).data('thread');
 			dbHandler.getThread(thread_id)
 				.then(function(thread_obj){
-
+					return dbHandler.getThreadMessages(thread_obj);
+				})
+				.then(function(messages){
+					new MessageView($('#message_viewer'), messages);
 				});
 		}
 		return def.promise;
@@ -91,7 +102,7 @@ ProjectView.prototype = {
 		var def = Q.defer();
 		this.attachments_container = $('<div>')
 			.addClass('attachments')
-			.appendTo(this.inner);
+			.appendTo(this.container);
 		$('<h3>')
 			.html('Attachments')
 			.appendTo(this.attachments_container);

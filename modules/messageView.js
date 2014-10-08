@@ -6,6 +6,7 @@ var exec = require('child_process').exec;
 var dbHandler = require('../modules/dbHandler.js');
 
 function MessageView(container, messages){
+	console.log(messages);
 	this.container = container
 		.empty()
 		.addClass('message_view');
@@ -198,7 +199,7 @@ Message.prototype = {
 				.html(attachment.fileName)
 				.appendTo(wrapper)
 				.click(function(){
-					var path = ['attachments', self.message_data.uid, attachment.fileName].join('/');
+					var path = ['attachments', self.message_data.mailbox, self.message_data.uid, attachment.fileName].join('/');
 					var command = 'open '+path.replace(/ /g,'\\ ');
 					exec(command);
 				});
@@ -323,7 +324,7 @@ Message.prototype = {
 						var attachment = attachments[i];
 						if(attachment.contentId === content_id){
 							var file_name = attachment.fileName;
-							var file_path = ['attachments', message_data.uid,file_name].join('/');
+							var file_path = ['attachments', message_data.mailbox, message_data.uid,file_name].join('/');
 							$(this).attr('src',file_path);
 							break;
 						}

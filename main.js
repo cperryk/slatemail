@@ -4,11 +4,14 @@ var mailboxView = require('./modules/mailboxView.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
 var imapHandler = require('./modules/imapHandler.js');
+var syncer = require('./modules/syncer.js');
 var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
 var Q = require('q');
 var gui = require('nw.gui');
 var BOX;
+
+console.log(syncer);
 
 $(function(){
 
@@ -44,14 +47,6 @@ $(function(){
 		$('#box_selector').html(box_name);
 		update();
 	}
-	function openProjectView(){
-		$('#project_viewer').show();
-		$('#message_viewer').css('width','60%');
-	}
-	function closeProjectView(){
-		$('#project_viewer').hide();
-		$('#message_viewer').css('width','80%');
-	}
 	function emailSelected(uid){
 		dbHandler.connect()
 			.then(function(){
@@ -62,12 +57,15 @@ $(function(){
 			})
 			.then(function(thread_obj){
 				if(thread_obj.project_id){
-					openProjectView();
-					new ProjectView(thread_obj.project_id);
+					$('#project_viewer').show();
+					$('#message_viewer').css('width','60%');
+					new ProjectView(thread_obj.project_id, thread_obj);
 				}
 				else{
-					closeProjectView();
+					$('#project_viewer').hide();
+					$('#message_viewer').css('width','80%');
 				}
+				console.log(thread_obj);
 				return dbHandler.getThreadMessages(thread_obj);
 			})
 			.then(function(messages){
@@ -106,14 +104,14 @@ $(function(){
 	}
 
 	function regularSync(){
-		return;
-		// dbHandler.syncBox('INBOX')
-		// 	.then(function(){
-		// 		printMail();
-		// 		setTimeout(function(){
-		// 			regularSync();
-		// 		},60000);
-		// 	});
+		console.log('regular sync');
+		syncer.syncAll()
+			.then(function(){
+				printMail();
+				setTimeout(function(){
+					regularSync();
+				},60000);
+			});
 	}
 
 	function markRead(mail_objs){

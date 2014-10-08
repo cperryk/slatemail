@@ -14,8 +14,8 @@ var async = require('async');
 
 var dbHandler = {
 
-deleteDB:function(db_name, callback){
-	var req = indexedDB.deleteDatabase(db_name);
+deleteDB:function(callback){
+	var req = indexedDB.deleteDatabase('slatemail');
 	req.onsuccess = function () {
 		console.log("Deleted database successfully");
 		if(callback){
@@ -96,12 +96,12 @@ ensureLocalBox:function(mailbox_name, callback){
 },
 saveMailToLocalBox:function(mailbox_name, mail_obj, callback){
 	console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
-	// console.log(mail_obj);
 	dbHandler.saveAttachments(mailbox_name, mail_obj, function(){
+		mail_obj.mailbox = mailbox_name;
 		var tx = db.transaction("box_"+mailbox_name,"readwrite");
 		var store = tx.objectStore("box_"+mailbox_name);
+		mail_obj.uid = parseInt(mail_obj.uid,10);
 		store.put(mail_obj);
-		// console.log('database insertion successful');
 		dbHandler.threadMail(mailbox_name, mail_obj, callback);
 	});
 	// saveContact(mail_obj);
@@ -254,7 +254,7 @@ getMailFromBoxWithMessageId:function(mailbox_name, message_id, callback){
 	};
 },
 getMailFromLocalBox:function(mailbox_name, uid){
-	// console.log('getting mail from local box '+mailbox_name+': '+uid);
+	console.log('getting mail from local box '+mailbox_name+': '+uid);
 	var def = Q.defer();
 	var tx = db.transaction("box_"+mailbox_name,"readonly");
 	var store = tx.objectStore("box_"+mailbox_name);
@@ -303,253 +303,16 @@ updateFlags:function(box_name, uid, flags, callback){
 		return true;
 	}
 },
-syncAll:function(){
-	console.log('syncing all boxes');
+deleteMessage:function(box_name, uid){
 	var def = Q.defer();
-	imapHandler.getBoxes()
-		.then(function(boxes){
-			var box_names = [];
-			for(var i in boxes){
-				box_names.push(i);
-			}
-			var ind = 0;
-			syncBox(box_names, 0, function(){
-				console.log('syncAll complete');
-				def.resolve();
-			});
-			function syncBox(box_names, current_index, callback){
-				dbHandler.syncBox(box_names[current_index])
-					.then(function(){
-						if(current_index === box_names.length-1){
-							callback();
-						}
-						else{
-							syncBox(box_names, current_index+1, callback);
-						}
-					});
-			}
-		});
-	return def.promise;
-},
-syncBox:function(mailbox_name, callback){
-	console.log('---------------- syncing: '+mailbox_name+' ----------------');
-	var def = Q.defer();
-	dbHandler.ensureLocalBox(mailbox_name)
-		.then(function(){
-			console.log('local box created; proceeding');
-			return imapHandler.getUIDsFlags(mailbox_name);
-		})
-		.then(function(msgs){
-			if(msgs.length===0){
-				console.log('throwing');
-				throw new Error("No messages");
-			}
-			this.msgs = msgs;
-			return deleteLocalMessages(msgs);
-		})
-		.then(function(){
-			console.log('downloading new mail');
-			return downloadNewMail(this.msgs);
-		})
-		.then(function(){
-			console.log('updating flags');
-			return updateFlags(this.msgs);
-		})
-		.then(function(){
-			console.log('saving uids');
-			return saveUIDs(this.msgs);
-		})
-		.then(function(){
-			console.log('resolving');
-			if(callback){
-				callback(null, true);
-			}
-			else{
-				def.resolve();
-			}
-		})
-		.catch(function(error){
-			console.log(error);
-			if(callback){
-				callback(null,true);
-			}
-			else{
-				def.resolve();
-			}
-		});
-	return def.promise;
-
-	function updateFlags(msgs){
-		msgs = (function(){
-			var out = {};
-			msgs.forEach(function(msg){
-				out[msg.uid] = msg.flags;
-			});
-			return out;
-		}());
-		var def = Q.defer();
-		var file_path = './descriptors/'+mailbox_name+'_uids.json';
-		fs.exists(file_path, function(exists){
-			if(exists){
-				fs.readJson(file_path, 'utf8', function(err, existing_msgs){
-					existing_msgs.forEach(function(msg){
-						var uid = msg[0];
-						var local_flags = msg[1];
-						var remote_flags = msgs[uid];
-						if(msgs[uid]){
-							if(!arraysEqual(msg[1],msgs[uid])){
-								dbHandler.updateFlags(mailbox_name, uid, remote_flags);
-							}
-						}
-					});
-					def.resolve();
-				});
-			}
-			else{
-				def.resolve();
-			}
-		});
-		function arraysEqual(arr1, arr2) {
-			if(arr1.length !== arr2.length)
-					return false;
-			for(var i = arr1.length; i--;) {
-					if(arr1[i] !== arr2[i])
-							return false;
-			}
-			return true;
-		}
-		return def.promise;
-	}
-
-	function saveUIDs(msgs, callback){
-		var deferred = Q.defer();
-		var uids = (function(){
-			var out = [];
-			msgs.forEach(function(msg){
-				out.push([msg.uid,msg.flags]);
-			});
-			return out;
-		}());
-		var file_name = './descriptors/'+mailbox_name+'_uids.json';
-		var data = JSON.stringify(uids);
-		fs.outputFile(file_name, data, function(err){
-			deferred.resolve();
-		});
-		return deferred.promise;
-	}
-	function downloadNewMail(msgs){
-		var deferred = Q.defer();
-		syncChunk(msgs, 0, msgs.length, function(){
-			console.log('sync complete');
-			deferred.resolve();
-		});
-		return deferred.promise;
-	}
-	function syncChunk(msgs, limitx, message_count, callback){
-		console.log('--- sync chunk '+limitx+','+message_count);
-		var max_msg = Math.min(message_count, limitx+100);
-		var chunk = msgs.slice(limitx, max_msg);
-		addLocalMessages(chunk, function(){
-			if(max_msg < message_count){
-				syncChunk(msgs, max_msg, message_count, callback);
-			}
-			else{
-				if(callback){
-					callback();
-				}
-			}
-		});
-	}
-	function addLocalMessages(msgs, callback){
-		var messages_to_process = msgs.length;
-		msgs.forEach(function(msg, index){
-			//  console.log('- processing: '+msg.uid);
-			dbHandler.getMailFromLocalBox(mailbox_name, msg.uid)
-				.then(function(result){
-					if(!result){
-						//  console.log(msg.uid+' not found; retrieving');
-						imapHandler.getMessageWithUID(mailbox_name, msg.uid)
-							.then(function(mail_obj){
-								//  console.log(msg.uid+"'s mail object retrieved from remote server");
-								mail_obj.uid = msg.uid;
-								mail_obj.flags = msg.flags;
-								//  console.log('saving '+msg.uid+" to local store");
-								dbHandler.saveMailToLocalBox(mailbox_name, mail_obj, function(){
-									//  console.log('saved '+msg.uid+' to local store');
-									checkEnd(index);
-								});
-							});
-					}
-					else{
-						// console.log('found, proceeding...');
-						checkEnd(index);
-					}
-				});
-		});
-		function checkEnd(index){
-			if(index === messages_to_process-1){
-				if(callback){
-					callback();
-				}
-			}
-		}
-	}
-	function deleteLocalMessages(msgs, callback){
-		console.log('deleting local messages');
-		var def = Q.defer();
-		var uids = (function(){
-			var out = {};
-			msgs.forEach(function(msg){
-				out[msg.uid] = null;
-			});
-			return out;
-		}());
-		fs.exists('descriptors/'+mailbox_name+'_uids.json', function(exists){
-			if(exists){
-				fs.readFile('descriptors/'+mailbox_name+'_uids.json','utf8',function(err,data){
-					var existing_msgs = JSON.parse(data);
-					console.log(existing_msgs);
-					existing_msgs.forEach(function(msg){
-						// console.log(msg[0]);
-						// console.log(msg[0] in uids);
-						if(msg[0] in uids === false){
-							dbHandler.deleteMessage(mailbox_name, msg[0]);
-						}
-					});
-					def.resolve();
-				});
-			}
-			else{
-				def.resolve();
-			}
-		});
-		return def.promise;
-		// console.log(t1);
-		// dbHandler.getUIDsFromMailbox(mailbox_name, function(uid){
-		//   // if((uid in uids) === false){
-		//   //   dbHandler.deleteMessage(mailbox_name, uid);
-		//   // }
-		// }, function(){
-		//   console.log('delete local messages complete');
-		//   console.log(' ');
-		//   var t2 = new Date();
-		//   console.log(t2);
-		//   if(callback){
-		//     callback();
-		//   }
-		// });
-	}
-},
-deleteMessage:function(box_name, uid, callback){
 	console.log('deleting local '+box_name+':'+uid);
 	var objectStore = db.transaction("box_"+box_name,'readwrite').objectStore("box_"+box_name);
 	var delete_request = objectStore.delete(uid);
 	delete_request.onsuccess = function(){
-		console.log(box_name+':'+uid+' deleted');
-		if(callback){
-			callback();
-		}
+		console.log('deleted: '+box_name+':'+uid);
+		def.resolve();
 	};
+	return def.promise;
 },
 getUIDsFromMailbox:function(box_name, onKey, onEnd){
 	if(!db.objectStoreNames.contains("box_"+box_name)){
@@ -622,6 +385,7 @@ getThread:function(thread_id){
 	return def.promise;
 },
 getThreadMessages:function(thread_obj){
+	console.log('getting thread messages');
 	var def = Q.defer();
 	var message_umis = thread_obj.messages;
 	var messages_to_get = message_umis.length;
@@ -851,7 +615,5 @@ getProject:function(project_name){
 }
 
 };
-
-
 
 module.exports = dbHandler;

@@ -30,6 +30,7 @@ var imapHandler = {
 		return def.promise;
 	},
 	connectAndOpen:function(box_name, callback){
+		// console.log('connecting and opening: '+box_name);
 		var def = Q.defer();
 		imapHandler.connect()
 			.then(function(){
@@ -38,11 +39,14 @@ var imapHandler = {
 			.then(function(box){
 				def.resolve(box);
 				return true;
+			})
+			.catch(function(err){
+				console.log(err);
 			});
 		return def.promise;
 	},
 	disconnect:function(){
-		console.log('disconnecting');
+		// console.log('disconnecting');
 		imap.end();
 	},
 	openBox:function(box_name, callback){
@@ -113,39 +117,52 @@ var imapHandler = {
 			criteria:[['UID',parseInt(uid,10)]],
 			callback_on_message:function(mail_obj){
 				def.resolve(mail_obj);
+				throw new Error('abort promise chain');
 			}
+		})
+		.then(function(){
+			def.resolve(false);
+		})
+		.fail(function(err){
+			def.resolve(false);
 		});
 		return def.promise;
 	},
 	getMessagesWithSearchCriteria:function(conf){
 		// console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
 		var def = Q.defer();
-		imapHandler.connectAndOpen(conf.box_name).then(function(box){
-			imap.search(conf.criteria, function(err,results){
-				if(err || !results || results.length === 0){
-					console.log('no results found');
-					if(conf.callback_on_end){
-						conf.callback_on_end(false);
+		imapHandler.connectAndOpen(conf.box_name)
+			.then(function(box){
+				imap.search(conf.criteria, function(err,results){
+					// console.log('search initiated');
+					if(err || !results || results.length === 0){
+						// console.log('no results found');
+						if(conf.callback_on_end){
+							conf.callback_on_end(false);
+						}
+						return;
 					}
-					return;
-				}
-				var fetch = imap.fetch(results,{ bodies: '' });
-				fetch.on('message', function(msg) {
-					imapHandler.getMailObject(msg)
-						.then(function(mail_object){
-							if(conf.callback_on_message){
-								conf.callback_on_message(mail_object);
-							}
-						});
+					var fetch = imap.fetch(results,{ bodies: '' });
+					fetch.on('message', function(msg) {
+						imapHandler.getMailObject(msg)
+							.then(function(mail_object){
+								if(conf.callback_on_message){
+									conf.callback_on_message(mail_object);
+								}
+							});
+					});
+					fetch.once('error', function(err) {
+						console.log(err);
+						def.resolve();
+					});
+					fetch.once('end',function(){
+						def.resolve();
+					});
 				});
-				fetch.once('error', function(err) {
-					def.resolve();
-				});
-				fetch.once('end',function(){
-					def.resolve();
-				});
+			})
+			.catch(function(err){
+				console.log(err);
 			});
-		});
 		return def.promise;
 	},
 	getMailObject: function(msg){
@@ -221,12 +238,15 @@ var imapHandler = {
 		var def = Q.defer();
 		imapHandler.ensureBox(to_box)
 			.then(function(){
-				return imapHandler.connectAndOpen(from_box)
+				return imapHandler.connectAndOpen(from_box);
 			})
 			.then(function(){
 				imap.move(uid, to_box, function(){
 					return true;
 				});
+			})
+			.catch(function(err){
+				console.log(err);
 			})
 			.fin(function(){
 				console.log('move complete');
