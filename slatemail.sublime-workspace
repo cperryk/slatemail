@@ -4,6 +4,70 @@
 		"selected_items":
 		[
 			[
+				"remote",
+				"remote_descriptors"
+			],
+			[
+				"to",
+				"to_update"
+			],
+			[
+				"remo",
+				"remote_descriptors"
+			],
+			[
+				"messages",
+				"messages_to_delete"
+			],
+			[
+				"remote_",
+				"remote_descriptors"
+			],
+			[
+				"local",
+				"local_descriptors"
+			],
+			[
+				"delete",
+				"deleteLocalMessages"
+			],
+			[
+				"getU",
+				"getUIDs"
+			],
+			[
+				"dele",
+				"deleteLocalMessages"
+			],
+			[
+				"attachments",
+				"attachments_container"
+			],
+			[
+				"print",
+				"printAttachments"
+			],
+			[
+				"atta",
+				"attachments_container"
+			],
+			[
+				"getMe",
+				"getMessageWithUID"
+			],
+			[
+				"ensureProjec",
+				"ensureProjectStore"
+			],
+			[
+				"object",
+				"objectStoreNames"
+			],
+			[
+				"selec",
+				"selected_uid"
+			],
+			[
 				"view",
 				"view_space"
 			],
@@ -440,10 +504,6 @@
 				"starbucks_marker_icon"
 			],
 			[
-				"remo",
-				"removeClass"
-			],
-			[
 				"qu",
 				"quiz_UI"
 			],
@@ -454,40 +514,62 @@
 			[
 				"city",
 				"city_lat_lons"
-			],
-			[
-				"cit",
-				"city_lat_lons"
-			],
-			[
-				"quest",
-				"question_index"
-			],
-			[
-				"answers",
-				"answers_remaining"
-			],
-			[
-				"ans",
-				"answers_available"
-			],
-			[
-				"answ",
-				"answers_remaining"
-			],
-			[
-				"str_re",
-				"str_replace"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
+			"contents": "var fs = require('fs');\nvar $ = require('jquery');\nvar mailboxView = require('./modules/mailboxView.js');\nvar MessageView = require('./modules/messageView.js');\nvar ProjectView = require('./modules/projectView.js');\nvar imapHandler = require('./modules/imapHandler.js');\nvar syncer = require('./modules/syncer.js');\nvar dbHandler = require('./modules/dbHandler.js');\nvar MailComposer = require('./MailComposer/MailComposer.js');\nvar Q = require('q');\nvar gui = require('nw.gui');\nvar BOX;\n\nconsole.log(syncer);\n\n$(function(){\n\n	initialize();\n\n	function initialize(){\n		selectBox('INBOX');\n		addEventListeners();\n	}\n\n	function addEventListeners(){\n		$('#box_selector').click(function(){\n			var box_name = window.prompt('What box do you want?');\n			if(!box_name){\n				return;\n			}\n			dbHandler.connect()\n				.then(function(){\n					selectBox(box_name);\n				});\n		});\n		$(window).keydown(function(e){\n			if(e.keyCode===78 && e.metaKey){\n				new MailComposer();\n			}\n		});\n		mailboxView.onSelect(emailSelected);\n	}\n\n	function selectBox(box_name){\n		BOX = box_name;\n		$('#message_viewer').empty();\n		$('#box_selector').html(box_name);\n		update();\n	}\n	function emailSelected(uid){\n		dbHandler.connect()\n			.then(function(){\n				return dbHandler.getMailFromLocalBox(BOX,uid);\n			})\n			.then(function(mail_obj){\n				return dbHandler.getThread(mail_obj.thread_id);\n			})\n			.then(function(thread_obj){\n				if(thread_obj.project_id){\n					$('#project_viewer').show();\n					$('#message_viewer').css('width','60%');\n					new ProjectView(thread_obj.project_id, thread_obj);\n				}\n				else{\n					$('#project_viewer').hide();\n					$('#message_viewer').css('width','80%');\n				}\n				console.log(thread_obj);\n				return dbHandler.getThreadMessages(thread_obj);\n			})\n			.then(function(messages){\n				markRead(messages);\n				new MessageView($('#message_viewer'), messages, BOX);\n			})\n			.catch(function(error){\n				console.log(error);\n			});\n		$(window).unbind('keypress').on('keypress',function(e){\n			console.log('key press');\n			if(e.keyCode === 100 ){ // d\n				(function(){\n					var selected_uid = mailboxView.selected_email.data('uid');\n					dbHandler.markComplete(BOX, selected_uid);\n					mailboxView.selected_email.slideUp();\n				}());\n			}\n			else if(e.keyCode === 112){ // p\n				(function(){\n					var project_name = prompt('What project would you like to put this in?');\n					var selected_uid = mailboxView.selected_email.data('uid');\n					dbHandler.putInProject(BOX, selected_uid, project_name);\n				}());\n			}\n		});\n	}\n\n	function update(){\n		dbHandler\n			.connect()\n			.then(function(){\n				printMail();\n				regularSync();\n			});\n	}\n\n	function regularSync(){\n		console.log('regular sync');\n		syncer.syncAll()\n			.then(function(){\n				printMail();\n				setTimeout(function(){\n					regularSync();\n				},60000);\n			});\n	}\n\n	function markRead(mail_objs){\n		console.log('marking read');\n		console.log(mail_objs);\n		mail_objs.forEach(function(mail_obj){\n			if(mail_obj.flags.indexOf('\\\\Seen')===-1){\n				imapHandler.markSeen(BOX, mail_obj.uid);\n			}\n		});\n	}\n\n	function printMail(){\n		mailboxView.clear();\n		var printed_threads = [];\n		dbHandler.getMessagesFromMailbox(BOX,function(mail_object){\n			if(printed_threads.indexOf(mail_object.thread_id)>-1){\n				return;\n			}\n			mailboxView.printMessage(mail_object);\n			printed_threads.push(mail_object.thread_id);\n		});\n	}\n\n});\n",
+			"file": "main.js",
+			"file_size": 3361,
+			"file_write_time": 130572791980000000,
+			"settings":
+			{
+				"buffer_size": 3361,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "modules/dbHandler.js",
 			"settings":
 			{
-				"buffer_size": 18309,
+				"buffer_size": 17095,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/syncer.js",
+			"settings":
+			{
+				"buffer_size": 5556,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var Imap = require('imap');\nvar MailParser = require(\"mailparser\").MailParser;\nvar Q = require('q');\nvar imap;\nvar fs = require('fs');\n\nvar imapHandler = {\n	connect:function(){\n		if(imap && imap.state && imap.state === 'authenticated'){\n			return Q(true);\n		}\n		console.log('connecting...');\n		var def = Q.defer();\n		var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json')).internal;\n		// conf.debug = function(s){\n		//   console.log(s);\n		// };\n		imap = new Imap(conf);\n		imap.connect();\n		imap\n			.once('ready',function(){\n				def.resolve();\n			})\n			.once('error',function(err){\n				console.log('imap error: '+err);\n			})\n			.once('end', function() {\n				console.log('Connection ended');\n			});\n		return def.promise;\n	},\n	connectAndOpen:function(box_name){\n		// console.log('connecting and opening: '+box_name);\n		var def = Q.defer();\n		imapHandler.connect()\n			.then(function(){\n				return imapHandler.openBox(box_name);\n			})\n			.then(function(box){\n				def.resolve(box);\n				return true;\n			})\n			.catch(function(err){\n				console.log(err);\n			});\n		return def.promise;\n	},\n	disconnect:function(){\n		// console.log('disconnecting');\n		imap.end();\n	},\n	openBox:function(box_name){\n		var def = Q.defer();\n		if(imap.opened_box === box_name){\n			return Q(box_name);\n		}\n		console.log('opening box: '+box_name+'...');\n		imap.openBox(box_name, false, function(err, box){\n			if (err){\n				console.log(err);\n				throw err;\n			}\n			else{\n				console.log('box opened');\n				imap.opened_box = box_name;\n				def.resolve(box);\n			}\n		});\n		return def.promise;\n	},\n	getUIDsFlags:function(box_name){\n		var def = Q.defer();\n		imapHandler.connectAndOpen(box_name)\n			.then(function(box){\n				var message_identifiers = [];\n				//var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;\n				var range_string = 1+':'+box.messages.total;\n				var f = imap.seq.fetch(range_string)\n					.on('message', function(msg, seqno) {\n						var message_id;\n						var uid;\n						var flags;\n						msg\n							.once('attributes', function(attrs) {\n								uid = attrs.uid;\n								flags = (function(){\n									var out = [];\n									var flags = attrs.flags;\n									for(var i in flags){\n										if(flags.hasOwnProperty(i)){\n											out.push(flags[i]);\n										}\n									}\n									return out;\n								}());\n							})\n							.once('end', function() {\n								message_identifiers.push({\n									uid:uid,\n									flags:flags\n								});\n							});\n					})\n					.once('error', function(err) {})\n					.once('end', function() {\n						def.resolve(message_identifiers);\n					});\n			});\n		return def.promise;\n	},\n	getMessageWithUID:function(box_name, uid){\n		// console.log('getting message with uid: '+uid);\n		var def = Q.defer();\n		var message;\n		imapHandler.getMessagesWithSearchCriteria({\n			box_name:box_name,\n			criteria:[['UID',parseInt(uid,10)]],\n			callback_on_message:function(mail_obj){\n				def.resolve(mail_obj);\n				throw new Error('abort promise chain');\n			}\n		})\n		.then(function(){\n			def.resolve(false);\n		})\n		.fail(function(err){\n			def.resolve(false);\n		});\n		return def.promise;\n	},\n	getMessagesWithSearchCriteria:function(conf){\n		// console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);\n		var def = Q.defer();\n		imapHandler.connectAndOpen(conf.box_name)\n			.then(function(box){\n				imap.search(conf.criteria, function(err,results){\n					// console.log('search initiated');\n					if(err || !results || results.length === 0){\n						// console.log('no results found');\n						if(conf.callback_on_end){\n							conf.callback_on_end(false);\n						}\n						return;\n					}\n					var fetch = imap.fetch(results,{ bodies: '' });\n					fetch.on('message', function(msg) {\n						imapHandler.getMailObject(msg)\n							.then(function(mail_object){\n								if(conf.callback_on_message){\n									conf.callback_on_message(mail_object);\n								}\n							});\n					});\n					fetch.once('error', function(err) {\n						console.log(err);\n						def.resolve();\n					});\n					fetch.once('end',function(){\n						def.resolve();\n					});\n				});\n			})\n			.catch(function(err){\n				console.log(err);\n			});\n		return def.promise;\n	},\n	getMailObject: function(msg){\n		var def = Q.defer();\n		var parser = new MailParser();\n		parser.on('end', function(mail_object){\n			def.resolve(mail_object);\n		});\n		msg.on('body', function(stream, info) {\n			stream.pipe(parser);\n		});\n		return def.promise;\n	},\n	markSeen:function(box_name, uid, callback){\n		console.log('marking seen: '+uid);\n		var def = Q.defer();\n		imapHandler.connectAndOpen(box_name)\n			.then(function(box){\n				imap.addFlags(uid,['Seen'],function(err){\n					def.resolve();\n				});\n			});\n		return def.promise;\n	},\n	getBoxes:function(callback){\n		var def = Q.defer();\n		imapHandler.connect()\n			.then(function(){\n				imap.getBoxes(function(err, boxes){\n					def.resolve(boxes);\n				});\n			});\n		return def.promise;\n	},\n	getMessageCount:function(box_name, callback){\n		var deferred = Q.defer();\n		imapHandler.connectAndOpen(box_name)\n			.then(function(box){\n				return deferred.resolve(box.messages.total);\n			});\n		return deferred.promise;\n	},\n	ensureBox:function(box_name){\n		var def = Q.defer();\n		imapHandler.getBoxes()\n			.then(function(boxes){\n				console.log(boxes);\n				if(boxes[box_name]){\n					console.log('box already exists; ensured.');\n					def.resolve();\n					return true;\n				}\n				else{\n					console.log('box does not exist; creating');\n					return imapHandler.createBox(box_name);\n				}\n			})\n			.fin(function(){\n				console.log('box ensured');\n				def.resolve();\n			});\n		return def.promise;\n	},\n	createBox:function(box_name){\n		var def = Q.defer();\n		imap.addBox(box_name, function(){\n			def.resolve();\n		});\n		return def.promise;\n	},\n	move:function(from_box, to_box, uid, callback){\n		console.log('moving '+from_box+':'+uid+' to '+to_box);\n		var def = Q.defer();\n		imapHandler.ensureBox(to_box)\n			.then(function(){\n				return imapHandler.connectAndOpen(from_box);\n			})\n			.then(function(){\n				imap.move(uid, to_box, function(){\n					return true;\n				});\n			})\n			.catch(function(err){\n				console.log(err);\n			})\n			.fin(function(){\n				console.log('move complete');\n				def.resolve();\n			});\n//		imapHandler.connectAndOpen(from_box)\n//			.then(function(){\n//				imap.move(uid, to_box, function(){\n//					def.resolve();\n//				});\n//			})\n		return def.promise;\n	}\n};\n\nmodule.exports = imapHandler;\n",
+			"file": "modules/imapHandler.js",
+			"file_size": 6463,
+			"file_write_time": 130572655860000000,
+			"settings":
+			{
+				"buffer_size": 6425,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "descriptors/2014_uids.json",
+			"settings":
+			{
+				"buffer_size": 2,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/syncer_old.js",
+			"settings":
+			{
+				"buffer_size": 5644,
 				"line_ending": "Unix"
 			}
 		},
@@ -495,26 +577,7 @@
 			"file": "modules/messageView.js",
 			"settings":
 			{
-				"buffer_size": 12477,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "var $ = require('jquery');\nvar nodemailer = require('nodemailer');\nvar smtpTransport = require('nodemailer-smtp-transport');\nvar fs = require('fs-extra');\nvar CKEDITOR;\nfunction MailComposer(conf){\n	console.log('new mail composer...');\n	this.conf = conf;\n	var self = this;\n	if(!conf || !conf.container){\n		console.log('creating new window');\n		var gui = window.gui;\n		var win = window.open('mailComposer/mailComposer.html');\n		this.Win = gui.Window.get(win);\n		this.Win.once('document-end',function(){\n			console.log('focusing');\n			self.Win.focus();\n			$(function(){\n				var doc = $(win.document);\n				var text_area = doc.find('textarea').get(0);\n\n				self.CKEDITOR = win.CKEDITOR;\n				// self.CKEDITOR.replace(text_area, editor_config);\n				self.container = doc;\n				self.preload(conf);\n				self.addEventListeners();\n				if(!(conf && conf.in_reply_to)){\n					doc.find('.input_to').focus();\n				}\n				else{\n					doc.find('#message_body').focus();\n				}\n			});\n		});\n	}\n}\nMailComposer.prototype = {\n	addEventListeners:function(){\n		console.log('adding event listeners');\n		var self = this;\n		console.log(this.container.find('.btn_send')[0]);\n		this.container.find('.btn_send')\n			.click(function(){\n				$(this).unbind('click');\n				self.send();\n			});\n	},\n	preload:function(conf){\n		console.log('preloading');\n		console.log(conf);\n		if(!conf){\n			return;\n		}\n		if(conf.to){\n			this.container.find('.input_to')\n				.html(conf.to);\n		}\n		if(conf.subject){\n			this.container.find('.input_subject')\n				.html(conf.subject);\n		}\n		if(conf.cc){\n			this.container.find('.input_cc')\n				.html(conf.cc);\n		}\n\n		// to-do: CKEDITOR replaces this\n		if(conf.body){\n//			this.container.find('#message_body')\n//				.html(conf.body);\n			this.CKEDITOR.instances.message_body.setData(conf.body);\n		}\n	},\n	send:function(){\n		var self = this;\n		var to = this.container.find('.input_to').html();\n		var subject = this.container.find('.input_subject').html();\n		var body = this.CKEDITOR.instances.message_body.getData();\n		var credentials = fs.readJsonSync('credentials/credentials2.json').external;\n		var mail_options = {\n			from: credentials.auth.user,\n			to: to,\n			subject: subject,\n			html: body\n		};\n		if(this.conf && this.conf.in_reply_to){\n			mail_options.inReplyTo = this.conf.in_reply_to;\n		}\n		console.log(mail_options);\n		var transporter = nodemailer.createTransport(smtpTransport(credentials));\n		console.log(transporter);\n\n		transporter.sendMail(mail_options, function(error, info) {\n			if (error) {\n				console.log(error);\n			} else {\n				console.log('Message sent: ' + info.response);\n			}\n			self.Win.close();\n		});\n	}\n};\n\nmodule.exports = MailComposer;\n",
-			"file": "mailComposer/mailComposer.js",
-			"file_size": 2648,
-			"file_write_time": 130570939310000000,
-			"settings":
-			{
-				"buffer_size": 2648,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/imapHandler.js",
-			"settings":
-			{
-				"buffer_size": 6005,
+				"buffer_size": 12530,
 				"line_ending": "Unix"
 			}
 		}
@@ -522,9 +585,41 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 97.0,
 		"selected_items":
 		[
+			[
+				"format",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"next color",
+				"ColorSchemeSelector: Next Color Scheme"
+			],
+			[
+				"color",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"random ",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"select",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"rand",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"rando",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
+			[
+				"random",
+				"ColorSchemeSelector: Random Color Scheme"
+			],
 			[
 				"gr",
 				"Grunt"
@@ -588,10 +683,6 @@
 			[
 				"beaut",
 				"Javascript Beautify"
-			],
-			[
-				"format",
-				"Pretty JSON: Format (Pretty Print) JSON"
 			],
 			[
 				"conver tto ",
@@ -658,10 +749,6 @@
 				"Snippet: noHighlight"
 			],
 			[
-				"color",
-				"ColorSchemeSelector: Next Color Scheme"
-			],
-			[
 				"install",
 				"Package Control: Install Package"
 			],
@@ -684,10 +771,6 @@
 			[
 				"select theme",
 				"ColorSchemeSelector: Select Color Scheme"
-			],
-			[
-				"random",
-				"ColorSchemeSelector: Random Color Scheme"
 			],
 			[
 				"randomc",
@@ -748,14 +831,6 @@
 			[
 				"random fro",
 				"Snippet: random item from array"
-			],
-			[
-				"rand",
-				"ColorSchemeSelector: Random Color Scheme"
-			],
-			[
-				"rando",
-				"ColorSchemeSelector: Random Color Scheme"
 			],
 			[
 				"gurnt",
@@ -984,17 +1059,27 @@
 	"expanded_folders":
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/getCSV.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/tracker.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-cssmin/node_modules/clean-css/node_modules/commander/index.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-htmlmin/node_modules/html-minifier/node_modules/clean-css/node_modules/commander/index.js",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/data_compile/process.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/data_compile/data.csv",
@@ -1035,9 +1120,7 @@
 		"/Users/kirkcp/Documents/interactives/build_system/package.json",
 		"/Users/kirkcp/Documents/interactives/source/features/2014/09/test/src/assets/test.cson",
 		"/Users/kirkcp/Library/Preferences/WebStorm8/colors/tomorrow-night.icls",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/bower.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/replacebyclass.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/README.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
@@ -1050,7 +1133,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/sync.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/http_signing.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
@@ -1060,11 +1142,8 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/combined-stream/lib/combined_stream.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/node_modules/asn1/lib/ber/types.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/node-uuid/benchmark/benchmark-native.c",
-		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/ncp/test/symlink-fixtures/src/dir/bar",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/sizzle/test/data/mixed_sort.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/sample.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/MIT-LICENSE.txt",
@@ -1078,7 +1157,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-expr.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/test/auth_encoded.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/node_modules/minimist/test/default_bool.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposer.html",
@@ -1114,9 +1192,7 @@
 		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.c._green.json",
 		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.b._brown.json",
 		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/connection_strings/Connect500.json",
-		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.j._bramlett.json",
-		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.j._ellis.json",
-		"/Applications/MAMP/htdocs/editorial-interactives/2013/13-09/sports_separation/htdocs/sports_separation.css"
+		"/Users/kirkcp/Documents/interactives/2014/08/sports_separation_redux/data_collection/player_pids/a.j._bramlett.json"
 	],
 	"find":
 	{
@@ -1134,6 +1210,88 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"reply",
+			"deletelocalmessages",
+			"delete",
+			"imaphandler",
+			"getmailfromlocalbox",
+			"markread(",
+			"promises.push",
+			"updateflags",
+			"getuids",
+			"uids[",
+			"uids",
+			"downloadnewmail",
+			"savedescriptors",
+			"descriptors",
+			"descriptors[1]",
+			"saveuids",
+			"deletemessage",
+			"deletelocalmessages",
+			"downloadnewmail",
+			".all(",
+			"addlocalmessage",
+			"uids",
+			"downloadnewmail",
+			"flags",
+			"downloadnewmail",
+			"results",
+			"getLocalDescriptors",
+			"msgs",
+			"deleteLocalMessages",
+			"ensurelocalbox",
+			"deletelocalmessages",
+			"stringify",
+			"syncBoxIteration",
+			"syncBox",
+			"syncbox",
+			"getmessage",
+			"console.log",
+			"console",
+			"syncbox",
+			"export",
+			"dbhandler",
+			"exports",
+			"imaphandler",
+			"console",
+			"connectandopen",
+			"getmailfromlocalbox",
+			"savemailtolocalbox",
+			"printattachments",
+			"attachments",
+			".inner",
+			"this.inner",
+			"threadclick",
+			"#feffaf;",
+			"feffaf",
+			"selected",
+			"attachments",
+			"box",
+			"box_name",
+			"subject",
+			"attachments",
+			"container",
+			".thread_container",
+			"thread_data",
+			"getthread",
+			"project",
+			"thread_data",
+			"getthreadmessages",
+			"printmessages",
+			"messageview.",
+			"getmessage",
+			"getmessagewithuid",
+			"transaction(",
+			"onerror",
+			"objectStore",
+			"ObjectStore",
+			"objectStore",
+			"\"box_\"+mailbox_name",
+			"onerror",
+			"store.put",
+			"keypress",
+			"markcomplete",
+			"getmessagewithuid",
 			"hr",
 			"prependTo",
 			"strong",
@@ -1179,89 +1337,7 @@
 			"Discontinued",
 			"Died",
 			"g4",
-			"img",
-			"    }",
-			",",
-			" '",
-			"name",
-			"http",
-			"http://www.wikiwand.com/en/IBook",
-			"http:",
-			"  ",
-			"\n",
-			"  ",
-			"setcount",
-			"memcached",
-			"getflowers",
-			"\"",
-			"get",
-			".click",
-			"afterAdd",
-			"count",
-			".html(",
-			"count",
-			"null",
-			"submitflower",
-			"randominteger",
-			"submitflower",
-			"submitflower(",
-			"submitflower",
-			"console.log",
-			"afteradd",
-			"===",
-			" ==",
-			"submitflower",
-			"group",
-			"showtooltip",
-			" sub",
-			").",
-			"graphics",
-			"}, {",
-			",\n    ",
-			"id:",
-			"\"true\"",
-			"\"false\"",
-			"\"fresh\"",
-			"fresh\"",
-			"  group:\"\",",
-			"season:",
-			"house:",
-			"\"id\"",
-			"\"url\"",
-			"\"episode\"",
-			"\"house\"",
-			"\"season\"",
-			"\"answers\": {",
-			"\"question\"",
-			"\"0\"",
-			"\"True\"",
-			"\"False\"",
-			"c7c7c7",
-			"printMail",
-			"printattachmenticons",
-			"headers",
-			".headers",
-			"addeventlisteners",
-			"printactionbtns",
-			".headers",
-			"box_name",
-			"primary_child",
-			"message_count_wrapper",
-			"'attachments",
-			"messageview",
-			"printmessages",
-			"'Show quoted text'",
-			"Show quoted text'",
-			".body",
-			".reply",
-			".reply()",
-			"reply",
-			"fncs",
-			"console",
-			"+1",
-			"JSON.stringify",
-			"100",
-			"addlocalmessages"
+			"img"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1279,16 +1355,45 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 6,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3361,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2786,
+								2786
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
 					"file": "modules/dbHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18309,
+						"buffer_size": 17095,
 						"regions":
 						{
 							"bookmarks":
@@ -1298,8 +1403,12 @@
 								"regions":
 								[
 									[
-										18013,
-										18013
+										7549,
+										7549
+									],
+									[
+										12889,
+										12889
 									]
 								],
 								"scope": "bookmarks"
@@ -1308,8 +1417,8 @@
 						"selection":
 						[
 							[
-								13726,
-								13726
+								9154,
+								9154
 							]
 						],
 						"settings":
@@ -1318,68 +1427,38 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6591.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "modules/messageView.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12477,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10176,
-								10176
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 10352.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
 					"buffer": 2,
-					"file": "mailComposer/mailComposer.js",
+					"file": "modules/syncer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2648,
+						"buffer_size": 5556,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1255,
-								1255
+								4053,
+								4053
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 923.0,
+						"translation.y": 2751.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -1388,15 +1467,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6005,
+						"buffer_size": 6425,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5783,
-								5790
+								6133,
+								6133
 							]
 						],
 						"settings":
@@ -1405,10 +1484,96 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5340.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "descriptors/2014_uids.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "modules/syncer_old.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5644,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								237,
+								237
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "modules/messageView.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 12530,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9851,
+								9851
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 10326.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -1465,6 +1630,10 @@
 		"selected_items":
 		[
 			[
+				"main",
+				"main.js"
+			],
+			[
 				"graves.scss",
 				"src/graves.scss"
 			],
@@ -1495,10 +1664,6 @@
 			[
 				"mailview",
 				"mailComposer/ckeditor/messageView.js"
-			],
-			[
-				"main",
-				"main.js"
 			],
 			[
 				"imap",
@@ -1643,7 +1808,7 @@
 	"settings":
 	{
 	},
-	"show_minimap": false,
+	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,

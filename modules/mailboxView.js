@@ -44,7 +44,7 @@ mailboxView = {
 	},
 	insertDateSeparator:function(mail_object){
 		var date_string = mailboxView.getDateString(mail_object.date);
-		if(date_string && date_string!==last_printed_date){
+		if(date_string && date_string !== last_printed_date){
 			mailboxView.printDateSeparator(date_string);
 			last_printed_date = date_string;
 		}

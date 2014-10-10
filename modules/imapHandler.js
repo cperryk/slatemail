@@ -5,7 +5,7 @@ var imap;
 var fs = require('fs');
 
 var imapHandler = {
-	connect:function(callback){
+	connect:function(){
 		if(imap && imap.state && imap.state === 'authenticated'){
 			return Q(true);
 		}
@@ -29,7 +29,7 @@ var imapHandler = {
 			});
 		return def.promise;
 	},
-	connectAndOpen:function(box_name, callback){
+	connectAndOpen:function(box_name){
 		// console.log('connecting and opening: '+box_name);
 		var def = Q.defer();
 		imapHandler.connect()
@@ -49,7 +49,7 @@ var imapHandler = {
 		// console.log('disconnecting');
 		imap.end();
 	},
-	openBox:function(box_name, callback){
+	openBox:function(box_name){
 		var def = Q.defer();
 		if(imap.opened_box === box_name){
 			return Q(box_name);
@@ -68,7 +68,7 @@ var imapHandler = {
 		});
 		return def.promise;
 	},
-	getUIDsFlags:function(box_name, callback){
+	getUIDsFlags:function(box_name){
 		var def = Q.defer();
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){

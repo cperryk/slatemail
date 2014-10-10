@@ -149,7 +149,7 @@ function deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors
 	var messages_to_delete = [];
 	for(var uid in local_descriptors){
 		if(uid in remote_descriptors === false){
-			messages_to_delete.push(uid);
+			messages_to_delete.push(parseInt(uid,10));
 		}
 	}
 	messages_to_delete.forEach(function(uid){

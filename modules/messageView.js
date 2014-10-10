@@ -413,13 +413,14 @@ Message.prototype = {
 			var headers = $('<div>')
 				.append([
 					$('<br/>'),
-					/*
+					
 					$('<hr>'),
 					$('<p>').html('<b>From:</b> '+message_data.from[0].name),
 					$('<p>').html('<b>Sent:</b> '+message_data.date),
 					$('<p>').html('<b>To:</b> '+self.getToString(message_data)),
-					$('<p>').html('<b>Subject:</b> '+message_data.subject)*/
-					$('<p>').html('On Mon, Oct 6, 2014 at 9:01 AM, Jaeah Lee <jaeah.j.lee@gmail.com> wrote:')
+					$('<p>').html('<b>Subject:</b> '+message_data.subject),
+					$('<p>').html(message_data.html || message_data.text)
+					// $('<p>').html('On Mon, Oct 6, 2014 at 9:01 AM, Jaeah Lee <jaeah.j.lee@gmail.com> wrote:')
 				]);
 			container.prepend(headers.html());
 			return container.html();
