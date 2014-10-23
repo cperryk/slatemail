@@ -37,6 +37,7 @@ var imapHandler = {
 				return imapHandler.openBox(box_name);
 			})
 			.then(function(box){
+				console.log('resolving with:');
 				def.resolve(box);
 				return true;
 			})
@@ -51,8 +52,8 @@ var imapHandler = {
 	},
 	openBox:function(box_name){
 		var def = Q.defer();
-		if(imap.opened_box === box_name){
-			return Q(box_name);
+		if(imap._box && (imap._box.name === box_name)){
+			return Q(imap._box);
 		}
 		console.log('opening box: '+box_name+'...');
 		imap.openBox(box_name, false, function(err, box){
@@ -62,16 +63,17 @@ var imapHandler = {
 			}
 			else{
 				console.log('box opened');
-				imap.opened_box = box_name;
 				def.resolve(box);
 			}
 		});
 		return def.promise;
 	},
 	getUIDsFlags:function(box_name){
+		console.log('get uids flags from '+box_name);
 		var def = Q.defer();
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){
+				console.log(box);
 				var message_identifiers = [];
 				//var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
 				var range_string = 1+':'+box.messages.total;
@@ -105,11 +107,14 @@ var imapHandler = {
 					.once('end', function() {
 						def.resolve(message_identifiers);
 					});
+			})
+			.catch(function(err){
+				console.log(err);
 			});
 		return def.promise;
 	},
 	getMessageWithUID:function(box_name, uid){
-		// console.log('getting message with uid: '+uid);
+		console.log('getting message with uid: '+uid);
 		var def = Q.defer();
 		var message;
 		imapHandler.getMessagesWithSearchCriteria({
@@ -129,7 +134,7 @@ var imapHandler = {
 		return def.promise;
 	},
 	getMessagesWithSearchCriteria:function(conf){
-		// console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
+		console.log('ImapHandler: Get messages with search criteria: '+conf.criteria);
 		var def = Q.defer();
 		imapHandler.connectAndOpen(conf.box_name)
 			.then(function(box){
@@ -182,6 +187,9 @@ var imapHandler = {
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){
 				imap.addFlags(uid,['Seen'],function(err){
+					if(err){
+						console.log(err);
+					}
 					def.resolve();
 				});
 			});
@@ -209,7 +217,6 @@ var imapHandler = {
 		var def = Q.defer();
 		imapHandler.getBoxes()
 			.then(function(boxes){
-				console.log(boxes);
 				if(boxes[box_name]){
 					console.log('box already exists; ensured.');
 					def.resolve();
@@ -233,7 +240,7 @@ var imapHandler = {
 		});
 		return def.promise;
 	},
-	move:function(from_box, to_box, uid, callback){
+	move:function(from_box, to_box, uid){
 		console.log('moving '+from_box+':'+uid+' to '+to_box);
 		var def = Q.defer();
 		imapHandler.ensureBox(to_box)
@@ -241,7 +248,10 @@ var imapHandler = {
 				return imapHandler.connectAndOpen(from_box);
 			})
 			.then(function(){
-				imap.move(uid, to_box, function(){
+				imap.move(uid, to_box, function(err){
+					if(err){
+						console.log(err);
+					}
 					return true;
 				});
 			})

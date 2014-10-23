@@ -11,7 +11,6 @@ var Q = require('q');
 var gui = require('nw.gui');
 var BOX;
 
-console.log(syncer);
 
 $(function(){
 
@@ -56,6 +55,7 @@ $(function(){
 				return dbHandler.getThread(mail_obj.thread_id);
 			})
 			.then(function(thread_obj){
+				console.log(thread_obj);
 				if(thread_obj.project_id){
 					$('#project_viewer').show();
 					$('#message_viewer').css('width','60%');
@@ -69,14 +69,22 @@ $(function(){
 				return dbHandler.getThreadMessages(thread_obj);
 			})
 			.then(function(messages){
+				console.log('thread messages received');
+				console.log(messages);
 				markRead(messages);
-				new MessageView($('#message_viewer'), messages, BOX);
+				var messages_to_print = [];
+				messages.forEach(function(message){
+					if(message.mailbox!=='Drafts'){
+						messages_to_print.push(message);
+					}
+				});
+				new MessageView($('#message_viewer'), messages_to_print, BOX);
 			})
 			.catch(function(error){
 				console.log(error);
 			});
 		$(window).unbind('keypress').on('keypress',function(e){
-			console.log('key press');
+			console.log('key press: '+e.keyCode);
 			if(e.keyCode === 100 ){ // d
 				(function(){
 					var selected_uid = mailboxView.selected_email.data('uid');
@@ -91,12 +99,21 @@ $(function(){
 					dbHandler.putInProject(BOX, selected_uid, project_name);
 				}());
 			}
+			else if(e.keyCode === 115){ //s
+				(function(){
+					var date = new Date(prompt('What date would you like to schedule this for?'));
+					var selected_uid = mailboxView.selected_email.data('uid');
+					dbHandler.schedule(date, BOX, selected_uid)
+						.then(function(){
+							mailboxView.selected_email.slideUp();
+						});
+				}());
+			}
 		});
 	}
 
 	function update(){
-		dbHandler
-			.connect()
+		dbHandler.connect()
 			.then(function(){
 				printMail();
 				regularSync();
@@ -105,22 +122,27 @@ $(function(){
 
 	function regularSync(){
 		console.log('regular sync');
-		syncer.syncAll()
+		syncer.syncBox('INBOX')
 			.then(function(){
 				printMail();
-				setTimeout(function(){
-					regularSync();
-				},60000);
+			})
+			.fin(function(){
+				console.log('queing next');
+				setTimeout(regularSync,30000);
+			})
+			.catch(function(err){
+				console.log(err);
 			});
 	}
 
 	function markRead(mail_objs){
-		console.log('marking read');
 		console.log(mail_objs);
 		mail_objs.forEach(function(mail_obj){
-			if(mail_obj.flags.indexOf('\\Seen')===-1){
-				imapHandler.markSeen(BOX, mail_obj.uid);
-			}
+			console.log(mail_obj);
+			dbHandler.markSeen(mail_obj.mailbox, mail_obj.uid)
+				.catch(function(err){
+					console.log(err);
+				});
 		});
 	}
 
@@ -134,6 +156,10 @@ $(function(){
 			mailboxView.printMessage(mail_object);
 			printed_threads.push(mail_object.thread_id);
 		});
+	}
+
+	function MessageList(container){
+		this.container = $(container);
 	}
 
 });

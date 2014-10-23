@@ -73,6 +73,7 @@ body {
   padding-bottom: 0.5em;
   border-bottom: 1px solid #e3e3e3; }
   .message_view .headers .from {
+    font-family: 'Overlock';
     font-size: 1.5em;
     margin: 0px; }
   .message_view .headers .to {
@@ -170,18 +171,20 @@ body {
   .inbox_email.selected {
     background-color: #feffaf; }
   .inbox_email .from {
+    font-family: 'Overlock';
     font-weight: bold;
+    font-size: 16px;
+    line-height: 16px;
     margin-bottom: 0.2em; }
   .inbox_email .subject {
     font-size: 0.8em;
     line-height: 1.2; }
   .inbox_email .text_preview {
-    padding: 0.3em 0;
+    padding: 0;
     font-size: 0.7em;
-    line-height: 1.2;
-    max-height: 2em;
+    line-height: 1.2em;
     color: #a5a5a5;
-    max-height: 2em;
+    max-height: 2.4em;
     overflow: hidden; }
   .inbox_email .date {
     position: absolute;
@@ -189,8 +192,8 @@ body {
     font-size: 0.6em; }
   .inbox_email .icon {
     float: left;
-    width: 30px;
-    height: 30px;
+    width: 16px;
+    height: 16px;
     margin-right: 5px; }
 
 #project_viewer {
@@ -209,12 +212,18 @@ body {
     font-size: 2em;
     text-align: center; }
   #project_viewer .thread, #project_viewer .attachment {
-    padding: 1em;
+    padding: 0.5em;
     line-height: 1.2;
     cursor: pointer;
     border-bottom: 1px solid #e3e3e3; }
   #project_viewer .thread.selected {
     background-color: #feffaf; }
+  #project_viewer .thread img {
+    width: 15px; }
+  #project_viewer .thread h4 {
+    margin: 0px;
+    font-size: 0.8em;
+    font-weight: normal; }
   #project_viewer h3 {
     padding: 1em 1em 0.5em 1em;
     margin: 1.5em 0 0 0;

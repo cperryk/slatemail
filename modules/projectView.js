@@ -3,6 +3,7 @@ var fs = require('fs');
 var dbHandler = require('../modules/dbHandler.js');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
+var mustache = require('mustache');
 
 function ProjectView(project_name, initial_thread){
 	this.project_name = project_name;
@@ -53,26 +54,48 @@ ProjectView.prototype = {
 	printThread:function(thread_obj){
 		var self = this;
 		var def = Q.defer();
+		var ICONS = {
+			incomplete:'graphics/icon_37352/icon_37352.png',
+			complete:'graphics/icon_45161/icon_45161.png',
+			defer:'graphics/icon_1303/icon_1303.png'
+		};
 		var initial_thread = this.initial_thread;
 		dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
-				var most_recent_message = thread_messages[0];
-				console.log(thread_obj.thread_id);
-				var thread_container = $('<div>')
-					.addClass('thread')
-					.html(most_recent_message.subject)
-					.attr('data-thread',thread_obj.thread_id)
-					.appendTo(self.thread_container)
+				var thread_action_status = (function(){
+					for(var i=0;i<thread_messages.length;i++){
+						var box = thread_messages[i].mailbox;
+						if(box === 'complete'){
+							return 'complete';
+						}
+						if(box === 'inbox'){
+							return 'incomplete';
+						}
+					}
+					return 'incomplete';
+				}());
+				var thread_icon = ICONS[thread_action_status];
+				var template = '<div class="thread" data-thread="{{{thread_id}}}">'+
+					'<table><tr><td><img src="{{{icon}}}"/></td><td><h4>{{{subject}}}</h4></td></tr></table>'+
+				'</div>';
+				var view = {
+					thread_id: thread_obj.thread_id,
+					icon: ICONS[thread_action_status],
+					subject: thread_messages[0].subject
+				};
+				var html = mustache.render(template, view);
+				var thread_container = $(mustache.render(html))
+					.appendTo('.thread_container')
 					.click(threadClick);
 				if(thread_obj.thread_id === initial_thread.thread_id){
 					thread_container.addClass('selected');
 				}
-				def.resolve();
 				thread_messages.forEach(function(mail_obj){
 					if(mail_obj.attachments){
 						self.saveAttachments(mail_obj);
 					}
 				});
+				def.resolve();
 			});
 		function threadClick(){
 			$('.selected')

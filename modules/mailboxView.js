@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var favicon = require('favicon');
 var favicon_urls = {};
+var mustache = require('mustache');
 
 var onSelectEmail;
 
@@ -20,24 +21,21 @@ mailboxView = {
 		});
 	},
 	printMessage:function(mail_object){
-		var message_wrapper = $('<div>')
-			.data('uid',mail_object.uid)
-			.addClass('inbox_email');
+		var template = '<div data-uid="{{uid}}" class="inbox_email">'+
+			'<div class="from">{{from}}</div>'+
+			'<div class="subject">{{subject}}</div>'+
+			'<div class="text_preview">{{{text_preview}}}</div>'+
+		'</div>';
+		var view = {
+			uid: mail_object.uid,
+			from: mailboxView.parseName(mail_object.from),
+			subject: mail_object.headers.subject,
+			text_preview: mailboxView.getPreviewText(mail_object)
+		};
+		var message_wrapper = $(mustache.render(template, view));
 		if(mail_object.flags.indexOf('\\Seen')===-1){
 			message_wrapper.addClass('unseen');
 		}
-		$('<div>')
-			.addClass('from')
-			.html(mailboxView.parseName(mail_object.from))
-			.appendTo(message_wrapper);
-		$('<div>')
-			.addClass('subject')
-			.html(mail_object.headers.subject)
-			.appendTo(message_wrapper);
-		$('<div>')
-			.addClass('text_preview')
-			.html(mailboxView.getPreviewText(mail_object))
-			.appendTo(message_wrapper);
 		mailboxView.insertFavicon(message_wrapper, mail_object);
 		mailboxView.insertDateSeparator(mail_object);
 		message_wrapper.appendTo('#inbox');
@@ -158,7 +156,7 @@ mailboxView = {
 			return mail_object.text.replace(/[\n\r]/g, ' ').slice(0,125);
 		}
 		if(mail_object.html){
-			return mail_object.html.replace(/[\n\r]/g, ' ').slice(0,125);
+			return mail_object.html.replace(/<[^>]*>/g, '').replace(/[\n\r]/g, '').trim().slice(0,125);
 		}
 		return false;
 	},

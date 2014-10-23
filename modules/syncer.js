@@ -33,6 +33,7 @@ function syncAll(){
 		})
 		.then(function(){
 			console.log('full sync complete!');
+			def.resolve();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -45,22 +46,31 @@ function syncBox(mailbox_name){
 	var def = Q.defer();
 	dbHandler.ensureLocalBox(mailbox_name)
 		.then(function(){
+			console.log('ok, continue.');
 			return Q.all([
 				getLocalDescriptors(mailbox_name),
 				getRemoteDescriptors(mailbox_name)
 			]);
 		})
 		.then(function(descriptors){
+			console.log('go on....');
 			var local_descriptors = descriptors[0];
 			var remote_descriptors = descriptors[1];
-			console.log(local_descriptors);
-			console.log(remote_descriptors);
 			return Q.all([
 				deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors), // delete any local messages that are no longer in remote messages
 				downloadNewMail(mailbox_name, local_descriptors, remote_descriptors), // download any remote messages that are not in local messages
 				updateFlags(mailbox_name, local_descriptors, remote_descriptors) // update local flags with remote flags where they differ
 			])
-			.then(function(){
+			.then(function(outputs){
+				// an IMAP box might report a UID before the message is available to download.
+				// If any messages failed to download, remove it from the new local descriptors record before it's saved.
+				// Otherwise, the client will think it has an email that it doesn't and never download it.
+				var downloaded_messages = outputs[1];
+				downloaded_messages.forEach(function(msg){
+					if(msg.downloaded === false){
+						delete remote_descriptors[msg.uid];
+					}
+				});
 				return Q.all([
 					saveDescriptors(mailbox_name, remote_descriptors) // save the remote descriptors to local
 				]);
@@ -93,11 +103,9 @@ function updateFlags(mailbox_name, local_descriptors, remote_descriptors){
 	to_update.forEach(function(update){
 		promises.push(dbHandler.updateFlags(mailbox_name, update.uid, update.flags));
 	});
-	console.log('flag promises:');
-	console.log(promises);
 	Q.all(promises)
 		.then(function(){
-			def.resolve();
+			def.resolve('wtf');
 		});
 	// dbHandler.updateFlags(mailbox_name, uid, remote_flags);
 	function arraysEqual(arr1, arr2) {
@@ -112,26 +120,35 @@ function updateFlags(mailbox_name, local_descriptors, remote_descriptors){
 }
 
 function getRemoteDescriptors(mailbox_name){
+	console.log('getting remote descriptors');
 	var def = Q.defer();
 	imapHandler.getUIDsFlags(mailbox_name)
 		.then(function(msgs){
+			console.log(msgs);
 			var out = {};
 			msgs.forEach(function(msg){
 				out[msg.uid] = msg.flags;
 			});
+			console.log('rd resolve');
 			def.resolve(out);
+		})
+		.catch(function(err){
+			console.log(err);
 		});
 	return def.promise;
 }
 
 function getLocalDescriptors(mailbox_name){
+	console.log('getting local descriptors');
 	var def = Q.defer();
 	var file_path = './descriptors/'+mailbox_name+'_uids.json';
 	fs.exists(file_path, function(exists){
 		if(!exists){
+			console.log('ld resolve');
 			def.resolve({});
 		}
 		fs.readJson(file_path, 'utf8', function(err, msgs){
+			console.log('ld resolve');
 			def.resolve(msgs);
 		});
 	});
@@ -185,14 +202,12 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 		}
 	}
 	to_get.forEach(function(uid){
+		console.log(uid);
 		promises.push(downloadMessage(uid));
 	});
 	Q.all(promises)
-		.then(function(){
-			console.log('complete!');
-		})
-		.then(function(){
-			def.resolve();
+		.then(function(results){
+			def.resolve(results);
 		});
 	return def.promise;
 
@@ -202,13 +217,13 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 			.then(function(mail_obj){
 				if(!mail_obj){
 					console.log('no mail object found... '+uid);
-					def.resolve();
+					def.resolve({uid:uid, downloaded:false});
 				}
 				else{
 					mail_obj.flags = remote_descriptors[uid];
 					mail_obj.uid = uid;
 					dbHandler.saveMailToLocalBox(mailbox_name, mail_obj);
-					def.resolve();
+					def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
 				}
 			})
 			.catch(function(err){

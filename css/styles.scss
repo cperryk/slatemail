@@ -82,6 +82,7 @@ body{
 		padding-bottom:0.5em;
 		border-bottom:1px solid #e3e3e3;
 		.from{
+			font-family: 'Overlock';
 			font-size:1.5em;
 			margin:0px;
 		}
@@ -204,7 +205,10 @@ body{
 		background-color:$selection_yellow;
 	}
 	.from{
+		font-family: 'Overlock';
 		font-weight: bold;
+		font-size:16px;
+		line-height:16px;
 		margin-bottom:0.2em;
 	}
 	.subject{
@@ -212,12 +216,11 @@ body{
 		line-height:1.2;
 	}
 	.text_preview{
-		padding:0.3em 0;
+		padding:0;
 		font-size:0.7em;
-		line-height:1.2;
-		max-height:2em;
+		line-height:1.2em;
 		color:#a5a5a5;
-		max-height:2em;
+		max-height:2.4em;
 		overflow: hidden;
 	}
 	.date{
@@ -227,8 +230,8 @@ body{
 	}
 	.icon{
 		float:left;
-		width:30px;
-		height:30px;
+		width:16px;
+		height:16px;
 		margin-right:5px;
 	}
 }
@@ -249,7 +252,7 @@ body{
 		text-align:center;
 	}
 	.thread, .attachment{
-		padding:1em;
+		padding:0.5em;
 		line-height:1.2;
 		cursor:pointer;
 		border-bottom:1px solid #e3e3e3;
@@ -258,8 +261,16 @@ body{
 		&.selected{
 			background-color:$selection_yellow;
 		}
+		img{
+			width:15px;
+		}
+		h4{
+			margin:0px;
+			font-size:0.8em;
+			font-weight: normal;
+		}
 	}
-		h3{
+	h3{
 		padding:1em 1em 0.5em 1em;
 		margin:1.5em 0 0 0;
 		border-bottom:1px solid #e3e3e3;

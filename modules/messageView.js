@@ -6,6 +6,7 @@ var exec = require('child_process').exec;
 var dbHandler = require('../modules/dbHandler.js');
 
 function MessageView(container, messages){
+	console.log('New message view');
 	console.log(messages);
 	this.container = container
 		.empty()
@@ -32,8 +33,6 @@ MessageView.prototype = {
 		return this;
 	},
 	printMessages: function(mail_objs){
-		console.log('printing messages');
-		console.log(mail_objs);
 		var self = this;
 		mail_objs.sort(function(a,b){
 			if(a.date > b.date){

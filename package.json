@@ -1,4 +1,8 @@
 {
-  "name": "nw-demo",
-  "main": "index.html"
+  "name": "SlateMail",
+  "main": "index.html",
+  "window":{
+  	"toolbar":true,
+  	"frame":true
+  }
 }
