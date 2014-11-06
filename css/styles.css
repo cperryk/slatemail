@@ -206,6 +206,11 @@ body {
   border-left: 1px solid #c7c7c7;
   z-index: 99;
   display: none; }
+  #project_viewer h4 {
+    margin: 0px;
+    font-size: 0.8em;
+    font-weight: normal;
+    font-weight: normal; }
   #project_viewer .project_title {
     padding: 1em 1em 0 1em;
     margin: 0 0 0 0;
@@ -220,10 +225,6 @@ body {
     background-color: #feffaf; }
   #project_viewer .thread img {
     width: 15px; }
-  #project_viewer .thread h4 {
-    margin: 0px;
-    font-size: 0.8em;
-    font-weight: normal; }
   #project_viewer h3 {
     padding: 1em 1em 0.5em 1em;
     margin: 1.5em 0 0 0;

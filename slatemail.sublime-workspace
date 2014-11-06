@@ -4,12 +4,68 @@
 		"selected_items":
 		[
 			[
-				"selec",
-				"selected_email"
+				"obje",
+				"objectStore"
+			],
+			[
+				"messages",
+				"messages_checked"
+			],
+			[
+				"call",
+				"callback_on_end"
+			],
+			[
+				"downla",
+				"downloadMessage"
+			],
+			[
+				"reso",
+				"resolved_messages"
 			],
 			[
 				"mailbox",
-				"mailboxView"
+				"mailbox_name"
+			],
+			[
+				"message",
+				"message_found"
+			],
+			[
+				"update",
+				"update_request"
+			],
+			[
+				"cb",
+				"callback"
+			],
+			[
+				"open",
+				"connectAndOpen"
+			],
+			[
+				"ensure",
+				"ensureBox"
+			],
+			[
+				"imap",
+				"imapHandler"
+			],
+			[
+				"mess",
+				"messages_to_print"
+			],
+			[
+				"down",
+				"downloaded_messages"
+			],
+			[
+				"lcoal",
+				"local_descriptors"
+			],
+			[
+				"selec",
+				"selected_email"
 			],
 			[
 				"getMail",
@@ -54,10 +110,6 @@
 			[
 				"remo",
 				"remote_descriptors"
-			],
-			[
-				"messages",
-				"messages_to_delete"
 			],
 			[
 				"remote_",
@@ -142,10 +194,6 @@
 			[
 				"cur",
 				"current_index"
-			],
-			[
-				"message",
-				"message_data"
 			],
 			[
 				"append",
@@ -348,10 +396,6 @@
 				"callback_on_end"
 			],
 			[
-				"call",
-				"callback_on_message"
-			],
-			[
 				"callbac",
 				"callback_on_end"
 			],
@@ -361,10 +405,6 @@
 			],
 			[
 				"messag",
-				"message_data"
-			],
-			[
-				"mess",
 				"message_data"
 			],
 			[
@@ -398,10 +438,6 @@
 			[
 				"fetc",
 				"fetchMessage"
-			],
-			[
-				"imap",
-				"imapFunctions"
 			],
 			[
 				"getINbox",
@@ -478,68 +514,24 @@
 			[
 				"acti",
 				"activateMarker"
-			],
-			[
-				"pop",
-				"popup_wrapper"
-			],
-			[
-				"cot",
-				"container"
-			],
-			[
-				"new",
-				"new_index"
-			],
-			[
-				"active",
-				"active_marker"
-			],
-			[
-				"story",
-				"story_btns_container"
-			],
-			[
-				"inl",
-				"inline-block"
-			],
-			[
-				"str_rep",
-				"str_replace"
-			],
-			[
-				"question",
-				"question_index"
-			],
-			[
-				"loca",
-				"locationVar"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
+			"file": "modules/projectView.js",
+			"settings":
+			{
+				"buffer_size": 4204,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 3855,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "package.json",
-			"settings":
-			{
-				"buffer_size": 102,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/dbHandler.js",
-			"settings":
-			{
-				"buffer_size": 20836,
+				"buffer_size": 4662,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,15 +539,42 @@
 			"file": "modules/imapHandler.js",
 			"settings":
 			{
-				"buffer_size": 6478,
+				"buffer_size": 7025,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "descriptors/INBOX_uids.json",
+			"file": "modules/dbHandler.js",
 			"settings":
 			{
-				"buffer_size": 7653,
+				"buffer_size": 23986,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/syncer.js",
+			"settings":
+			{
+				"buffer_size": 6964,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var Q = require('Q');\n\nvar promises = [];\nfor(var i=0;i<10;i++){\n	promises.push(myProcess(i));\n}\n\nfunction iterateUntil(endValue){\n	return Q.resolve('some value')\n		.then(function(value){\n			if(value===endValue){\n				re\n			}\n		})\n}\nfunction myProcess(i){\n	var def = Q.defer();\n	setTimeout(function(){\n		console.log(i);\n		def.resolve();\n	}, Math.random()*1000);\n	return def.promise;\n}",
+			"file": "modules/promises_test.js",
+			"file_size": 313,
+			"file_write_time": 130597704850000000,
+			"settings":
+			{
+				"buffer_size": 383,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "descriptors/Deleted Items_uids.json",
+			"settings":
+			{
+				"buffer_size": 16368,
 				"line_ending": "Unix"
 			}
 		}
@@ -563,12 +582,16 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 137.0,
 		"selected_items":
 		[
 			[
 				"forma",
 				"Format: Javascript"
+			],
+			[
+				"form",
+				"Pretty JSON: Format (Pretty Print) JSON"
 			],
 			[
 				"pad",
@@ -633,10 +656,6 @@
 			[
 				"gru",
 				"Grunt"
-			],
-			[
-				"form",
-				"Pretty JSON: Format (Pretty Print) JSON"
 			],
 			[
 				"nog",
@@ -1054,29 +1073,47 @@
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
 		"/Users/kirkcp/Documents/node_play/slatemail/css",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules"
+		"/Users/kirkcp/Documents/node_play/slatemail/modules",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Documents/node_play/slatemail/.idea/codeStyleSettings.xml",
+		"/Users/kirkcp/Documents/node_play/slatemail/.idea/.name",
+		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
+		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
+		"/Users/kirkcp/Desktop/sony/quiz/src/index.html",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/thoughts.txt",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/lib/form_data.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/root.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
 		"/Users/kirkcp/Desktop/Fresca/combined.txt",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/2014_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/getCSV.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/tracker.js",
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-cssmin/node_modules/clean-css/node_modules/commander/index.js",
@@ -1124,7 +1161,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/bower.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/replacebyclass.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/README.md",
-		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3296/Pressfreedommap.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Junk Email/14417/PGA TOUR Rewind, YouTube.docx",
@@ -1133,7 +1169,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/sync.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/http_signing.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/77852/Presidential Nicknames Quiz.docx",
@@ -1152,7 +1187,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/.sass-cache/9f04d129e58cea992d2f3f00116b63931132ec53/mailComposer.scssc",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/nodemailer-direct-transport/src/message-queue.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-expr.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/test/auth_encoded.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/node_modules/minimist/test/default_bool.js",
@@ -1163,7 +1197,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailCompser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/153848/sex offenders.Jane.Registration.v5.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib/Connection.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/CONTRIBUTING.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-connection-idle-order.js",
@@ -1176,21 +1209,11 @@
 		"/Users/kirkcp/Documents/node_play/my_app_2/package.json",
 		"/Users/kirkcp/Documents/node_play/my_app/node_modules/mailparser/package.json",
 		"/Users/kirkcp/Documents/node_play/my_app/offlineimap/List.Slate Discuss/new/1407424641_0.72124.sc-12375.local,U=2968,FMD5=c0386a44e1258edc742ebb66890c7d7d:2,",
-		"/Users/kirkcp/Documents/interactives/lib/js/intSharing/intSharing.css",
-		"/Users/kirkcp/Documents/interactives/2014/08/illustrated_map/src/data/dessert/dessert.html",
-		"/Applications/MAMP/htdocs/editorial-interactives/interactive_server_scripts/trivia/getScores.php",
-		"/Users/kirkcp/Downloads/ard0309st/ard0309stt11.csv",
-		"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/htdocs/index.php",
-		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/savedQuizzes/quiz18 2.json",
-		"/Users/kirkcp/Downloads/ard0309st/ard0309statt01.csv",
-		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/quiz-optomized.php",
-		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/index.php",
-		"/Applications/MAMP/htdocs/editorial-interactives/trivia/builder/builderService.php",
-		"/Applications/MAMP/htdocs/editorial-interactives/trivia/htdocs/trivia.css"
+		"/Users/kirkcp/Documents/interactives/lib/js/intSharing/intSharing.css"
 	],
 	"find":
 	{
-		"height": 38.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -1204,6 +1227,59 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"updatemailobject",
+			"getthreadmessages",
+			"getmessageswithsearchcriteria",
+			"parsefetch",
+			"tryread",
+			"saveto",
+			"saveattachments",
+			"q = ",
+			"savetoexistingthread",
+			"downloadnewmail",
+			"q.all",
+			"savemailtolocalbox",
+			"updateflags",
+			"downloadnewmail",
+			"deletelocalmessages",
+			"downloadnewmail",
+			"threadmessage",
+			"readonly",
+			"threadmail",
+			"search",
+			"threadmail",
+			"savetoexistingthread",
+			"savedescriptors",
+			"threadmail",
+			"savemailtolocal",
+			"savemailtolocalbox",
+			"threadmail",
+			"callback",
+			"savetoexistingthread",
+			"updatemailobject",
+			"updatethread",
+			".result",
+			"threadmail",
+			"delete",
+			"threadmail",
+			"messageid",
+			"updateMailWithThreadID",
+			"pids_to_threads",
+			"updatemailwiththreadid",
+			"threadmail",
+			"savetoexistingthread",
+			"\"",
+			"updatemailwiththreadid",
+			"AUI",
+			"TUI",
+			"thread",
+			"threadmessage",
+			"console",
+			"opened_box",
+			"getremotedes",
+			"parsename",
+			"font-family: '",
+			"downloadnewmail",
 			"getmessageswithsearchcriteria",
 			"imaphandler.move",
 			"createbox",
@@ -1278,60 +1354,7 @@
 			"syncBox",
 			"syncbox",
 			"getmessage",
-			"console.log",
-			"console",
-			"syncbox",
-			"export",
-			"dbhandler",
-			"exports",
-			"imaphandler",
-			"console",
-			"connectandopen",
-			"getmailfromlocalbox",
-			"savemailtolocalbox",
-			"printattachments",
-			"attachments",
-			".inner",
-			"this.inner",
-			"threadclick",
-			"#feffaf;",
-			"feffaf",
-			"selected",
-			"attachments",
-			"box",
-			"box_name",
-			"subject",
-			"attachments",
-			"container",
-			".thread_container",
-			"thread_data",
-			"getthread",
-			"project",
-			"thread_data",
-			"getthreadmessages",
-			"printmessages",
-			"messageview.",
-			"getmessage",
-			"getmessagewithuid",
-			"transaction(",
-			"onerror",
-			"objectStore",
-			"ObjectStore",
-			"objectStore",
-			"\"box_\"+mailbox_name",
-			"onerror",
-			"store.put",
-			"keypress",
-			"markcomplete",
-			"getmessagewithuid",
-			"hr",
-			"prependTo",
-			"strong",
-			"gettostring",
-			"deletemessage",
-			"markcomplete",
-			"deletemessage",
-			"DayTile"
+			"console.log"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1354,19 +1377,28 @@
 			[
 				{
 					"buffer": 0,
-					"file": "main.js",
+					"file": "modules/projectView.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3855,
+						"buffer_size": 4204,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								686,
-								686
+								401,
+								401
 							]
 						],
 						"settings":
@@ -1375,47 +1407,48 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2106.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "package.json",
+					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 102,
+						"buffer_size": 4662,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								79,
-								79
+								1738,
+								1748
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 970.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "modules/dbHandler.js",
+					"file": "modules/imapHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 20836,
+						"buffer_size": 7025,
 						"regions":
 						{
 							"bookmarks":
@@ -1425,8 +1458,8 @@
 								"regions":
 								[
 									[
-										15598,
-										15598
+										3186,
+										3186
 									]
 								],
 								"scope": "bookmarks"
@@ -1435,8 +1468,8 @@
 						"selection":
 						[
 							[
-								334,
-								337
+								2796,
+								2800
 							]
 						],
 						"settings":
@@ -1445,7 +1478,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2343.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -1453,19 +1486,32 @@
 				},
 				{
 					"buffer": 3,
-					"file": "modules/imapHandler.js",
+					"file": "modules/dbHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6478,
+						"buffer_size": 23986,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										13723,
+										13723
+									]
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								460,
-								460
+								13572,
+								13572
 							]
 						],
 						"settings":
@@ -1474,7 +1520,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 9660.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1482,31 +1528,87 @@
 				},
 				{
 					"buffer": 4,
-					"file": "descriptors/INBOX_uids.json",
+					"file": "modules/syncer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7653,
+						"buffer_size": 6964,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7653,
-								7653
+								6274,
+								6274
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6646.0,
+						"translation.y": 4680.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "modules/promises_test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 383,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								219,
+								219
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "descriptors/Deleted Items_uids.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16368,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13538,
+								13538
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 138687.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1514,7 +1616,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 28.0
+		"height": 30.0
 	},
 	"input":
 	{
@@ -1554,7 +1656,7 @@
 	"project": "slatemail.sublime-project",
 	"replace":
 	{
-		"height": 52.0
+		"height": 56.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1563,36 +1665,56 @@
 		"selected_items":
 		[
 			[
-				"proj",
-				"modules/projectView.js"
-			],
-			[
-				"imap",
-				"modules/imapHandler.js"
-			],
-			[
-				"messageview",
-				"modules/messageView.js"
-			],
-			[
-				"mailbox",
-				"modules/mailboxView.js"
-			],
-			[
 				"main",
 				"main.js"
-			],
-			[
-				"graves.scss",
-				"src/graves.scss"
 			],
 			[
 				"dbha",
 				"modules/dbHandler.js"
 			],
 			[
+				"imap",
+				"modules/imapHandler.js"
+			],
+			[
 				"styles",
 				"css/styles.scss"
+			],
+			[
+				"messageview",
+				"modules/messageView.js"
+			],
+			[
+				"imapha",
+				"modules/imapHandler.js"
+			],
+			[
+				"mailbox",
+				"modules/mailboxView.js"
+			],
+			[
+				"messagev",
+				"modules/messageView.js"
+			],
+			[
+				"thread",
+				"modules/threadParser.js"
+			],
+			[
+				"style",
+				"css/styles.scss"
+			],
+			[
+				"syncer",
+				"modules/syncer.js"
+			],
+			[
+				"proj",
+				"modules/projectView.js"
+			],
+			[
+				"graves.scss",
+				"src/graves.scss"
 			],
 			[
 				"mailcom",
@@ -1625,10 +1747,6 @@
 			[
 				"mailcompser",
 				"mailComposer/mailComposer.js"
-			],
-			[
-				"imapha",
-				"modules/imapHandler.js"
 			],
 			[
 				"dbhand",
@@ -1722,6 +1840,26 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"simple",
+				"~/Documents/interactives/src/features/2014/05/simple_quiz/simple_quiz.sublime-project"
+			],
+			[
+				"rein",
+				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
+			],
+			[
+				"rei",
+				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
+			],
+			[
+				"food",
+				"~/Documents/interactives/src/features/2014/10/foods/foods.sublime-project"
+			],
+			[
+				"run",
+				"~/Documents/interactives/src/features/2014/10/run/run.sublime-project"
+			],
 			[
 				"vote",
 				"~/Documents/interactives/src/features/2014/10/vote_machine/vote_machine.sublime-project"

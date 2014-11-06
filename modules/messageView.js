@@ -180,6 +180,16 @@ Message.prototype = {
 
 		this.injected_wrapper = $('<div>')
 			.html(this.prepHTML(message_data))
+			.find('a')
+				.click(function(e){
+					console.log('stop!');
+					e.preventDefault();
+					var url = $(this).attr('href');
+					var command = 'open ' + url;
+					console.log(command);
+					exec(command);
+				})
+				.end()
 			.appendTo(iframe.contents().find('body'));
 		return this;
 	},
@@ -271,14 +281,6 @@ Message.prototype = {
 				.remove()
 				.end();
 
-		stage.find('a')
-			.click(function(e){
-				e.preventDefault();
-				var url = $(this).attr('href');
-				var command = 'open ' + url;
-				console.log(command);
-				exec(command);
-			});
 		stage
 			.find('.WordSection1')
 				.find('div')

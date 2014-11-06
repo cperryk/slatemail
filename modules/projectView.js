@@ -4,6 +4,7 @@ var dbHandler = require('../modules/dbHandler.js');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
+var exec = require('child_process').exec;
 
 function ProjectView(project_name, initial_thread){
 	this.project_name = project_name;
@@ -116,7 +117,11 @@ ProjectView.prototype = {
 	saveAttachments:function(mail_obj){
 		var self = this;
 		mail_obj.attachments.forEach(function(attachment){
-			self.attachments.push(attachment);
+			self.attachments.push({
+				mailbox: mail_obj.mailbox,
+				uid: mail_obj.uid,
+				attachment: attachment
+			});
 		});
 	},
 	printAttachments:function(){
@@ -129,12 +134,16 @@ ProjectView.prototype = {
 		$('<h3>')
 			.html('Attachments')
 			.appendTo(this.attachments_container);
-		this.attachments.forEach(function(attachment){
-			console.log(attachment);
+		this.attachments.forEach(function(a){
 			$('<div>')
-				.html(attachment.fileName)
+				.html('<h4>'+a.attachment.fileName+'</h4>')
 				.addClass('attachment')
-				.appendTo(self.attachments_container);
+				.appendTo(self.attachments_container)
+				.click(function(){
+					var path = ['attachments', a.mailbox, a.uid, a.attachment.fileName].join('/');
+					var command = 'open '+path.replace(/ /g,'\\ ');
+					exec(command);
+				});
 		});
 	}
 };

@@ -117,18 +117,27 @@ $(function(){
 			.then(function(){
 				printMail();
 				regularSync();
+			})
+			.catch(function(err){
+				console.log(err);
 			});
 	}
 
 	function regularSync(){
-		console.log('regular sync');
-		syncer.syncBox('INBOX')
+		// imapHandler.getMessageWithUID('Deleted Items', 29273)
+		// 	.then(function(mail_obj){
+		// 		console.log('RESULT:');
+		// 		console.log(mail_obj);
+		// 	});
+		// return;
+		return;
+		syncer.syncAll()
 			.then(function(){
 				printMail();
 			})
 			.fin(function(){
 				console.log('queing next');
-				setTimeout(regularSync,30000);
+				// setTimeout(regularSync,60000);
 			})
 			.catch(function(err){
 				console.log(err);
@@ -147,19 +156,33 @@ $(function(){
 	}
 
 	function printMail(){
+		var def = Q.defer();
+		console.log('printing mail');
 		mailboxView.clear();
 		var printed_threads = [];
+		var messages_to_print = [];
 		dbHandler.getMessagesFromMailbox(BOX,function(mail_object){
 			if(printed_threads.indexOf(mail_object.thread_id)>-1){
 				return;
 			}
-			mailboxView.printMessage(mail_object);
+			messages_to_print.push(mail_object);
 			printed_threads.push(mail_object.thread_id);
+		})
+		.then(function(){
+			messages_to_print.sort(function(a,b){
+				return a.date > b.date ? -1 : 1;
+			});
+			messages_to_print.forEach(function(mail_obj){
+				mailboxView.printMessage(mail_obj);
+			});
+		})
+		.fin(function(){
+			def.resolve();
+		})
+		.catch(function(err){
+			console.log(err);
 		});
-	}
-
-	function MessageList(container){
-		this.container = $(container);
+		return def.promise;
 	}
 
 });

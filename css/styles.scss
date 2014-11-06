@@ -245,6 +245,12 @@ body{
 	border-left:1px solid #c7c7c7;
 	z-index:99;
 	display: none;
+	h4{
+		margin:0px;
+		font-size:0.8em;
+		font-weight: normal;
+		font-weight: normal;
+	}
 	.project_title{
 		padding:1em 1em 0 1em;
 		margin:0 0 0 0;
@@ -263,11 +269,6 @@ body{
 		}
 		img{
 			width:15px;
-		}
-		h4{
-			margin:0px;
-			font-size:0.8em;
-			font-weight: normal;
 		}
 	}
 	h3{
