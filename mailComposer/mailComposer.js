@@ -8,19 +8,15 @@ function MailComposer(conf){
 	this.conf = conf;
 	var self = this;
 	if(!conf || !conf.container){
-		console.log('creating new window');
 		var gui = window.gui;
 		var win = window.open('mailComposer/mailComposer.html');
 		this.Win = gui.Window.get(win);
 		this.Win.once('document-end',function(){
-			console.log('focusing');
 			self.Win.focus();
 			$(function(){
 				var doc = $(win.document);
 				var text_area = doc.find('textarea').get(0);
-
 				self.CKEDITOR = win.CKEDITOR;
-				// self.CKEDITOR.replace(text_area, editor_config);
 				self.container = doc;
 				self.preload(conf);
 				self.addEventListeners();
@@ -46,6 +42,7 @@ MailComposer.prototype = {
 			});
 	},
 	preload:function(conf){
+		var self = this;
 		console.log('preloading');
 		console.log(conf);
 		if(!conf){
@@ -64,14 +61,22 @@ MailComposer.prototype = {
 				.html(conf.cc);
 		}
 
-		// to-do: CKEDITOR replaces this
 		if(conf.body){
-//			this.container.find('#message_body')
-//				.html(conf.body);
-			this.CKEDITOR.instances.message_body.setData(conf.body);
+			this.CKEDITOR.instances.message_body.setData(conf.body, {
+				callback:function(){
+					// Set the type of blockquotes to cite.
+					// If you don't do this, CKEDITOR will automatically get rid of the type attributes because it's probably invalid HTML.
+					// However, these are essential so Apple Mail will collapse the quoted emails.
+					var blockquote = self.container.find('blockquote');
+					console.log(blockquote);
+					blockquote
+						.attr('type','cite');
+				}
+			});
 		}
 	},
 	send:function(){
+		console.log('sending');
 		var self = this;
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
@@ -83,6 +88,7 @@ MailComposer.prototype = {
 			subject: subject,
 			html: body
 		};
+		console.log(mail_options.html);
 		if(this.conf && this.conf.in_reply_to){
 			mail_options.inReplyTo = this.conf.in_reply_to;
 		}

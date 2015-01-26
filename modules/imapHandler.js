@@ -6,27 +6,38 @@ var fs = require('fs');
 
 var imapHandler = {
 	connect:function(){
-		if(imap && imap.state && imap.state === 'authenticated'){
+		var loc_imap = imap;
+		if(imap){
+			// console.log(imap.state);
+		}
+		if(loc_imap && loc_imap.state && loc_imap.state === 'authenticated'){
+			// console.log('already authenticated');
 			return Q(true);
 		}
-		console.log('connecting...');
+		// console.log('connecting...');
 		var def = Q.defer();
 		var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json')).internal;
 		// conf.debug = function(s){
 		//   console.log(s);
 		// };
-		imap = new Imap(conf);
-		imap.connect();
-		imap
+		loc_imap = new Imap(conf);
+		loc_imap.connect();
+		loc_imap
 			.once('ready',function(){
+				console.log('ready');
 				def.resolve();
 			})
 			.once('error',function(err){
 				console.log('imap error: '+err);
+				console.log(err);
 			})
 			.once('end', function() {
 				console.log('Connection ended');
+			})
+			.once('close', function(){
+				console.log('imap connection closed');
 			});
+		imap = loc_imap;
 		return def.promise;
 	},
 	connectAndOpen:function(box_name){
@@ -47,28 +58,30 @@ var imapHandler = {
 	},
 	disconnect:function(){
 		// console.log('disconnecting');
-		imap.end();
+		// imap.end();
 	},
 	openBox:function(box_name){
 		var def = Q.defer();
 		if(imap._box && (imap._box.name === box_name)){
 			return Q(imap._box);
 		}
-		console.log('opening box: '+box_name+'...');
 		imap.openBox(box_name, false, function(err, box){
+			// console.log('BOX IS OPEN');
+			// console.log(box);
 			if (err){
+				console.log('error in openBox');
 				console.log(err);
 				throw err;
 			}
 			else{
-				console.log('box opened');
+				// console.log('box opened');
 				def.resolve(box);
 			}
 		});
 		return def.promise;
 	},
 	getUIDsFlags:function(box_name){
-		console.log('get uids flags from '+box_name);
+		// console.log('get uids flags from '+box_name);
 		var def = Q.defer();
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){
@@ -121,12 +134,15 @@ var imapHandler = {
 			criteria:[['UID',parseInt(uid,10)]]
 		})
 		.then(function(messages){
-			if(messages === false){
+			if(!messages || messages.length === 0){
 				def.resolve(false);
 			}
 			else{
 				def.resolve(messages[0]);
 			}
+		})
+		.catch(function(err){
+			console.log(err);
 		});
 		return def.promise;
 	},
@@ -183,7 +199,7 @@ var imapHandler = {
 		});
 		return def.promise;
 	},
-	markSeen:function(box_name, uid, callback){
+	markSeen:function(box_name, uid){
 		console.log('marking seen: '+uid);
 		var def = Q.defer();
 		imapHandler.connectAndOpen(box_name)
@@ -197,7 +213,31 @@ var imapHandler = {
 			});
 		return def.promise;
 	},
-	getBoxes:function(callback){
+	markDeleted:function(box_name, uid){
+		console.log('marking for deletion: '+uid);
+		var def = Q.defer();
+		imapHandler.connectAndOpen(box_name)
+			.then(function(box){
+				imap.addFlags(uid,['Deleted'],function(err){
+					if(err){
+						console.log(err);
+					}
+					def.resolve();
+				});
+			});
+		return def.promise;
+	},
+	expunge:function(box_name){
+		var def = Q.defer();
+		imapHandler.connectAndOpen(box_name)
+			.then(function(box){
+				// console.log(box_name+ 'expunged');
+				imap.expunge();
+				def.resolve();
+			});
+		return def.promise;
+	},
+	getBoxes:function(){
 		var def = Q.defer();
 		imapHandler.connect()
 			.then(function(){
@@ -207,7 +247,7 @@ var imapHandler = {
 			});
 		return def.promise;
 	},
-	getMessageCount:function(box_name, callback){
+	getMessageCount:function(box_name){
 		var deferred = Q.defer();
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){

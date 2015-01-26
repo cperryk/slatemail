@@ -4,12 +4,15 @@ var favicon_urls = {};
 var mustache = require('mustache');
 
 var onSelectEmail;
+var onDeselectEmail;
 
 var last_printed_date;
+var message_groups = {};
 
 mailboxView = {
 	clear:function(){
 		$('#inbox').empty();
+		message_groups = {};
 	},
 	addEventListeners:function(){
 		var self = this;
@@ -21,24 +24,43 @@ mailboxView = {
 		});
 	},
 	printMessage:function(mail_object){
-		var template = '<div data-uid="{{uid}}" class="inbox_email">'+
-			'<div class="from">{{from}}</div>'+
-			'<div class="subject">{{subject}}</div>'+
-			'<div class="text_preview">{{{text_preview}}}</div>'+
+		// console.log('print message: '+mail_object.short_subject);
+		var mid = mail_object.mailbox+':'+mail_object.uid;
+		// console.log('MID: '+mid);
+		// if($('#'+mid).length > 0){
+		// 	return;
+		// }
+		var template = '<div id="'+mid+'" data-mailbox="'+mail_object.mailbox+'" data-uid="'+mail_object.uid+'" class="inbox_email">'+
+			'<div class="from">'+mailboxView.parseName(mail_object.from)+'</div>'+
+			'<div class="subject">'+mail_object.headers.subject+'</div>'+
+			'<div class="text_preview">'+mailboxView.getPreviewText(mail_object)+'</div>'+
 		'</div>';
-		var view = {
-			uid: mail_object.uid,
-			from: mailboxView.parseName(mail_object.from),
-			subject: mail_object.headers.subject,
-			text_preview: mailboxView.getPreviewText(mail_object)
-		};
-		var message_wrapper = $(mustache.render(template, view));
+		var message_wrapper = $(template);
 		if(mail_object.flags.indexOf('\\Seen')===-1){
 			message_wrapper.addClass('unseen');
 		}
 		mailboxView.insertFavicon(message_wrapper, mail_object);
-		mailboxView.insertDateSeparator(mail_object);
-		message_wrapper.appendTo('#inbox');
+		(function(){
+			var group_id = (function(){
+				if(mail_object.mailbox.substring(0, 'SlateMail/scheduled/'.length) === 'SlateMail/scheduled/'){
+					return 'Past Due';
+				}
+				return mailboxView.getDateString(mail_object.date);
+			}());
+			var element = message_groups[group_id];
+			if(!element){
+				element = $('<div class="date_group">');
+				if(group_id==='Past Due'){
+					element.prependTo('#inbox');
+				}
+				else{
+					element.appendTo('#inbox');
+				}
+				mailboxView.printDateSeparator(group_id, element);
+				message_groups[group_id] = element;
+			}
+			message_wrapper.appendTo(element);
+		}());
 	},
 	insertDateSeparator:function(mail_object){
 		var date_string = mailboxView.getDateString(mail_object.date);
@@ -64,7 +86,7 @@ mailboxView = {
 			return 'One week ago';
 		}
 		if(days_diff >= 14){
-			return 'Two weeks ago';
+			return 'Two weeks ago +';
 		}
 		if(days_diff >= 30){
 			return 'One month ago';
@@ -85,23 +107,31 @@ mailboxView = {
 		}
 		return false;
 	},
-	printDateSeparator:function(s){
+	printDateSeparator:function(s, target){
 		$('<div>')
 			.addClass('date_separator')
 			.html('<span class="triangle">&#9660;</span> <span class="date_string">'+s+'</span>')
-			.appendTo('#inbox')
+			.appendTo(target)
 			.click(function(){
 				if($(this).hasClass('collapsed')){
-					$(this).nextUntil('.date_separator')
-						.show();
-					$(this).removeClass('collapsed');
-					$(this).find('.triangle').html('&#9660;');
+					$(this)
+						.removeClass('collapsed')
+						.siblings()
+							.show()
+							.end()
+						.find('.triangle')
+							.html('&#9660;')
+							.end();
 				}
 				else{
-					$(this).nextUntil('.date_separator')
-						.hide();
-					$(this).addClass('collapsed');
-					$(this).find('.triangle').html('&#9654;');
+					$(this)
+						.addClass('collapsed')
+						.siblings()
+							.hide()
+							.end()
+						.find('.triangle')
+							.html('&#9654;')
+							.end();
 				}
 			});
 	},
@@ -136,15 +166,25 @@ mailboxView = {
 		}
 	},
 	select:function(inbox_email){
+		if(console){console.log('--------- selection -----------');}
 		var self = this;
-		if(mailboxView.selected_email){
-			mailboxView.selected_email.removeClass('selected');
+		if(mailboxView.selected_email && (mailboxView.selected_email.data('uid') === inbox_email.data('uid'))){
+			inbox_email.removeClass('selected');
+			delete mailboxView.selected_email;
+			if(onDeselectEmail){
+				onDeselectEmail(inbox_email.data('uid'));
+			}
 		}
-		inbox_email.addClass('selected');
-		if(onSelectEmail){
-			onSelectEmail(inbox_email.data('uid'));
+		else{
+			if(mailboxView.selected_email){
+				mailboxView.selected_email.removeClass('selected');
+			}
+			inbox_email.addClass('selected');
+			if(onSelectEmail){
+				onSelectEmail(inbox_email.data('mailbox'), inbox_email.data('uid'));
+			}
+			mailboxView.selected_email = inbox_email;
 		}
-		mailboxView.selected_email = inbox_email;
 	},
 	getPreviewText:function(mail_object){
 		/**
@@ -183,6 +223,9 @@ mailboxView = {
 	},
 	onSelect:function(fnc){
 		onSelectEmail = fnc;
+	},
+	onDeselect:function(fnc){
+		onDeselectEmail = fnc;
 	}
 };
 mailboxView.addEventListeners();

@@ -1,10 +1,24 @@
 body {
   font-family: 'Gotham'; }
+  body.project_viewer_open #message_viewer {
+    width: -webkit-calc(80% - 550px) !important; }
+
+#tree_view {
+  position: fixed;
+  height: 100%;
+  width: 150px;
+  top: 0;
+  left: 0; }
+  #tree_view .inner {
+    height: 100%;
+    border-right: 1px solid #c7c7c7;
+    float: left;
+    width: 149px; }
 
 #left_pane {
-  width: 20%;
+  width: 250px;
   height: 100%;
-  left: 0px;
+  left: 150px;
   top: 0px;
   position: fixed; }
   #left_pane #box_selector {
@@ -46,9 +60,9 @@ body {
 
 #message_viewer {
   background: url(../graphics/stripe.png);
-  width: 80%;
+  width: -webkit-calc(100% - 400px) !important;
   height: 100%;
-  left: 20%;
+  left: 400px;
   top: 0px;
   border-left: 1px solid #c7c7c7;
   position: fixed;
@@ -59,7 +73,7 @@ body {
   margin: 1.5em 0;
   padding: 2%;
   border: 1px solid #c7c7c7;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.04706) 0px 8px 11px 3px;
   width: 96%;
   position: relative; }
   .message_view .envelope:first-child {
@@ -229,3 +243,18 @@ body {
     padding: 1em 1em 0.5em 1em;
     margin: 1.5em 0 0 0;
     border-bottom: 1px solid #e3e3e3; }
+
+.tree_view {
+  font-size: 0.8em; }
+  .tree_view ul {
+    padding: 0 0 0 10px;
+    list-style: none; }
+  .tree_view .tree_view_item {
+    cursor: pointer;
+    margin: 4px 0; }
+  .tree_view span:hover {
+    text-decoration: underline; }
+  .tree_view .selected > span {
+    font-weight: bold; }
+  .tree_view .folder_icon {
+    margin-right: 2px; }

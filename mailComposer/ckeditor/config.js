@@ -40,11 +40,14 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
 		// { name: 'styles' },
 		{ name: 'colors' },
-		{ name: 'about' }
+		{ name: 'about' },
+		{ name: 'sourcearea' }
 	];
+	config.extraPlugins = 'sourcearea';
+	// config.extraPlugins = 'sourcedialog';
 
 	config.removePlugins = 'elementspath';
-	config.scayt_autoStartup = true;
+	// config.scayt_autoStartup = true;
 	config.uiColor =  '#e3e3e3';
 
 	// Remove some buttons provided by the standard plugins, which are

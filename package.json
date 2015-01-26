@@ -3,6 +3,7 @@
   "main": "index.html",
   "window":{
   	"toolbar":true,
-  	"frame":true
+  	"frame":true,
+  	"icon":"appicon.png"
   }
 }

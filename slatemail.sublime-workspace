@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"message",
+				"message_viewer"
+			],
+			[
+				"inbox",
+				"inbox_email"
+			],
+			[
+				"selected",
+				"selected_email"
+			],
+			[
+				"onDe",
+				"onDeselectEmail"
+			],
+			[
+				"mail",
+				"mail_options"
+			],
+			[
 				"obje",
 				"objectStore"
 			],
@@ -26,10 +46,6 @@
 			[
 				"mailbox",
 				"mailbox_name"
-			],
-			[
-				"message",
-				"message_found"
 			],
 			[
 				"update",
@@ -90,10 +106,6 @@
 			[
 				"deb",
 				"dbHandler"
-			],
-			[
-				"mail",
-				"mail_object"
 			],
 			[
 				"saveMail",
@@ -502,23 +514,35 @@
 			[
 				"st",
 				"stdout"
-			],
-			[
-				"resize",
-				"resizeCallback"
-			],
-			[
-				"attach",
-				"attached_elements"
-			],
-			[
-				"acti",
-				"activateMarker"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "main.js",
+			"settings":
+			{
+				"buffer_size": 4735,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/mailboxView.js",
+			"settings":
+			{
+				"buffer_size": 5162,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "mailComposer/mailComposer.js",
+			"settings":
+			{
+				"buffer_size": 2927,
+				"line_ending": "Unix"
+			}
+		},
 		{
 			"file": "modules/projectView.js",
 			"settings":
@@ -528,18 +552,10 @@
 			}
 		},
 		{
-			"file": "main.js",
+			"file": "modules/messageView.js",
 			"settings":
 			{
-				"buffer_size": 4662,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/imapHandler.js",
-			"settings":
-			{
-				"buffer_size": 7025,
+				"buffer_size": 12742,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,44 +563,65 @@
 			"file": "modules/dbHandler.js",
 			"settings":
 			{
-				"buffer_size": 23986,
+				"buffer_size": 24149,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "modules/syncer.js",
+			"file": "package.json",
 			"settings":
 			{
-				"buffer_size": 6964,
+				"buffer_size": 143,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "var Q = require('Q');\n\nvar promises = [];\nfor(var i=0;i<10;i++){\n	promises.push(myProcess(i));\n}\n\nfunction iterateUntil(endValue){\n	return Q.resolve('some value')\n		.then(function(value){\n			if(value===endValue){\n				re\n			}\n		})\n}\nfunction myProcess(i){\n	var def = Q.defer();\n	setTimeout(function(){\n		console.log(i);\n		def.resolve();\n	}, Math.random()*1000);\n	return def.promise;\n}",
-			"file": "modules/promises_test.js",
-			"file_size": 313,
-			"file_write_time": 130597704850000000,
+			"file": "css/styles.scss",
 			"settings":
 			{
-				"buffer_size": 383,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "descriptors/Deleted Items_uids.json",
-			"settings":
-			{
-				"buffer_size": 16368,
+				"buffer_size": 4737,
 				"line_ending": "Unix"
 			}
 		}
 	],
-	"build_system": "",
+	"build_system": "Packages/SASS-Build/SASS.sublime-build",
 	"command_palette":
 	{
-		"height": 137.0,
+		"height": 375.0,
 		"selected_items":
 		[
+			[
+				"left",
+				"Snippet: insert left guillmet arrows"
+			],
+			[
+				"gr",
+				"Grunt"
+			],
+			[
+				"disabe",
+				"Package Control: Disable Package"
+			],
+			[
+				"disab",
+				"Package Control: Disable Package"
+			],
+			[
+				"disable",
+				"Package Control: Disable Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"disa",
+				"Package Control: Disable Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
 			[
 				"forma",
 				"Format: Javascript"
@@ -646,10 +683,6 @@
 				"ColorSchemeSelector: Random Color Scheme"
 			],
 			[
-				"gr",
-				"Grunt"
-			],
-			[
 				"save ",
 				"Project: Save As"
 			],
@@ -672,10 +705,6 @@
 			[
 				"set syntax: live",
 				"Set Syntax: LiveScript"
-			],
-			[
-				"instal",
-				"Package Control: Install Package"
 			],
 			[
 				"grun",
@@ -764,10 +793,6 @@
 			[
 				"no",
 				"Snippet: noHighlight"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"remove pa",
@@ -1022,10 +1047,6 @@
 				"Snippet: insert right guillmet arrows"
 			],
 			[
-				"left",
-				"Snippet: insert left guillmet arrows"
-			],
-			[
 				"slatered",
 				"Snippet: slatered"
 			],
@@ -1072,27 +1093,35 @@
 	"expanded_folders":
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
-		"/Users/kirkcp/Documents/node_play/slatemail/css",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib"
+		"/Users/kirkcp/Documents/node_play/slatemail/css/.sass-cache",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Deleted Items_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11398/proposed_senate_attributes.csv",
+		"/Users/kirkcp/Documents/node_play/slatemail/.idea/dictionaries/kirkcp.xml",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/promises_test.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/SublimeOnSaveBuild/SublimeOnSaveBuild.sublime-settings",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/SublimeOnSaveBuild.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11845/20130131motw_immigration_populationLH.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/codeStyleSettings.xml",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/.name",
 		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
-		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
 		"/Users/kirkcp/Desktop/sony/quiz/src/index.html",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
@@ -1102,13 +1131,9 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/root.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
 		"/Users/kirkcp/Desktop/Fresca/combined.txt",
@@ -1166,7 +1191,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Junk Email/14417/PGA TOUR Rewind, YouTube.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/messageView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/sync.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/http-signature/http_signing.md",
@@ -1195,25 +1219,17 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposer.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailComposerTemplate.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailCompser.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/153848/sex offenders.Jane.Registration.v5.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib/Connection.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/CONTRIBUTING.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-connection-idle-order.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sports Separation/359/MakeAll4.py",
 		"/Users/kirkcp/Documents/node_play/slatemail/uids/INBOX_uids.json",
-		"/Users/kirkcp/Desktop/oldcallbackcode",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/lib/_stream_readable.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/package.json",
-		"/Users/kirkcp/Documents/node_play/my_app_2/node_modules/mailparser/package.json",
-		"/Users/kirkcp/Documents/node_play/my_app_2/package.json",
-		"/Users/kirkcp/Documents/node_play/my_app/node_modules/mailparser/package.json",
-		"/Users/kirkcp/Documents/node_play/my_app/offlineimap/List.Slate Discuss/new/1407424641_0.72124.sc-12375.local,U=2968,FMD5=c0386a44e1258edc742ebb66890c7d7d:2,",
-		"/Users/kirkcp/Documents/interactives/lib/js/intSharing/intSharing.css"
+		"/Users/kirkcp/Desktop/oldcallbackcode"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 37.0
 	},
 	"find_in_files":
 	{
@@ -1227,6 +1243,22 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"window",
+			"onselectemail",
+			"window",
+			"getfromstring",
+			"reply",
+			"on",
+			"message_view",
+			"deletemessage",
+			"savemailtolocalbox",
+			"mail_obj",
+			"body",
+			"source",
+			"extraplugins",
+			"3D",
+			"reply",
+			"prephtml",
 			"updatemailobject",
 			"getthreadmessages",
 			"getmessageswithsearchcriteria",
@@ -1338,23 +1370,7 @@
 			"deletelocalmessages",
 			"downloadnewmail",
 			".all(",
-			"addlocalmessage",
-			"uids",
-			"downloadnewmail",
-			"flags",
-			"downloadnewmail",
-			"results",
-			"getLocalDescriptors",
-			"msgs",
-			"deleteLocalMessages",
-			"ensurelocalbox",
-			"deletelocalmessages",
-			"stringify",
-			"syncBoxIteration",
-			"syncBox",
-			"syncbox",
-			"getmessage",
-			"console.log"
+			"addlocalmessage"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1372,11 +1388,98 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4735,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3002,
+								3002
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1682.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "modules/mailboxView.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5162,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								154,
+								154
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "mailComposer/mailComposer.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2927,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1683,
+								1685
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "modules/projectView.js",
 					"semi_transient": false,
 					"settings":
@@ -1397,8 +1500,8 @@
 						"selection":
 						[
 							[
-								401,
-								401
+								527,
+								527
 							]
 						],
 						"settings":
@@ -1414,201 +1517,144 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4662,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1738,
-								1748
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 970.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "modules/imapHandler.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7025,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										3186,
-										3186
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								2796,
-								2800
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2343.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "modules/dbHandler.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 23986,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										13723,
-										13723
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								13572,
-								13572
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 9660.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
 					"buffer": 4,
-					"file": "modules/syncer.js",
+					"file": "modules/messageView.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6964,
+						"buffer_size": 12742,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										10328,
+										10328
+									]
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								6274,
-								6274
+								7111,
+								7113
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4680.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "modules/promises_test.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 383,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								219,
-								219
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "modules/dbHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 24149,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										13886,
+										13886
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								13082,
+								13082
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "descriptors/Deleted Items_uids.json",
+					"file": "package.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16368,
+						"buffer_size": 143,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13538,
-								13538
+								79,
+								79
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JSON.tmLanguage"
 						},
-						"translation.x": 138687.0,
+						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "css/styles.scss",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4737,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1287,
+								1287
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SCSS/SCSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 989.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1665,8 +1711,32 @@
 		"selected_items":
 		[
 			[
+				"packa",
+				"package.json"
+			],
+			[
+				"mailbox",
+				"modules/mailboxView.js"
+			],
+			[
+				"pack",
+				"package.json"
+			],
+			[
+				"mailcomp",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"package",
+				"package.json"
+			],
+			[
 				"main",
 				"main.js"
+			],
+			[
+				"impa",
+				"modules/imapHandler.js"
 			],
 			[
 				"dbha",
@@ -1687,10 +1757,6 @@
 			[
 				"imapha",
 				"modules/imapHandler.js"
-			],
-			[
-				"mailbox",
-				"modules/mailboxView.js"
 			],
 			[
 				"messagev",
@@ -1754,10 +1820,6 @@
 			],
 			[
 				"mailcomposer",
-				"mailComposer/mailComposer.js"
-			],
-			[
-				"mailcomp",
 				"mailComposer/mailComposer.js"
 			],
 			[
@@ -1841,15 +1903,19 @@
 		"selected_items":
 		[
 			[
+				"outrage",
+				"~/Documents/interactives/src/features/2014/09/outrage/outrage.sublime-project"
+			],
+			[
+				"rei",
+				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
+			],
+			[
 				"simple",
 				"~/Documents/interactives/src/features/2014/05/simple_quiz/simple_quiz.sublime-project"
 			],
 			[
 				"rein",
-				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
-			],
-			[
-				"rei",
 				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
 			],
 			[
@@ -1863,10 +1929,6 @@
 			[
 				"vote",
 				"~/Documents/interactives/src/features/2014/10/vote_machine/vote_machine.sublime-project"
-			],
-			[
-				"outrage",
-				"~/Documents/interactives/src/features/2014/09/outrage/outrage.sublime-project"
 			],
 			[
 				"foods",
@@ -1895,7 +1957,7 @@
 	"settings":
 	{
 	},
-	"show_minimap": true,
+	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,

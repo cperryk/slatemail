@@ -4,6 +4,9 @@ var message_css = fs.readFileSync('css/message.css','utf8');
 var MailComposer = require('../mailComposer/mailComposer.js');
 var exec = require('child_process').exec;
 var dbHandler = require('../modules/dbHandler.js');
+var mustache = require('mustache');
+
+require('datejs');
 
 function MessageView(container, messages){
 	console.log('New message view');
@@ -42,12 +45,12 @@ MessageView.prototype = {
 				return 1;
 			}
 		});
+		var d1 = new Date().getTime();
 		mail_objs.forEach(function(mail_obj, index){
 			var message = new Message(mail_obj, self);
-			// if(index===0){
-			//   message.select();
-			// }
 		});
+		var d2 = new Date().getTime();
+		console.log('thread render time: '+(d2-d1));
 		return this;
 	},
 	printTop: function(mail_objs){
@@ -83,16 +86,6 @@ MessageView.prototype = {
 				.appendTo(wrapper);
 		}
 		wrapper.appendTo(this.top_wrapper);
-		// var wrapper = $('<div>')
-		//   .appendTo(this.top_wrapper);
-		// this.btn_reply = $('<span>')
-		//   .addClass('btn_reply')
-		//   .html('reply all')
-		//   .appendTo(wrapper);
-		// this.btn_forward = $('<span>')
-		//   .addClass('btn_forward')
-		//   .html('forward')
-		//   .appendTo(wrapper);
 		this.top_wrapper
 			.show();
 		this.container.addClass('with_top');
@@ -105,7 +98,7 @@ MessageView.prototype = {
 				self.reply();
 			}
 		});
-		return this;  
+		return this;
 	}
 };
 
@@ -117,7 +110,6 @@ function Message(message_data, par){
 	this.container = $('<div>')
 		.addClass('envelope')
 		.appendTo(par.messages_wrapper);
-
 
 	$('<div>')
 		.addClass('btn_reveal')
@@ -139,31 +131,46 @@ Message.prototype = {
 		var message_data = this.message_data;
 		var container = this.container;
 
-		var wrapper = $('<div>')
-			.addClass('headers')
-			.appendTo(container);
+		var d1 = new Date().getTime();
 
-		$('<p>')
-			.addClass('from')
-			.html(this.getFromString(message_data))
-			.appendTo(wrapper);
+		// MUSTACHE METHOD
+		var template = '<div class="headers">'+
+				'<div class="from">{{from}}</div>'+
+				'<div class="to">To: {{to}}</div>'+
+				'<div class="date">{{date}}</div>'+
+			'</div>';
+		var wrapper = $(mustache.render(template, {
+			from: this.getFromString(message_data),
+			to: this.getToString(message_data) + (message_data.cc?' | cc: ' + this.getToString(message_data,true):''),
+			date: this.parseDate(message_data.date)
+		})).appendTo(container);
 
-		$('<p>')
-			.addClass('to')
-			.html('To: '+this.getToString(message_data) + 
-				(message_data.cc?' | cc: ' + this.getToString(message_data,true):''))
-			.appendTo(wrapper);
-
-		$('<div>')
-			.addClass('date')
-			.html(this.parseDate(message_data.date))
-			.appendTo(container);
+		// JQUERY METHOD
+		// var wrapper = $('<div>')
+		// 	.addClass('headers')
+		// 	.appendTo(container);
+		//
+		// $('<p>')
+		// 	.addClass('from')
+		// 	.html(this.getFromString(message_data))
+		// 	.appendTo(wrapper);
+		//
+		// $('<p>')
+		// 	.addClass('to')
+		// 	.html('To: '+this.getToString(message_data) +
+		// 		(message_data.cc?' | cc: ' + this.getToString(message_data,true):''))
+		// 	.appendTo(wrapper);
+		//
+		// $('<div>')
+		// 	.addClass('date')
+		// 	.html(this.parseDate(message_data.date))
+		// 	.appendTo(container);
 
 		this.headers_wrapper = wrapper;
-
 		return this;
 	},
 	printBody:function(){
+		var t1 = new Date().getTime();
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
@@ -177,20 +184,19 @@ Message.prototype = {
 				.find('head')
 					.html('<style>'+message_css+'</style>')
 					.end();
-
+		var t2 = new Date().getTime();
 		this.injected_wrapper = $('<div>')
-			.html(this.prepHTML(message_data))
+			.html(this.prepHTMLshort(message_data))
 			.find('a')
 				.click(function(e){
-					console.log('stop!');
 					e.preventDefault();
 					var url = $(this).attr('href');
 					var command = 'open ' + url;
-					console.log(command);
 					exec(command);
 				})
 				.end()
 			.appendTo(iframe.contents().find('body'));
+		console.log('prepHTML time: '+(t2-t1));
 		return this;
 	},
 	printAttachmentIcons:function(){
@@ -265,6 +271,16 @@ Message.prototype = {
 		var d = new Date(date);
 		return d.toDateString();
 	},
+	prepHTMLshort: function(message_data){
+		var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
+		var stage = $('<div>')
+			.html(html);
+		stage
+			.find('style')
+				.remove();
+		var text = stage.text().replace(/\s+/g," ");
+		return text.substring(0, Math.min(200, text.length));
+	},
 	prepHTML: function(message_data){
 		var btn_show = $('<span>')
 			.addClass('btn_show')
@@ -273,8 +289,17 @@ Message.prototype = {
 		var stage = $('<div>')
 			.hide()
 			.html(html)
-			//.find('.gmail_quote,#OLK_SRC_BODY_SECTION,#signature,blockquote,#message-coda,#Signature')
-			.find('#signature,#message-coda,#Signature,blockquote,#OLK_SRC_BODY_SECTION')
+			.find('blockquote')
+				.each(function(){
+					if($(this).attr('type')==='cite'){
+						$(this).parent()
+							.append(btn_show)
+							.end()
+						.remove();
+					}
+				})
+				.end()
+			.find('#signature,#message-coda,#Signature,#OLK_SRC_BODY_SECTION')
 				.parent()
 					.append(btn_show)
 					.end()
@@ -297,16 +322,16 @@ Message.prototype = {
 		});
 
 		// Often quoted messages are separated from the new message by horizontal rules
-		stage
-			.find('hr')
-				.nextAll()
-					.remove()
-					.end()
-				.parent()
-					.append(btn_show)
-					.end()
-				.remove()
-				.end();
+		// stage
+		// 	.find('hr')
+		// 		.nextAll()
+		// 			.remove()
+		// 			.end()
+		// 		.parent()
+		// 			.append(btn_show)
+		// 			.end()
+		// 		.remove()
+		// 		.end();
 
 		stage
 			.find('img')
@@ -409,22 +434,21 @@ Message.prototype = {
 		var self = this;
 		var message_data = this.message_data;
 		var body = (function(){
-			var container = $('<div>')
-				.html(message_data.html);
-			var headers = $('<div>')
-				.append([
-					$('<br/>'),
-					
-					$('<hr>'),
-					$('<p>').html('<b>From:</b> '+message_data.from[0].name),
-					$('<p>').html('<b>Sent:</b> '+message_data.date),
-					$('<p>').html('<b>To:</b> '+self.getToString(message_data)),
-					$('<p>').html('<b>Subject:</b> '+message_data.subject),
-					$('<p>').html(message_data.html || message_data.text)
-					// $('<p>').html('On Mon, Oct 6, 2014 at 9:01 AM, Jaeah Lee <jaeah.j.lee@gmail.com> wrote:')
-				]);
-			container.prepend(headers.html());
-			return container.html();
+			var wrapper = $('<div><br/>');
+			var date_string = (function(){
+				if(console){console.log('getting date string');}
+				var date = new Date(message_data.date);
+				var months = ['Jan.','Feb.','March','April','May','June','July','Aug.','Oct.','Nov.','Dec.'];
+				var s = date.toString('MMM. dd')+', at '+date.toString('hh:mm tt');
+				if(console){console.log(s);}
+				return s;
+			}());
+			var from_string =  self.getFromString(message_data);
+			var block_quote = $('<blockquote type="cite">')
+				.html('<div>On '+date_string+', '+from_string+' wrote:</div>'+
+					(message_data.html || message_data.text.replace(/\n/g, '<br/>')))
+				.appendTo(wrapper);
+			return wrapper.html();
 		}());
 		var conf = {
 			to: message_data.from[0].address,
