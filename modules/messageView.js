@@ -375,6 +375,7 @@ Message.prototype = {
 	},
 	printActionBtns:function(){
 		var self = this;
+
 		var btns = $('<p>')
 			.addClass('action_btns')
 			.hide()
@@ -385,37 +386,23 @@ Message.prototype = {
 			.addClass('action_btns_wrapper')
 			.appendTo(btns);
 
-		$('<div>')
-			.addClass('action_btn btn_reply')
-			.html('Reply')
+		$('<div class="action_btn btn_reply">Reply</div>')
 			.appendTo(inner_wrapper)
 			.click(function(){
 				self.reply();
 			});
 
-		$('<div>')
-			.addClass('action_btn btn_reply_all')
-			.html('Reply All')
+		$('<div class="action_btn btn_reply_all">Reply All</div>')
 			.appendTo(inner_wrapper)
 			.click(function(){
 				self.replyAll();
 			});
 
-		$('<div>')
-			.addClass('action_btn btn_forward')
-			.html('Forward')
+		$('<div class="action_btn btn_forward">Forward</div>')
 			.appendTo(inner_wrapper)
 			.click(function(){
 				self.forward();
 			});
-
-		// $('<div>')
-		//   .addClass('action_btn btn_tag')
-		//   .html('Tag')
-		//   .appendTo(inner_wrapper)
-		//   .click(function(){
-		//     self.tag();
-		//   });
 
 		this.action_btns = btns;
 	},
@@ -463,7 +450,7 @@ Message.prototype = {
 	},
 	reply:function(){
 		var conf = this.getReplyConf();
-		new MailComposer(conf);
+		new MailComposer(null, conf);
 	},
 	replyAll:function(){
 		var self = this;
@@ -479,7 +466,7 @@ Message.prototype = {
 			}
 			return s;
 		}());
-		new MailComposer(conf);
+		new MailComposer(null, conf);
 	},
 	getPeopleList:function(arr){
 		console.log('getting people list');
@@ -541,10 +528,7 @@ Message.prototype = {
 			body:stage.html(),
 			subject:'FW: '+message_data.subject
 		};
-		new MailComposer(conf);
-	},
-	tag:function(){
-		var tag = window.prompt('tag');
+		new MailComposer(null, conf);
 	},
 	reveal:function(){
 		this.injected_wrapper.html(this.message_data.html || this.message_data.text);

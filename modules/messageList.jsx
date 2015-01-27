@@ -201,7 +201,6 @@ function getPreviewText(mail_object){
 }
 
 function parseName(from_header){
-	console.log('parsing name');
 	if(!from_header || from_header.length === 0){
 		return '';
 	}

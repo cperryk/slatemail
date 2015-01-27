@@ -9,9 +9,16 @@ var indexedDB = window.indexedDB;
 
 // to-do: build routine to ensure deleted mailboxes are deleted locally
 
+console.log('DBHANDLER IMPORTED');
+
 var dbHandler = {
+	test:function(){
+		console.log('test');
+	},
 
 deleteDB:function(){
+	console.log('delete request');
+	console.trace();
 	var def = Q.defer();
 	var req = indexedDB.deleteDatabase('slatemail');
 	console.log(req);
@@ -420,26 +427,30 @@ getUIDsFromMailbox:function(box_name, onKey, onEnd){
 	};
 },
 getMessagesFromMailbox: function(box_name, onMessage){
+	console.log('get messages from '+box_name);
 	var def = Q.defer();
+	console.log(db);
 	if(!db.objectStoreNames.contains("box_"+box_name)){
-		//console.log('local box does not exist');
-		return;
+		console.log(box_name+' does not exist');
+		def.resolve();
 	}
-	var tx = db.transaction("box_"+box_name);
-	var objectStore = tx.objectStore("box_"+box_name);
-	objectStore.openCursor(null, 'prev').onsuccess = function(event) {
-		var cursor = event.target.result;
-		if (cursor) {
-			var mail_object = cursor.value;
-			if(onMessage){
-				onMessage(mail_object);
+	else{
+		var tx = db.transaction("box_"+box_name);
+		var objectStore = tx.objectStore("box_"+box_name);
+		objectStore.openCursor(null, 'prev').onsuccess = function(event) {
+			var cursor = event.target.result;
+			if (cursor) {
+				var mail_object = cursor.value;
+				if(onMessage){
+					onMessage(mail_object);
+				}
+				cursor.continue();
 			}
-			cursor.continue();
-		}
-		else {
-			def.resolve();
-		}
-	};
+			else {
+				def.resolve();
+			}
+		};
+	}
 	return def.promise;
 },
 getThreads:function(thread_ids){
@@ -882,7 +893,7 @@ threadMessage:function(message_id){
 				function to ensure that messages that have already been threaded in the past
 				that have since moved mailboxes are attached to the same threads as before.
 			*/
-			console.log('by pid');
+			// console.log('by pid');
 			var pid = mail_obj.pid;
 			var def = Q.defer();
 			var tx = db.transaction("pids","readonly");
@@ -901,11 +912,11 @@ threadMessage:function(message_id){
 			return def.promise;
 		}
 		function traceInReplyTo(mail_obj){
-			console.log('by reply to');
+			// console.log('by reply to');
 			return traceByProperty(mail_obj, 'inReplyTo');
 		}
 		function traceReferences(mail_obj){
-			console.log('by references');
+			// console.log('by references');
 			return traceByProperty(mail_obj, 'references');
 		}
 		function traceSubject(mail_obj){

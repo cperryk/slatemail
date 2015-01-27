@@ -3,32 +3,26 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var fs = require('fs-extra');
 var CKEDITOR;
-function MailComposer(conf){
-	console.log('new mail composer...');
-	this.conf = conf;
-	var self = this;
-	if(!conf || !conf.container){
+
+function MailComposer(container, conf){
+	this.conf = conf || {};
+	if(!container){
 		var gui = window.gui;
-		var win = window.open('mailComposer/mailComposer.html');
-		this.Win = gui.Window.get(win);
-		this.Win.once('document-end',function(){
-			self.Win.focus();
-			$(function(){
-				var doc = $(win.document);
-				var text_area = doc.find('textarea').get(0);
-				self.CKEDITOR = win.CKEDITOR;
-				self.container = doc;
-				self.preload(conf);
-				self.addEventListeners();
-				if(!(conf && conf.in_reply_to)){
-					doc.find('.input_to').focus();
-				}
-				else{
-					doc.find('#message_body').focus();
-				}
-			});
+		this.Win = gui.Window.open('mailComposer/mailComposer.html', {
+			'new-instance':true,
+			focus: true
 		});
 	}
+	else{
+		console.log('has container');
+		this.container = container;
+		this.conf = JSON.parse(fs.readFileSync('mailComposer/cached.json', 'utf8'));
+		this.CKEDITOR = window.CKEDITOR;
+		console.log(this.conf);
+		this.preload();
+		this.addEventListeners();
+	}
+	fs.writeFileSync('mailComposer/cached.json', JSON.stringify(this.conf));
 }
 MailComposer.prototype = {
 	addEventListeners:function(){
@@ -41,13 +35,11 @@ MailComposer.prototype = {
 				self.send();
 			});
 	},
-	preload:function(conf){
+	preload:function(){
 		var self = this;
+		var conf = this.conf;
 		console.log('preloading');
 		console.log(conf);
-		if(!conf){
-			return;
-		}
 		if(conf.to){
 			this.container.find('.input_to')
 				.html(conf.to);
@@ -60,7 +52,13 @@ MailComposer.prototype = {
 			this.container.find('.input_cc')
 				.html(conf.cc);
 		}
-
+		if(conf && conf.to){
+			console.log('focusing on message body');
+			this.container.find('#message_body').focus();
+		}
+		else{
+			this.container.find('.input_to').focus();
+		}
 		if(conf.body){
 			this.CKEDITOR.instances.message_body.setData(conf.body, {
 				callback:function(){

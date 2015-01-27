@@ -79,6 +79,7 @@ function syncAll(){
 			return dbHandler.threadMessages(new_messages);
 		})
 		.fin(function(){
+			console.log('*** SYNCING COMPLETE ***');
 			syncing = false;
 			def.resolve();
 		})

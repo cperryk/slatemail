@@ -12,8 +12,9 @@ var Q = require('q');
 var gui = require('nw.gui');
 var Overlay = require('./modules/overlay.js');
 var ProjectSelector = require('./modules/ProjectSelector');
-
 var indexedDB = window.indexedDB;
+var test = require('./modules/testModule.js');
+// var test = require('./modules/test.js');
 
 $(function(){
 
@@ -24,9 +25,13 @@ $(function(){
 
 	(function init(){
 		dbHandler.connect()
+			// .then(function(){
+			// 	return syncer.syncAll();
+			// })
 			.then(function(){
 				message_list = new MessageList($('#inbox'), {
 					onSelection:function(mailbox, uid){
+						console.log('selected');
 						emailSelected(mailbox, uid);
 					}
 				});
@@ -37,7 +42,6 @@ $(function(){
 				});
 				addEventListeners();
 				printMail();
-				regularSync();
 			})
 			.catch(function(err){
 				console.log(err);
@@ -45,9 +49,9 @@ $(function(){
 	}());
 
 	function addEventListeners(){
-		$('#box_selector').click(function(){});
 		$(window).keydown(function(e){
 			if(e.keyCode===78 && e.metaKey){
+				// this.Win = gui.Window.open('mailComposer/mailComposer.html');
 				new MailComposer();
 			}
 		});
@@ -60,19 +64,23 @@ $(function(){
 		printMail();
 	}
 	function emailSelected(mailbox, uid){
+		console.log('getting email');
 		var my_thread_obj;
 		dbHandler.connect()
 			.then(function(){
 				return dbHandler.getMailFromLocalBox(mailbox,uid);
 			})
 			.then(function(mail_obj){
+				console.log(mail_obj);
 				return dbHandler.getThread(mail_obj.thread_id);
 			})
 			.then(function(thread_obj){
+				console.log(thread_obj);
 				my_thread_obj = thread_obj;
 				return dbHandler.getThreadMessages(thread_obj);
 			})
 			.then(function(messages){
+				console.log(messages);
 				// markRead(messages);
 				var messages_to_print = [];
 				messages.forEach(function(message){
@@ -83,9 +91,7 @@ $(function(){
 				new MessageView($('#message_viewer'), messages_to_print);
 			})
 			.then(function(){
-				console.log('TESTIGN!!!!!!!!!!!!!!!!!');
 				var thread_obj = my_thread_obj;
-				console.log(thread_obj);
 				if(thread_obj.project_id !== undefined){
 					$('body').addClass('project_viewer_open');
 					$('#project_viewer').show();
@@ -221,12 +227,14 @@ $(function(){
 		// message_list.clear();
 		var printed_threads = [];
 		var messages_to_print = [];
+		console.log(dbHandler);
 		dbHandler.getMessagesFromMailbox(BOX, function(mail_obj){
 			// console.log('retrieved message: '+mail_obj.uid);
 			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
 				messages_to_print.push(mail_obj);
 				printed_threads.push(mail_obj.thread_id);
 			}
+			return true;
 		})
 		.then(function(){
 			if(BOX === 'INBOX'){
