@@ -63,6 +63,7 @@ var Message = React.createClass({displayName: "Message",
 		var from = parseName(mail_obj.from);
 		var subject = mail_obj.headers.subject;
 		var preview_text = getPreviewText(mail_obj);
+		console.log('preview_text: '+preview_text);
 		var mailbox = mail_obj.mailbox;
 		var unread = mail_obj.flags.indexOf('\\Seen')===-1;
 		var class_name = "message"+(unread?' unread':'');

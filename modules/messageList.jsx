@@ -11,7 +11,7 @@ var BoxViewer = React.createClass({
 	render:function(){
 		return (
 			<div className="message_list">
-			<List data={this.props.data} /> 
+			<List data={this.props.data} />
 			</div>
 		);
 	}
@@ -70,7 +70,7 @@ var Message = React.createClass({
 			<div className={class_name} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid}>
 				<div className="from">{from}</div>
 				<div className="subject">{subject}</div>
-				<div className="text_preview">{preview_text}</div>
+				<div dangerouslySetInnerHTML={{__html: preview_text}} className="text_preview"/>
 			</div>
 		);
 	}

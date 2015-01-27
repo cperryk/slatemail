@@ -52,7 +52,6 @@ $(function(){
 			}
 		});
 	}
-
 	function selectBox(box_name){
 		BOX = box_name;
 		$('#message_viewer').empty();
@@ -91,7 +90,7 @@ $(function(){
 					$('body').addClass('project_viewer_open');
 					$('#project_viewer').show();
 					new ProjectView(thread_obj.project_id, thread_obj);
-					// ^ careful where you put this last line. If it runs the same time 
+					// ^ careful where you put this last line. If it runs the same time
 					// as you get the thread messages for the selected message,
 					// things will break.
 				}
