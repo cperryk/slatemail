@@ -7,6 +7,7 @@ var mustache = require('mustache');
 var exec = require('child_process').exec;
 
 function ProjectView(project_name, initial_thread){
+	console.log('NEW PROJECT VIEW: '+project_name);
 	this.project_name = project_name;
 	this.initial_thread = initial_thread;
 	this.container = $('#project_viewer')
@@ -20,6 +21,7 @@ function ProjectView(project_name, initial_thread){
 }
 ProjectView.prototype = {
 	printThreads:function(){
+		console.log('---- PRINTING THREADS -----');
 		var self = this;
 		this.thread_container = $('<div>')
 			.addClass('thread_container')
@@ -27,11 +29,16 @@ ProjectView.prototype = {
 		$('<h3>')
 			.html('Threads')
 			.appendTo(this.thread_container);
+		console.log('GETTING PROJECT THREADS');
 		dbHandler.getProject(this.project_name)
 			.then(function(project_obj){
+				console.log('PROJECT...');
+				console.log(project_obj);
 				return dbHandler.getThreads(project_obj.threads);
 			})
 			.then(function(thread_objs){
+				console.log('PROJECT THREADS...');
+				console.log(thread_objs);
 				var def = Q.defer();
 				thread_objs.forEach(function(thread_obj, index){
 					self.printThread(thread_obj)

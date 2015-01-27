@@ -3,7 +3,7 @@ body{
 	font-family: 'Gotham';
 	&.project_viewer_open{
 		#message_viewer{
-			width:-webkit-calc(80% - 550px) !important;
+			width:-webkit-calc(80% - 402px) !important;
 		}
 	}
 }
@@ -49,22 +49,6 @@ body{
 		display: inline-block;
 		overflow:scroll;
 		height:100%;
-		.date_separator{
-			padding:1em;
-			margin:1em 0 0 0;
-			border-top:1px solid #c7c7c7;
-			border-bottom:1px solid #c7c7c7;
-			cursor:pointer;
-			text-transform:uppercase;
-			font-size:0.7em;
-			color:#006e76;
-			text-align:center;
-			background:#e3e3e3;
-			-webkit-user-select:none;
-			.triangle{
-				font-size:0.8em;
-			}
-		}
 	}
 }
 #message_viewer{
@@ -209,50 +193,6 @@ body{
 		}
 	}
 }
-.inbox_email{
-	padding:0.5em 0.5em;
-	border-bottom:1px solid #e3e3e3;
-	cursor:pointer;
-	overflow: hidden;
-	position: relative;
-	-webkit-user-select:none;
-	&.unseen{
-		background-color:#ffeeee;
-	}
-	&.selected{
-		background-color:$selection_yellow;
-	}
-	.from{
-		font-family: 'Overlock';
-		font-weight: bold;
-		font-size:16px;
-		line-height:16px;
-		margin-bottom:0.2em;
-	}
-	.subject{
-		font-size:0.8em;
-		line-height:1.2;
-	}
-	.text_preview{
-		padding:0;
-		font-size:0.7em;
-		line-height:1.2em;
-		color:#a5a5a5;
-		max-height:2.4em;
-		overflow: hidden;
-	}
-	.date{
-		position: absolute;
-		padding:0.5em;
-		font-size:0.6em;
-	}
-	.icon{
-		float:left;
-		width:16px;
-		height:16px;
-		margin-right:5px;
-	}
-}
 #project_viewer{
 	position:fixed;
 	width:20%;
@@ -315,5 +255,39 @@ body{
 	}
 	.folder_icon{
 		margin-right:2px;
+	}
+}
+
+.overlay{
+	background-color:rgba(0,0,0,0.5);
+	width:100%;
+	height:100%;
+	position:fixed;
+	z-index:9999;
+	left:0;
+	top:0;
+	text-align: center;
+	opacity: 0;
+	.inner{
+		background: #ffdb4c;
+		// position: fixed;
+		// bottom: 0px;
+		position:relative;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		display: inline-block;
+		text-align: left;
+		padding:1%;
+	}
+	.btn_ex{
+		position: absolute;
+		top:5px;
+		right:5px;
+		font-size:9px;
+		color:gray;
+		cursor:pointer;
+		&:hover{
+			color:black;
+		}
 	}
 }

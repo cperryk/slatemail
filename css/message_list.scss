@@ -1,0 +1,70 @@
+$selection_yellow: #feffaf;
+.message_list{
+	.message{
+		padding:0.5em 0.5em;
+		border-bottom:1px solid #e3e3e3;
+		cursor:pointer;
+		overflow: hidden;
+		position: relative;
+		-webkit-user-select:none;
+		&.unread{
+			background-color:#ffeeee;
+		}
+		&.selected{
+			background-color:$selection_yellow;
+		}
+		.from{
+			font-family: 'Overlock';
+			font-weight: bold;
+			font-size:16px;
+			line-height:16px;
+			margin-bottom:0.2em;
+		}
+		.subject{
+			font-size:0.8em;
+			line-height:1.2;
+		}
+		.text_preview{
+			padding:0;
+			font-size:0.7em;
+			line-height:1.2em;
+			color:#a5a5a5;
+			max-height:2.4em;
+			overflow: hidden;
+		}
+		.date{
+			position: absolute;
+			padding:0.5em;
+			font-size:0.6em;
+		}
+		.icon{
+			float:left;
+			width:16px;
+			height:16px;
+			margin-right:5px;
+		}
+	}
+	.message_group{
+		&.collapsed{
+			.message{
+				display:none;
+			}
+		}
+	}
+	.message_group_title{
+		padding:1em;
+		margin:1em 0 0 0;
+		border-top:1px solid #c7c7c7;
+		border-bottom:1px solid #c7c7c7;
+		cursor:pointer;
+		text-transform:uppercase;
+		font-size:0.7em;
+		color:#006e76;
+		text-align:center;
+		background:#e3e3e3;
+		-webkit-user-select:none;
+		.triangle{
+			font-size:0.8em;
+		}
+	}
+}

@@ -1,0 +1,52 @@
+.message_list .message {
+  padding: 0.5em 0.5em;
+  border-bottom: 1px solid #e3e3e3;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  -webkit-user-select: none; }
+  .message_list .message.unread {
+    background-color: #ffeeee; }
+  .message_list .message.selected {
+    background-color: #feffaf; }
+  .message_list .message .from {
+    font-family: 'Overlock';
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 16px;
+    margin-bottom: 0.2em; }
+  .message_list .message .subject {
+    font-size: 0.8em;
+    line-height: 1.2; }
+  .message_list .message .text_preview {
+    padding: 0;
+    font-size: 0.7em;
+    line-height: 1.2em;
+    color: #a5a5a5;
+    max-height: 2.4em;
+    overflow: hidden; }
+  .message_list .message .date {
+    position: absolute;
+    padding: 0.5em;
+    font-size: 0.6em; }
+  .message_list .message .icon {
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px; }
+.message_list .message_group.collapsed .message {
+  display: none; }
+.message_list .message_group_title {
+  padding: 1em;
+  margin: 1em 0 0 0;
+  border-top: 1px solid #c7c7c7;
+  border-bottom: 1px solid #c7c7c7;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.7em;
+  color: #006e76;
+  text-align: center;
+  background: #e3e3e3;
+  -webkit-user-select: none; }
+  .message_list .message_group_title .triangle {
+    font-size: 0.8em; }

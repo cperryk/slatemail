@@ -1,0 +1,49 @@
+.project_selector{
+	position: relative;
+	input{
+		height:14px;
+		margin:0px;
+		font-size:14px;
+	}
+	h1{
+		font-size:14px;
+		margin:0;
+	}
+	td{
+		vertical-align: top;
+	}
+	ul{
+		padding:0;
+		margin:0;
+		list-style: none;
+	}
+	.recent_project{
+		cursor:pointer;
+		&:hover{
+			text-decoration: underline;
+		}
+	}
+	h2{
+		margin:0;
+		font-weight: normal;
+	}
+	.tt-dropdown-menu{
+		background-color:white;
+		padding:5px;
+		p{
+			margin:0;
+		}
+	}
+	.btn_submit{
+		background-color:white;
+		text-align:center;
+		width:100%;
+		box-shadow: none;
+		text-transform: uppercase;
+		margin-top:5px;
+		padding: 2px 0;
+		border: none;
+		outline: 1px solid #c7c7c7;
+		cursor: pointer;
+	}
+}

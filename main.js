@@ -1,6 +1,6 @@
 var fs = require('fs');
 var $ = require('jquery');
-var mailboxView = require('./modules/mailboxView.js');
+var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
 var imapHandler = require('./modules/imapHandler.js');
@@ -10,45 +10,46 @@ var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
 var Q = require('q');
 var gui = require('nw.gui');
-var BOX;
-var tree_view;
+var Overlay = require('./modules/overlay.js');
+var ProjectSelector = require('./modules/ProjectSelector');
 
+var indexedDB = window.indexedDB;
 
 $(function(){
 
+	var tree_view;
+	var message_list;
+	var BOX = 'INBOX';
+	var overlay_is_open = false;
+
 	(function init(){
-		tree_view = new treeView($('#tree_view .inner'), {
-			onSelection:function(box_path){
-				selectBox(box_path);
-			}
-		});
-		selectBox('INBOX');
-		addEventListeners();
-		regularSync();
+		dbHandler.connect()
+			.then(function(){
+				message_list = new MessageList($('#inbox'), {
+					onSelection:function(mailbox, uid){
+						emailSelected(mailbox, uid);
+					}
+				});
+				tree_view = new treeView($('#tree_view .inner'), {
+					onSelection:function(box_path){
+						selectBox(box_path);
+					}
+				});
+				addEventListeners();
+				printMail();
+				regularSync();
+			})
+			.catch(function(err){
+				console.log(err);
+			});
 	}());
 
 	function addEventListeners(){
-		$('#box_selector').click(function(){
-			// var box_name = window.prompt('What box do you want?');
-			// if(!box_name){
-			// 	return;
-			// }
-			// dbHandler.connect()
-			// 	.then(function(){
-			// 		selectBox(box_name);
-			// 	});
-		});
+		$('#box_selector').click(function(){});
 		$(window).keydown(function(e){
 			if(e.keyCode===78 && e.metaKey){
 				new MailComposer();
 			}
-		});
-		mailboxView.onSelect(emailSelected);
-		mailboxView.onDeselect(function(){
-			// var win = gui.Window.get();
-			// win.resizeTo(250,win.height);
-			$('#project_viewer').hide();
-			$('#message_viewer').empty();
 		});
 	}
 
@@ -56,13 +57,11 @@ $(function(){
 		BOX = box_name;
 		$('#message_viewer').empty();
 		$('#box_selector').html('&#171; '+box_name);
-		update();
-		console.log(tree_view);
 		tree_view.reflectActiveMailbox(box_name);
+		printMail();
 	}
 	function emailSelected(mailbox, uid){
-		// var win = gui.Window.get();
-		// win.resizeTo(800,win.height);
+		var my_thread_obj;
 		dbHandler.connect()
 			.then(function(){
 				return dbHandler.getMailFromLocalBox(mailbox,uid);
@@ -71,20 +70,11 @@ $(function(){
 				return dbHandler.getThread(mail_obj.thread_id);
 			})
 			.then(function(thread_obj){
-				if(thread_obj.project_id){
-					$('body').addClass('project_viewer_open');
-					$('#project_viewer').show();
-					new ProjectView(thread_obj.project_id, thread_obj);
-				}
-				else{
-					$('#project_viewer').hide();
-					$('body').removeClass('project_viewer_open');
-				}
+				my_thread_obj = thread_obj;
 				return dbHandler.getThreadMessages(thread_obj);
 			})
 			.then(function(messages){
-				console.log(messages);
-				markRead(messages);
+				// markRead(messages);
 				var messages_to_print = [];
 				messages.forEach(function(message){
 					if(message.mailbox!=='Drafts'){
@@ -93,24 +83,51 @@ $(function(){
 				});
 				new MessageView($('#message_viewer'), messages_to_print);
 			})
+			.then(function(){
+				console.log('TESTIGN!!!!!!!!!!!!!!!!!');
+				var thread_obj = my_thread_obj;
+				console.log(thread_obj);
+				if(thread_obj.project_id !== undefined){
+					$('body').addClass('project_viewer_open');
+					$('#project_viewer').show();
+					new ProjectView(thread_obj.project_id, thread_obj);
+					// ^ careful where you put this last line. If it runs the same time 
+					// as you get the thread messages for the selected message,
+					// things will break.
+				}
+				else{
+					$('#project_viewer').hide();
+					$('body').removeClass('project_viewer_open');
+				}
+			})
 			.catch(function(error){
 				console.log(error);
 			});
-		$(window).unbind('keypress').on('keypress',function(e){
-			console.log('key press: '+e.keyCode);
+		addSelectedEmailListeners();
+	}
+	function addSelectedEmailListeners(){
+		$(window).unbind('keypress.selected_email').on('keypress.selected_email',function(e){
 			var key_code = e.keyCode;
 			var key_functions = {
 				100: function(){ // d
-					var selected_uid = mailboxView.selected_email.data('uid');
-					var box = mailboxView.selected_email.data('mailbox');
-					dbHandler.markComplete(box, selected_uid);
+					var selection = message_list.getSelection();
+					dbHandler.markComplete(selection.mailbox, selection.uid);
 					removeElement();
 				},
 				112: function(){ // p
-					var project_name = prompt('What project would you like to put this in?');
-					var selected_uid = mailboxView.selected_email.data('uid');
-					var selected_box = mailboxView.selected_email.data('mailbox');
-					dbHandler.putInProject(selected_box, selected_uid, project_name);
+					$(window).unbind('keypress.selected_email');
+					var overlay = new Overlay({
+						onClose:function(){
+							addSelectedEmailListeners();
+						}
+					});
+					var project_selector = new ProjectSelector(overlay.container, {
+						onSelection:function(project_id){
+							var selected_email = message_list.getSelection();
+							dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id);
+							overlay.close();
+						}
+					});
 				},
 				115: function(){ // s
 					var user_input = prompt('What date would you like to schedule this for?');
@@ -122,9 +139,8 @@ $(function(){
 					if(!isValidDate(date)){
 						return;
 					}
-					var selected_uid = mailboxView.selected_email.data('uid');
-					var selected_box = mailboxView.selected_email.data('mailbox');
-					dbHandler.schedule(date, selected_box, selected_uid)
+					var selection = message_list.getSelection();
+					dbHandler.schedule(date, selection.mailbox, selection.uid)
 						.then(function(){
 							removeElement();
 						});
@@ -143,15 +159,17 @@ $(function(){
 					}
 				},
 				98: function(){ // b
-					var selected_uid = mailboxView.selected_email.data('uid');
-					var selected_box = mailboxView.selected_email.data('mailbox');
-					dbHandler.getMailFromLocalBox(selected_box, selected_uid)
+					var selection = message_list.getSelection();
+					dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
 						.then(function(mail_obj){
 							var sender = mail_obj.from[0].address;
 							var block_sender = confirm("Do you want to block emails from "+sender+" and delete this thread?");
 							if(block_sender){
 								dbHandler.blockSender(sender);
 								alert("Emails from " + sender + " will automatically be deleted");
+								var selection = message_list.getSelection();
+								dbHandler.markComplete(selection.mailbox, selection.uid);
+								removeElement();
 							}
 						});
 				}
@@ -160,27 +178,16 @@ $(function(){
 				key_functions[key_code]();
 			}
 			function removeElement(){
-				var ele = mailboxView.selected_email;
+				var ele = message_list.selected_email;
 				var par = ele.parent();
 				ele.slideUp(function(){
 					ele.remove();
-					if(par.find('.inbox_email').length === 0){
+					if(par.find('.message').length === 0){
 						par.slideUp();
 					}
 				});
 			}
 		});
-	}
-
-	function update(){
-		dbHandler.connect()
-			.then(function(){
-				printMail();
-				// regularSync();
-			})
-			.catch(function(err){
-				console.log(err);
-			});
 	}
 
 	function regularSync(){
@@ -211,35 +218,42 @@ $(function(){
 
 	function printMail(){
 		var def = Q.defer();
-		console.log('printing mail');
-		mailboxView.clear();
+		console.log('-------------- printing mail --------------');
+		// message_list.clear();
 		var printed_threads = [];
 		var messages_to_print = [];
 		dbHandler.getMessagesFromMailbox(BOX, function(mail_obj){
-			if(printed_threads.indexOf(mail_obj.thread_id)>-1){
-				return;
-			}
-			messages_to_print.push(mail_obj);
-			printed_threads.push(mail_obj.thread_id);
-		})
-		.then(function(){
-
-			return dbHandler.getDueMail();
-		})
-		.then(function(due_mail){
-			due_mail.forEach(function(mail_obj){
-				if(printed_threads.indexOf(mail_obj.thread_id)>-1){
-					return;
-				}
+			// console.log('retrieved message: '+mail_obj.uid);
+			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
 				messages_to_print.push(mail_obj);
 				printed_threads.push(mail_obj.thread_id);
-			});
-			messages_to_print.sort(function(a,b){
-				return a.date > b.date ? -1 : 1;
-			});
-			messages_to_print.forEach(function(mail_obj, index){
-				mailboxView.printMessage(mail_obj);
-			});
+			}
+		})
+		.then(function(){
+			if(BOX === 'INBOX'){
+				return function(){
+					var def = Q.defer();
+					dbHandler.getDueMail()
+						.then(function(due_mail){
+							due_mail.forEach(function(mail_obj){
+								if(printed_threads.indexOf(mail_obj.thread_id)===-1){
+									messages_to_print.push(mail_obj);
+									printed_threads.push(mail_obj.thread_id);
+								}
+							});
+							def.resolve();
+						});
+					return def.promise;
+				};
+			}
+			else{
+				return true;
+			}
+		})
+		.then(function(){
+			console.log('messages to print...');
+			console.log(messages_to_print);
+			return message_list.reflectMessages(messages_to_print);
 		})
 		.fin(function(){
 			def.resolve();

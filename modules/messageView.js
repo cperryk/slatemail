@@ -50,7 +50,7 @@ MessageView.prototype = {
 			var message = new Message(mail_obj, self);
 		});
 		var d2 = new Date().getTime();
-		console.log('thread render time: '+(d2-d1));
+		// console.log('thread render time: '+(d2-d1));
 		return this;
 	},
 	printTop: function(mail_objs){
@@ -170,7 +170,6 @@ Message.prototype = {
 		return this;
 	},
 	printBody:function(){
-		var t1 = new Date().getTime();
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
@@ -184,7 +183,6 @@ Message.prototype = {
 				.find('head')
 					.html('<style>'+message_css+'</style>')
 					.end();
-		var t2 = new Date().getTime();
 		this.injected_wrapper = $('<div>')
 			.html(this.prepHTMLshort(message_data))
 			.find('a')
@@ -196,7 +194,6 @@ Message.prototype = {
 				})
 				.end()
 			.appendTo(iframe.contents().find('body'));
-		console.log('prepHTML time: '+(t2-t1));
 		return this;
 	},
 	printAttachmentIcons:function(){
@@ -273,6 +270,8 @@ Message.prototype = {
 	},
 	prepHTMLshort: function(message_data){
 		var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
+		html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/, '');
+		// console.log(html);
 		var stage = $('<div>')
 			.html(html);
 		stage

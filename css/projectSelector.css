@@ -1,0 +1,38 @@
+.project_selector {
+  position: relative; }
+  .project_selector input {
+    height: 14px;
+    margin: 0px;
+    font-size: 14px; }
+  .project_selector h1 {
+    font-size: 14px;
+    margin: 0; }
+  .project_selector td {
+    vertical-align: top; }
+  .project_selector ul {
+    padding: 0;
+    margin: 0;
+    list-style: none; }
+  .project_selector .recent_project {
+    cursor: pointer; }
+    .project_selector .recent_project:hover {
+      text-decoration: underline; }
+  .project_selector h2 {
+    margin: 0;
+    font-weight: normal; }
+  .project_selector .tt-dropdown-menu {
+    background-color: white;
+    padding: 5px; }
+    .project_selector .tt-dropdown-menu p {
+      margin: 0; }
+  .project_selector .btn_submit {
+    background-color: white;
+    text-align: center;
+    width: 100%;
+    box-shadow: none;
+    text-transform: uppercase;
+    margin-top: 5px;
+    padding: 2px 0;
+    border: none;
+    outline: 1px solid #c7c7c7;
+    cursor: pointer; }

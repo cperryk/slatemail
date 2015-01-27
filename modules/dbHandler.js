@@ -14,16 +14,17 @@ var dbHandler = {
 deleteDB:function(){
 	var def = Q.defer();
 	var req = indexedDB.deleteDatabase('slatemail');
+	console.log(req);
 	req.onsuccess = function () {
-		//console.log("Deleted database successfully");
+		console.log("Deleted database successfully");
 		def.resolve();
 	};
 	req.onerror = function () {
-		//console.log("Couldn't delete database");
+		console.log("Couldn't delete database");
 		def.resolve();
 	};
 	req.onblocked = function () {
-		//console.log("Couldn't delete database due to the operation being blocked");
+		console.log("Couldn't delete database due to the operation being blocked");
 		def.resolve();
 	};
 	return def.promise;
@@ -31,9 +32,10 @@ deleteDB:function(){
 connect:function(callback){
 	console.log('connecting local database');
 	var def = Q.defer();
+	console.log(indexedDB);
 	var request = indexedDB.open("slatemail");
 	request.onupgradeneeded = function(){
-		//console.log('upgrade needed');
+		console.log('upgrade needed');
 		db = request.result;
 
 		// Maps thread IDs to arrays that contain the message IDs of their emails.
@@ -54,9 +56,15 @@ connect:function(callback){
 		db.createObjectStore('blocked', {keyPath:'address'});
 	};
 	request.onsuccess = function(){
+		console.log('success');
 		db = request.result;
 		def.resolve(db);
 	};
+	request.onerror = function(){
+		console.log('error');
+		console.log(request.error);
+	};
+	console.log(request);
 	return def.promise;
 },
 ensureProjectStore:function(){ // Is this necessary? Isn't the project ensured in the initial connect() method?
@@ -435,28 +443,38 @@ getMessagesFromMailbox: function(box_name, onMessage){
 	return def.promise;
 },
 getThreads:function(thread_ids){
+	console.log('GETTING THREADS IN DBHANDLER, thread_ids...');
+	console.log(thread_ids);
 	var def = Q.defer();
 	var thread_objs = [];
-	thread_ids.forEach(function(thread_id,index){
-		//console.log(thread_id);
-		dbHandler.getThread(thread_id)
-			.then(function(thread_obj){
-				thread_objs.push(thread_obj);
-				if(index === thread_ids.length-1){
-					def.resolve(thread_objs);
-				}
-			});
+	var promises = [];
+	thread_ids.forEach(function(thread_id){
+		promises.push(dbHandler.getThread(thread_id));
 	});
+	Q.all(promises)
+		.then(function(out){
+			def.resolve(out);
+		});
 	return def.promise;
 },
 getThread:function(thread_id){
-	//console.log('getting thread: '+thread_id);
+	console.log('*********************** getting thread: '+thread_id);
+	thread_id = parseInt(thread_id, 10);
 	var def = Q.defer();
-	var objectStore = db.transaction('threads','readonly').objectStore('threads');
+	var tx = db.transaction('threads','readonly');
+	var objectStore = tx.objectStore('threads');
 	var get_request = objectStore.get(thread_id);
-	get_request.onsuccess = function(){
+	console.log(get_request);
+	get_request.onsuccess = function(event){
+		console.log('-------------- SUCCESS');
 		var matching = get_request.result;
+		console.log('THREAD '+thread_id+' LOCATED, result is...');
+		console.log(matching);
 		def.resolve(matching);
+	};
+	get_request.onerror = function(err){
+		console.log('-------------- ERROR');
+		def.resolve();
 	};
 	return def.promise;
 },
@@ -688,8 +706,26 @@ getProject:function(project_name){
 		def.resolve(result);
 	};
 	get_request.onerror = function(err){
-		//console.log('could not retrieve project: '+project_name);
-		//console.log(err);
+		console.log('could not retrieve project: '+project_name);
+		console.log(err);
+	};
+	return def.promise;
+},
+listProjects:function(){
+	// Resolves with a complete list of project names
+	var def = Q.defer();
+	var tx = db.transaction("projects");
+	var objectStore = tx.objectStore("projects");
+	var arr = [];
+	objectStore.openCursor(null, 'prev').onsuccess = function(event) {
+		var cursor = event.target.result;
+		if (cursor) {
+			arr.push(cursor.value.name);
+			cursor.continue();
+		}
+		else {
+			def.resolve(arr);
+		}
 	};
 	return def.promise;
 },
@@ -1041,6 +1077,7 @@ isSenderBlocked: function(sender_address){
 	return def.promise;
 },
 getDueMail:function(){ // TO-DO
+	console.log('GET DUE MAIL');
 	// Collects all mail that is past due from the scheduled local boxes.
 	// Resolves with an array of mail objects sorted descended by date.
 	var def = Q.defer();
@@ -1049,7 +1086,6 @@ getDueMail:function(){ // TO-DO
 		dbHandler.getAllStores()
 			.then(function(stores){
 				var arr = [];
-				console.log(stores);
 				for(var i=0;i<stores.length;i++){
 					var store = stores[i];
 					var prefix = 'box_SlateMail/scheduled/';
@@ -1063,7 +1099,12 @@ getDueMail:function(){ // TO-DO
 						}
 					}
 				}
+				console.log('resolving with:');
+				console.log(arr);
 				def.resolve(arr);
+			})
+			.catch(function(err){
+				console.log(err);
 			});
 		return def.promise;
 	}

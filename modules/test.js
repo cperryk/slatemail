@@ -1,17 +1,22 @@
-function arrToTree(paths){
-	// Takes an array of paths and turns it into a tree.
-	// ['a','a/b','a/c'] becomes {a:{b:{},c:{}}
-	// So does ['a/b/c'];
-	var tree = {};
-	paths.forEach(function(path){
-		var segs = path.split('/');
-		var last = tree;
-		for(var i=0; i<segs.length; i++){
-			if(!last[segs[i]]){
-				last[segs[i]] = {};
-			}
-			last = last[segs[i]];
-		}
-	});
-	return tree;
+var indexedDB = window.indexedDB;
+var Q = require('Q');
+deleteDB();
+
+function deleteDB(){
+	var def = Q.defer();
+	var req = indexedDB.deleteDatabase('slatemail');
+	console.log(req);
+	req.onsuccess = function () {
+		console.log("Deleted database successfully");
+		def.resolve();
+	};
+	req.onerror = function () {
+		console.log("Couldn't delete database");
+		def.resolve();
+	};
+	req.onblocked = function () {
+		console.log("Couldn't delete database due to the operation being blocked");
+		def.resolve();
+	};
+	return def.promise;
 }

@@ -23,6 +23,18 @@ mailboxView = {
 			});
 		});
 	},
+	reflectMessages:function(mail_objs){
+		mail_objs.sort(function(a,b){
+			return a.date > b.date ? -1 : 1;
+		});
+		var mids = {};
+		mail_objs.forEach(function(mail_obj, index){
+			var mid = mail_obj.mailbox + ':' + mail_obj.uid;
+			if($('#'+mid).length === 0){
+				mailboxView.printMessage(mail_obj);				
+			}
+		});
+	},
 	printMessage:function(mail_object){
 		// console.log('print message: '+mail_object.short_subject);
 		var mid = mail_object.mailbox+':'+mail_object.uid;
@@ -115,23 +127,19 @@ mailboxView = {
 			.click(function(){
 				if($(this).hasClass('collapsed')){
 					$(this)
-						.removeClass('collapsed')
-						.siblings()
-							.show()
-							.end()
 						.find('.triangle')
 							.html('&#9660;')
-							.end();
+							.end()
+						.closest('.message_group')
+							.removeClass('collapsed');
 				}
 				else{
 					$(this)
-						.addClass('collapsed')
-						.siblings()
-							.hide()
-							.end()
 						.find('.triangle')
 							.html('&#9654;')
-							.end();
+							.end()
+						.closest('.message_group')
+							.addClass('collapsed');
 				}
 			});
 	},

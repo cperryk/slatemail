@@ -4,16 +4,60 @@
 		"selected_items":
 		[
 			[
+				"selected",
+				"selected_box"
+			],
+			[
+				"reflect",
+				"reflectActiveMailbox"
+			],
+			[
+				"tree_view",
+				"tree_view_item"
+			],
+			[
+				"get",
+				"getBoxPath"
+			],
+			[
+				"messa",
+				"messages_to_print"
+			],
+			[
+				"messages",
+				"messages_to_print"
+			],
+			[
+				"mail_",
+				"mail_obj"
+			],
+			[
+				"getAll",
+				"getAllScheduleBoxes"
+			],
+			[
+				"remove",
+				"removeLocalMessage"
+			],
+			[
+				"sender",
+				"sender_address"
+			],
+			[
+				"mailBox",
+				"mailboxView"
+			],
+			[
+				"mailbox",
+				"mailboxView"
+			],
+			[
 				"message",
 				"message_viewer"
 			],
 			[
 				"inbox",
 				"inbox_email"
-			],
-			[
-				"selected",
-				"selected_email"
 			],
 			[
 				"onDe",
@@ -28,10 +72,6 @@
 				"objectStore"
 			],
 			[
-				"messages",
-				"messages_checked"
-			],
-			[
 				"call",
 				"callback_on_end"
 			],
@@ -42,10 +82,6 @@
 			[
 				"reso",
 				"resolved_messages"
-			],
-			[
-				"mailbox",
-				"mailbox_name"
 			],
 			[
 				"update",
@@ -292,10 +328,6 @@
 				"puzzle_complete"
 			],
 			[
-				"remove",
-				"removeFingerClickListener"
-			],
-			[
 				"prelo",
 				"preload"
 			],
@@ -388,10 +420,6 @@
 				"query_string"
 			],
 			[
-				"get",
-				"getPeopleWhoDiedByYear"
-			],
-			[
 				"END",
 				"END_YEAR"
 			],
@@ -422,10 +450,6 @@
 			[
 				"search",
 				"searchAtUID"
-			],
-			[
-				"messa",
-				"message_object"
 			],
 			[
 				"parse",
@@ -490,30 +514,6 @@
 			[
 				"PART",
 				"PART_D"
-			],
-			[
-				"PAR",
-				"PART_C"
-			],
-			[
-				"random",
-				"randomFromArray"
-			],
-			[
-				"rando",
-				"randomFromArray"
-			],
-			[
-				"ranom",
-				"randomFromArray"
-			],
-			[
-				"add",
-				"addEventListeners"
-			],
-			[
-				"st",
-				"stdout"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 4735,
+				"buffer_size": 6584,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,55 +531,23 @@
 			"file": "modules/mailboxView.js",
 			"settings":
 			{
-				"buffer_size": 5162,
+				"buffer_size": 6244,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "mailComposer/mailComposer.js",
+			"file": "modules/syncer.js",
 			"settings":
 			{
-				"buffer_size": 2927,
+				"buffer_size": 9328,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "modules/projectView.js",
+			"file": "modules/imapHandler.js",
 			"settings":
 			{
-				"buffer_size": 4204,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/messageView.js",
-			"settings":
-			{
-				"buffer_size": 12742,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/dbHandler.js",
-			"settings":
-			{
-				"buffer_size": 24149,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "package.json",
-			"settings":
-			{
-				"buffer_size": 143,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "css/styles.scss",
-			"settings":
-			{
-				"buffer_size": 4737,
+				"buffer_size": 7960,
 				"line_ending": "Unix"
 			}
 		}
@@ -587,9 +555,17 @@
 	"build_system": "Packages/SASS-Build/SASS.sublime-build",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 296.0,
 		"selected_items":
 		[
+			[
+				"convert ",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"reid",
+				"Indentation: Reindent Lines"
+			],
 			[
 				"left",
 				"Snippet: insert left guillmet arrows"
@@ -757,10 +733,6 @@
 			[
 				"conver tto sp",
 				"Indentation: Convert to Spaces"
-			],
-			[
-				"reid",
-				"Indentation: Reindent Lines"
 			],
 			[
 				"media",
@@ -1067,7 +1039,7 @@
 				"Snippet: scrambleArray"
 			]
 		],
-		"width": 453.0
+		"width": 475.0
 	},
 	"console":
 	{
@@ -1093,39 +1065,45 @@
 	"expanded_folders":
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/.sass-cache",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments",
+		"/Users/kirkcp/Documents/node_play/slatemail/css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules"
 	],
 	"file_history":
 	[
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/mailparser/node_modules/encoding/node_modules/iconv-lite/encodings/sbcs-data-generated.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Deleted Items_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldThreader.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Deleted Items_uids.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11398/proposed_senate_attributes.csv",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/dictionaries/kirkcp.xml",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/promises_test.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/SublimeOnSaveBuild/SublimeOnSaveBuild.sublime-settings",
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/SublimeOnSaveBuild.sublime-settings",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11845/20130131motw_immigration_populationLH.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/codeStyleSettings.xml",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/.name",
 		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
-		"/Users/kirkcp/Documents/node_play/slatemail/index.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
 		"/Users/kirkcp/Desktop/sony/quiz/src/index.html",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
 		"/Users/kirkcp/Documents/node_play/thoughts.txt",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/lib/form_data.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/root.js",
@@ -1134,7 +1112,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
 		"/Users/kirkcp/Desktop/Fresca/combined.txt",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js",
@@ -1221,15 +1198,11 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailCompser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/153848/sex offenders.Jane.Registration.v5.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/lib/Connection.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/CONTRIBUTING.md",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-connection-idle-order.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sports Separation/359/MakeAll4.py",
-		"/Users/kirkcp/Documents/node_play/slatemail/uids/INBOX_uids.json",
-		"/Users/kirkcp/Desktop/oldcallbackcode"
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/CONTRIBUTING.md"
 	],
 	"find":
 	{
-		"height": 37.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
@@ -1243,6 +1216,79 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"printmail",
+			"regularsync",
+			"regularysnc",
+			"update()",
+			"selectbox",
+			"deletelocalmessages",
+			"getlocaldescriptors",
+			"syncbox",
+			"syncall",
+			"syncer",
+			"syncall",
+			"syncer",
+			"update()",
+			"regularsync",
+			"expunged",
+			"gui.window",
+			"gui",
+			"prompt",
+			"treeview",
+			"reflectactivemailbox",
+			".data('box')",
+			"mailboxview",
+			"mail_object",
+			"removeElement",
+			"emailselected",
+			"onselect",
+			"Scheduled",
+			"date_string",
+			"inbox_groups",
+			"date_groups",
+			"getmail",
+			"'box_SlateMail/scheduled/'",
+			"stores[i]",
+			"syncboxes",
+			"prompt",
+			"deletemessage",
+			"syncbox",
+			"syncboxes",
+			"bypid",
+			"deletemessage",
+			"delete",
+			"ensureprojectstore",
+			"downloadmessage",
+			"e.keyCode",
+			"savepid(",
+			"findmatchingthread",
+			"savetoexistingthread",
+			"savetonewthread",
+			"time: ",
+			"prephtmlshort",
+			"printbody",
+			"new message",
+			"prephtml",
+			"link",
+			"chain",
+			"savetoexistingthread",
+			"regularsync",
+			"mail_obj",
+			"findfirstmailwithproperty",
+			"getthreadbypid",
+			"traceinreplyto",
+			"trace",
+			"inreplyto",
+			"traceinreplyto",
+			"traceinreply",
+			"getmailfromlocalbox",
+			"updatemailobject",
+			"getmailfromlocalbox",
+			"getMailFromLocalBox",
+			"updatemailobject",
+			"get_request.result",
+			"updatemailobject",
+			"matchToExistingThread",
 			"window",
 			"onselectemail",
 			"window",
@@ -1297,80 +1343,7 @@
 			"messageid",
 			"updateMailWithThreadID",
 			"pids_to_threads",
-			"updatemailwiththreadid",
-			"threadmail",
-			"savetoexistingthread",
-			"\"",
-			"updatemailwiththreadid",
-			"AUI",
-			"TUI",
-			"thread",
-			"threadmessage",
-			"console",
-			"opened_box",
-			"getremotedes",
-			"parsename",
-			"font-family: '",
-			"downloadnewmail",
-			"getmessageswithsearchcriteria",
-			"imaphandler.move",
-			"createbox",
-			"prompt",
-			"update",
-			"thread_message",
-			"continue",
-			"store.put",
-			"put_request",
-			"onerror",
-			"tx",
-			".put",
-			"readwrite",
-			"markread",
-			"console",
-			"text",
-			"||",
-			"text",
-			"delete ",
-			"\"",
-			"\\\"",
-			"\"",
-			"↵",
-			" String ",
-			"  private static final ",
-			"savemailobjecttonewthread",
-			"message_id",
-			"console.log",
-			"object_store_name",
-			"'box_'+mailbox_name",
-			"saveMailObjectToExistingThread",
-			"tracemessageID",
-			"save",
-			"index",
-			"downloadnewmail",
-			"saveattachments",
-			"mid",
-			"saveMailObjectToNewtHread",
-			"reply",
-			"deletelocalmessages",
-			"delete",
-			"imaphandler",
-			"getmailfromlocalbox",
-			"markread(",
-			"promises.push",
-			"updateflags",
-			"getuids",
-			"uids[",
-			"uids",
-			"downloadnewmail",
-			"savedescriptors",
-			"descriptors",
-			"descriptors[1]",
-			"saveuids",
-			"deletemessage",
-			"deletelocalmessages",
-			"downloadnewmail",
-			".all(",
-			"addlocalmessage"
+			"updatemailwiththreadid"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1388,7 +1361,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1397,27 +1370,28 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4735,
+						"buffer_size": 6584,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3002,
-								3002
+								5813,
+								5833
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1682.0,
+						"translation.y": 4339.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1426,48 +1400,50 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5162,
+						"buffer_size": 6244,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								154,
-								154
+								1863,
+								1877
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 632.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "mailComposer/mailComposer.js",
+					"file": "modules/syncer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2927,
+						"buffer_size": 9328,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1683,
-								1685
+								664,
+								664
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1475,186 +1451,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "modules/projectView.js",
+					"file": "modules/imapHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4204,
+						"buffer_size": 7960,
 						"regions":
 						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-								],
-								"scope": "bookmarks"
-							}
 						},
 						"selection":
 						[
 							[
-								527,
-								527
+								6873,
+								6873
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 5779.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "modules/messageView.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 12742,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										10328,
-										10328
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								7111,
-								7113
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "modules/dbHandler.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 24149,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										13886,
-										13886
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								13082,
-								13082
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "package.json",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 143,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								79,
-								79
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "css/styles.scss",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4737,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1287,
-								1287
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SCSS/SCSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 989.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1711,6 +1538,50 @@
 		"selected_items":
 		[
 			[
+				"mailboxview",
+				"modules/mailboxView.js"
+			],
+			[
+				"imaph",
+				"modules/imapHandler.js"
+			],
+			[
+				"dbhand",
+				"modules/dbHandler.js"
+			],
+			[
+				"syncer",
+				"modules/syncer.js"
+			],
+			[
+				"impa",
+				"modules/imapHandler.js"
+			],
+			[
+				"messageview",
+				"modules/messageView.js"
+			],
+			[
+				"mailbxo",
+				"modules/mailboxView.js"
+			],
+			[
+				"index",
+				"index.html"
+			],
+			[
+				"mailb",
+				"modules/mailboxView.js"
+			],
+			[
+				"imap",
+				"modules/imapHandler.js"
+			],
+			[
+				"imaphan",
+				"modules/imapHandler.js"
+			],
+			[
 				"packa",
 				"package.json"
 			],
@@ -1735,24 +1606,12 @@
 				"main.js"
 			],
 			[
-				"impa",
-				"modules/imapHandler.js"
-			],
-			[
 				"dbha",
 				"modules/dbHandler.js"
 			],
 			[
-				"imap",
-				"modules/imapHandler.js"
-			],
-			[
 				"styles",
 				"css/styles.scss"
-			],
-			[
-				"messageview",
-				"modules/messageView.js"
 			],
 			[
 				"imapha",
@@ -1769,10 +1628,6 @@
 			[
 				"style",
 				"css/styles.scss"
-			],
-			[
-				"syncer",
-				"modules/syncer.js"
 			],
 			[
 				"proj",
@@ -1799,10 +1654,6 @@
 				"mailComposer/ckeditor/messageView.js"
 			],
 			[
-				"imaph",
-				"modules/imapHandler.js"
-			],
-			[
 				"dbh",
 				"modules/dbHandler.js"
 			],
@@ -1813,10 +1664,6 @@
 			[
 				"mailcompser",
 				"mailComposer/mailComposer.js"
-			],
-			[
-				"dbhand",
-				"modules/dbHandler.js"
 			],
 			[
 				"mailcomposer",
@@ -1845,10 +1692,6 @@
 			[
 				"test.html",
 				"mailComposer/test.html"
-			],
-			[
-				"mailbxo",
-				"modules/mailboxView.js"
 			],
 			[
 				"mailboxvi",

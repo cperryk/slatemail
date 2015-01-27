@@ -6,6 +6,7 @@ var fs = require('fs');
 
 var imapHandler = {
 	connect:function(){
+		console.log('connecting');
 		var loc_imap = imap;
 		if(imap){
 			// console.log(imap.state);
@@ -14,9 +15,9 @@ var imapHandler = {
 			// console.log('already authenticated');
 			return Q(true);
 		}
-		// console.log('connecting...');
 		var def = Q.defer();
 		var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json')).internal;
+		// console.log(conf);
 		// conf.debug = function(s){
 		//   console.log(s);
 		// };
