@@ -48,6 +48,9 @@ MessageView.prototype = {
 		var d1 = new Date().getTime();
 		mail_objs.forEach(function(mail_obj, index){
 			var message = new Message(mail_obj, self);
+			if(index===0){
+				message.reveal();
+			}
 		});
 		var d2 = new Date().getTime();
 		// console.log('thread render time: '+(d2-d1));
