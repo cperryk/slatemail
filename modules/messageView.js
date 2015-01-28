@@ -1,3 +1,5 @@
+/* toDo: Probably would make sense to redo this whole thing in React so it updates as new threads come in*/
+
 var $ = require('jquery');
 var fs = require('fs');
 var message_css = fs.readFileSync('css/message.css','utf8');
@@ -52,14 +54,13 @@ MessageView.prototype = {
 			})
 			.catch(function(err){
 				console.log(err);
+			})
+			.catch(function(err){
+				console.log(err);
+			})
+			.fin(function(){
+				def.resolve();
 			});
-			// .catch(function(err){
-			// 	console.log(err);
-			// })
-			// .fin(function(){
-			// 	console.log('RESOLVING');
-			// 	def.resolve();
-			// });
 		return def.promise;
 	},
 	printMessages: function(mail_objs){
@@ -77,7 +78,7 @@ MessageView.prototype = {
 		mail_objs.forEach(function(mail_obj, index){
 			var my_message = new Message(mail_obj, self);
 			if(index===0){
-				// my_message.reveal();
+				my_message.reveal();
 			}
 		});
 		return this;
@@ -178,27 +179,6 @@ Message.prototype = {
 		return this;
 	},
 	printBody:function(){
-		// console.log($('#message_viewer')[0]);
-		// $('<iframe>')
-		// 	.appendTo('#message_viewer')
-		// 	.remove();
-		// var message_data = this.message_data;
-		// this.iframe_wrapper = $('<div>')
-		// 	.addClass('iframe_wrapper')
-		// 	.appendTo(this.container);
-		// var message_container = $('<div>')
-		// 	.appendTo(this.iframe_wrapper);
-		// this.injected_wrapper = $('<div>')
-		// 	.html(this.prepHTMLshort(message_data))
-		// 	.find('a')
-		// 		.click(function(e){
-		// 			e.preventDefault();
-		// 			var url = $(this).attr('href');
-		// 			var command = 'open ' + url;
-		// 			exec(command);
-		// 		})
-		// 		.end()
-		// 	.appendTo(message_container);
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
