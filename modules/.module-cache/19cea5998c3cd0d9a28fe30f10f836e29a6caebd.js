@@ -2,7 +2,7 @@ global.document= window.document;
 global.navigator= window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
-var dbHandler = require('./dbHandler');
+var dbHandler = require('dbHandler');
 var React = require('react');
 
 // REACT CLASSES
@@ -117,14 +117,15 @@ MessageList.prototype = {
 	render:function(groups){
 		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
-	printBox:function(box){
-		console.log('-------------- printing mail --------------');
+	printBox:function(){
 		var self = this;
 		var def = Q.defer();
+		console.log('-------------- printing mail --------------');
+		// message_list.clear();
 		var printed_threads = [];
 		var messages_to_print = [];
 		console.log(dbHandler);
-		dbHandler.getMessagesFromMailbox(box, function(mail_obj){
+		dbHandler.getMessagesFromMailbox(BOX, function(mail_obj){
 			// console.log('retrieved message: '+mail_obj.uid);
 			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
 				messages_to_print.push(mail_obj);
@@ -133,7 +134,7 @@ MessageList.prototype = {
 			return true;
 		})
 		.then(function(){
-			if(box === 'INBOX'){
+			if(BOX === 'INBOX'){
 				return function(){
 					var def = Q.defer();
 					dbHandler.getDueMail()
@@ -156,7 +157,7 @@ MessageList.prototype = {
 		.then(function(){
 			console.log('messages to print...');
 			console.log(messages_to_print);
-			return self.reflectMessages(messages_to_print);
+			return message_list.reflectMessages(messages_to_print);
 		})
 		.fin(function(){
 			def.resolve();

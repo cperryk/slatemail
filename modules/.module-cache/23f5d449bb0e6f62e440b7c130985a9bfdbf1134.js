@@ -2,7 +2,7 @@ global.document= window.document;
 global.navigator= window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
-var dbHandler = require('./dbHandler');
+var dbHandler = require('dbHandler');
 var React = require('react');
 
 // REACT CLASSES

@@ -1,6 +1,8 @@
 global.document= window.document;
 global.navigator= window.navigator;
 var $ = require('jquery');
+var Q = require('Q');
+var dbHandler = require('./dbHandler');
 var React = require('react');
 
 // REACT CLASSES
@@ -76,7 +78,7 @@ var Message = React.createClass({
 	}
 });
 
-function MailboxView(container, conf){
+function MessageList(container, conf){
 	var self = this;
 	this.container = container;
 	this.container
@@ -111,9 +113,58 @@ function MailboxView(container, conf){
 				}
 		});
 }
-MailboxView.prototype = {
+MessageList.prototype = {
 	render:function(groups){
 		React.render(<BoxViewer data={groups}/>, this.container[0]);
+	},
+	printBox:function(box){
+		console.log('-------------- printing mail --------------');
+		var self = this;
+		var def = Q.defer();
+		var printed_threads = [];
+		var messages_to_print = [];
+		console.log(dbHandler);
+		dbHandler.getMessagesFromMailbox(box, function(mail_obj){
+			// console.log('retrieved message: '+mail_obj.uid);
+			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
+				messages_to_print.push(mail_obj);
+				printed_threads.push(mail_obj.thread_id);
+			}
+			return true;
+		})
+		.then(function(){
+			if(box === 'INBOX'){
+				return function(){
+					var def = Q.defer();
+					dbHandler.getDueMail()
+						.then(function(due_mail){
+							due_mail.forEach(function(mail_obj){
+								if(printed_threads.indexOf(mail_obj.thread_id)===-1){
+									messages_to_print.push(mail_obj);
+									printed_threads.push(mail_obj.thread_id);
+								}
+							});
+							def.resolve();
+						});
+					return def.promise;
+				};
+			}
+			else{
+				return true;
+			}
+		})
+		.then(function(){
+			console.log('messages to print...');
+			console.log(messages_to_print);
+			return self.reflectMessages(messages_to_print);
+		})
+		.fin(function(){
+			def.resolve();
+		})
+		.catch(function(err){
+			console.log(err);
+		});
+		return def.promise;
 	},
 	reflectMessages: function(messages){
 		var self = this;
@@ -222,4 +273,4 @@ function parseName(from_header){
 	return '';
 }
 
-module.exports = MailboxView;
+module.exports = MessageList;

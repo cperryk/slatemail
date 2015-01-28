@@ -39,7 +39,7 @@ $(function init(){
 				}
 			});
 			addEventListeners();
-			printMail();
+			message_list.printBox(BOX);
 			// regularSync();
 		})
 		.catch(function(err){
@@ -60,7 +60,7 @@ function selectBox(box_name){
 	$('#message_viewer').empty();
 	$('#box_selector').html('&#171; '+box_name);
 	tree_view.reflectActiveMailbox(box_name);
-	printMail();
+	message_list.printBox(BOX);
 }
 function emailSelected(mailbox, uid){
 	console.log('getting email');
@@ -198,7 +198,7 @@ function regularSync(){
 	console.log('**** REGULAR SYNC ******');
 	syncer.syncAll()
 		.then(function(){
-			printMail();
+			message_box.printBox(BOX);
 		})
 		.fin(function(){
 			console.log('queing next');
@@ -218,54 +218,4 @@ function markRead(mail_objs){
 				console.log(err);
 			});
 	});
-}
-
-function printMail(){
-	var def = Q.defer();
-	console.log('-------------- printing mail --------------');
-	// message_list.clear();
-	var printed_threads = [];
-	var messages_to_print = [];
-	console.log(dbHandler);
-	dbHandler.getMessagesFromMailbox(BOX, function(mail_obj){
-		// console.log('retrieved message: '+mail_obj.uid);
-		if(printed_threads.indexOf(mail_obj.thread_id)===-1){
-			messages_to_print.push(mail_obj);
-			printed_threads.push(mail_obj.thread_id);
-		}
-		return true;
-	})
-	.then(function(){
-		if(BOX === 'INBOX'){
-			return function(){
-				var def = Q.defer();
-				dbHandler.getDueMail()
-					.then(function(due_mail){
-						due_mail.forEach(function(mail_obj){
-							if(printed_threads.indexOf(mail_obj.thread_id)===-1){
-								messages_to_print.push(mail_obj);
-								printed_threads.push(mail_obj.thread_id);
-							}
-						});
-						def.resolve();
-					});
-				return def.promise;
-			};
-		}
-		else{
-			return true;
-		}
-	})
-	.then(function(){
-		console.log('messages to print...');
-		console.log(messages_to_print);
-		return message_list.reflectMessages(messages_to_print);
-	})
-	.fin(function(){
-		def.resolve();
-	})
-	.catch(function(err){
-		console.log(err);
-	});
-	return def.promise;
 }

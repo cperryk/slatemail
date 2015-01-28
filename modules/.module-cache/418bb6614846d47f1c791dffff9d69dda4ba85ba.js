@@ -2,7 +2,7 @@ global.document= window.document;
 global.navigator= window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
-var dbHandler = require('./dbHandler');
+var dbHandler = require('dbHandler');
 var React = require('react');
 
 // REACT CLASSES
@@ -118,9 +118,10 @@ MessageList.prototype = {
 		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
 	printBox:function(box){
-		console.log('-------------- printing mail --------------');
 		var self = this;
 		var def = Q.defer();
+		console.log('-------------- printing mail --------------');
+		// message_list.clear();
 		var printed_threads = [];
 		var messages_to_print = [];
 		console.log(dbHandler);
