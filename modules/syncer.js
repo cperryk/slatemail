@@ -1,4 +1,4 @@
-// var dbHandler = require('../modules/dbHandler.js');
+var dbHandler = window.dbHandler;
 var imapHandler = require('../modules/imapHandler.js');
 var Q = require('Q');
 var fs = require('fs-extra');
