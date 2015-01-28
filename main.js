@@ -56,11 +56,6 @@ function addEventListeners(){
 			new MailComposer();
 		}
 	});
-	// $('body').on('click','.message', function(){
-	// 	var mailbox = $(this).data('mailbox');
-	// 	var uid = $(this).data('uid');
-	// 	emailSelected(mailbox, uid);
-	// });
 }
 function selectBox(box_name){
 	BOX = box_name;
@@ -79,31 +74,30 @@ function emailSelected(mailbox, uid){
 			return dbHandler.getMailFromLocalBox(mailbox,uid);
 		})
 		.then(function(mail_obj){
-			console.log(mail_obj);
-			return message_view.printThread(mail_obj.thread_id);
+			return dbHandler.getThread(mail_obj.thread_id);
 		})
-		.catch(function(err){
-			console.log(err);
+		.then(function(thread_obj){
+			return message_view.printThread(thread_obj);
+		})
+		.then(function(){
+			var thread_obj = my_thread_obj;
+			if(thread_obj.project_id !== undefined){
+				$('body').addClass('project_viewer_open');
+				$('#project_viewer').show();
+				new ProjectView(thread_obj.project_id, thread_obj);
+				// ^ careful where you put this last line. If it runs the same time
+				// as you get the thread messages for the selected message,
+				// things will break.
+			}
+			else{
+				$('#project_viewer').hide();
+				$('body').removeClass('project_viewer_open');
+			}
+		})
+		.catch(function(error){
+			console.log(error);
 		});
-	// 	.then(function(){
-	// 		var thread_obj = my_thread_obj;
-	// 		if(thread_obj.project_id !== undefined){
-	// 			$('body').addClass('project_viewer_open');
-	// 			$('#project_viewer').show();
-	// 			new ProjectView(thread_obj.project_id, thread_obj);
-	// 			// ^ careful where you put this last line. If it runs the same time
-	// 			// as you get the thread messages for the selected message,
-	// 			// things will break.
-	// 		}
-	// 		else{
-	// 			$('#project_viewer').hide();
-	// 			$('body').removeClass('project_viewer_open');
-	// 		}
-	// 	})
-	// 	.catch(function(error){
-	// 		console.log(error);
-	// 	});
-	// addSelectedEmailListeners();
+	addSelectedEmailListeners();
 }
 function addSelectedEmailListeners(){
 	$(window).unbind('keypress.selected_email').on('keypress.selected_email',function(e){

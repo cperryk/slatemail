@@ -34,32 +34,23 @@ MessageView.prototype = {
 			.hide();
 		return this;
 	},
-	printThread:function(thread_id){
-		console.log('');
-		console.log('************** printing thread: '+thread_id+' ***********************');
+	printThread:function(thread_obj){
+		// Prints thread therad_id. Resolves with the thread object
 		this.clear();
 		var self = this;
 		var def = Q.defer();
-		dbHandler.getThread(thread_id)
-			.then(function(thread_obj){
-				console.log(thread_obj);
-				return dbHandler.getThreadMessages(thread_obj);
-			})
+		dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
 				console.log(thread_messages);
 				self.messages = thread_messages;
 				self.printTop(thread_messages);
 				self.printMessages(thread_messages);
-				// 	.addEventListeners();
-			})
-			.catch(function(err){
-				console.log(err);
 			})
 			.catch(function(err){
 				console.log(err);
 			})
 			.fin(function(){
-				def.resolve();
+				def.resolve(thread_obj);
 			});
 		return def.promise;
 	},
