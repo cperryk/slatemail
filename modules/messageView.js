@@ -35,6 +35,7 @@ MessageView.prototype = {
 		return this;
 	},
 	printThread:function(thread_obj){
+		console.log('printing thread');
 		// Prints thread therad_id. Resolves with the thread object
 		this.clear();
 		var self = this;

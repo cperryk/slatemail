@@ -77,6 +77,7 @@ function emailSelected(mailbox, uid){
 			return dbHandler.getThread(mail_obj.thread_id);
 		})
 		.then(function(thread_obj){
+			my_thread_obj = thread_obj;
 			return message_view.printThread(thread_obj);
 		})
 		.then(function(){
@@ -84,7 +85,16 @@ function emailSelected(mailbox, uid){
 			if(thread_obj.project_id !== undefined){
 				$('body').addClass('project_viewer_open');
 				$('#project_viewer').show();
-				new ProjectView(thread_obj.project_id, thread_obj);
+				new ProjectView(thread_obj.project_id, thread_obj, {
+					onSelection: function(thread_id){
+						dbHandler.getThread(thread_id)
+							.then(function(thread_obj){
+								console.log('thread obj is ');
+								console.log(thread_obj);
+								message_view.printThread(thread_obj);
+							});
+					}
+				});
 				// ^ careful where you put this last line. If it runs the same time
 				// as you get the thread messages for the selected message,
 				// things will break.

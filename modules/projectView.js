@@ -7,10 +7,11 @@ var mustache = require('mustache');
 var exec = require('child_process').exec;
 var dbHandler = window.dbHandler;
 
-function ProjectView(project_name, initial_thread){
+function ProjectView(project_name, initial_thread, conf){
 	console.log('NEW PROJECT VIEW: '+project_name);
 	this.project_name = project_name;
 	this.initial_thread = initial_thread;
+	this.conf = conf;
 	this.container = $('#project_viewer')
 		.empty();
 	$('<h2>')
@@ -112,13 +113,9 @@ ProjectView.prototype = {
 			$(this)
 				.addClass('selected');
 			var thread_id = $(this).data('thread');
-			dbHandler.getThread(thread_id)
-				.then(function(thread_obj){
-					return dbHandler.getThreadMessages(thread_obj);
-				})
-				.then(function(messages){
-					new MessageView($('#message_viewer'), messages);
-				});
+			if(self.conf.onSelection){
+				self.conf.onSelection(thread_id);
+			}
 		}
 		return def.promise;
 	},
