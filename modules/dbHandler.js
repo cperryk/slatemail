@@ -1,5 +1,5 @@
 var MailParser = require("mailparser").MailParser;
-var imapHandler = require("./imapHandler.js");
+var imapHandler = require("./modules/imapHandler.js");
 var fs = require('fs-extra');
 var Q = require('q');
 var db;
@@ -39,7 +39,6 @@ deleteDB:function(){
 connect:function(callback){
 	console.log('connecting local database');
 	var def = Q.defer();
-	console.log(indexedDB);
 	var request = indexedDB.open("slatemail");
 	request.onupgradeneeded = function(){
 		console.log('upgrade needed');
@@ -71,7 +70,10 @@ connect:function(callback){
 		console.log('error');
 		console.log(request.error);
 	};
-	console.log(request);
+	request.onblocked = function(){
+		console.log('blocked');
+	};
+	// console.log(request);
 	return def.promise;
 },
 ensureProjectStore:function(){ // Is this necessary? Isn't the project ensured in the initial connect() method?
@@ -469,13 +471,12 @@ getThreads:function(thread_ids){
 	return def.promise;
 },
 getThread:function(thread_id){
-	console.log('*********************** getting thread: '+thread_id);
+	console.log('dBHandler - getting thread '+thread_id);
 	thread_id = parseInt(thread_id, 10);
 	var def = Q.defer();
 	var tx = db.transaction('threads','readonly');
 	var objectStore = tx.objectStore('threads');
 	var get_request = objectStore.get(thread_id);
-	console.log(get_request);
 	get_request.onsuccess = function(event){
 		console.log('-------------- SUCCESS');
 		var matching = get_request.result;
@@ -1206,4 +1207,5 @@ getMailboxTree:function(){
 
 };
 
-module.exports = dbHandler;
+
+// module.exports = dbHandler;

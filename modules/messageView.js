@@ -3,14 +3,13 @@ var fs = require('fs');
 var message_css = fs.readFileSync('css/message.css','utf8');
 var MailComposer = require('../mailComposer/mailComposer.js');
 var exec = require('child_process').exec;
-var dbHandler = require('../modules/dbHandler.js');
+// var dbHandler = require('../modules/dbHandler.js');
+var dbHandler = window.dbHandler;
 var mustache = require('mustache');
-
+var Q = require('Q');
 require('datejs');
 
-function MessageView(container, messages){
-	console.log('New message view');
-	console.log(messages);
+function MessageView(container){
 	this.container = container
 		.empty()
 		.addClass('message_view');
@@ -20,22 +19,52 @@ function MessageView(container, messages){
 	this.messages_wrapper = $('<div>')
 		.addClass('messages')
 		.appendTo(container);
-	this.messages = messages;
-	this.printTop(messages)
-		.printMessages(messages)
-		.addEventListeners();
 }
 
 MessageView.prototype = {
 	clear:function(){
+		console.log('clearing');
 		this.container
 			.removeClass('with_top');
 		this.messages_wrapper.empty();
 		this.top_wrapper
+			.empty()
 			.hide();
 		return this;
 	},
+	printThread:function(thread_id){
+		console.log('');
+		console.log('************** printing thread: '+thread_id+' ***********************');
+		this.clear();
+		var self = this;
+		var def = Q.defer();
+		dbHandler.getThread(thread_id)
+			.then(function(thread_obj){
+				console.log(thread_obj);
+				return dbHandler.getThreadMessages(thread_obj);
+			})
+			.then(function(thread_messages){
+				console.log(thread_messages);
+				self.messages = thread_messages;
+				self.printTop(thread_messages);
+				self.printMessages(thread_messages);
+				// 	.addEventListeners();
+			})
+			.catch(function(err){
+				console.log(err);
+			});
+			// .catch(function(err){
+			// 	console.log(err);
+			// })
+			// .fin(function(){
+			// 	console.log('RESOLVING');
+			// 	def.resolve();
+			// });
+		return def.promise;
+	},
 	printMessages: function(mail_objs){
+		console.log('printing messages');
+		console.log(mail_objs);
 		var self = this;
 		mail_objs.sort(function(a,b){
 			if(a.date > b.date){
@@ -45,15 +74,12 @@ MessageView.prototype = {
 				return 1;
 			}
 		});
-		var d1 = new Date().getTime();
 		mail_objs.forEach(function(mail_obj, index){
-			var message = new Message(mail_obj, self);
+			var my_message = new Message(mail_obj, self);
 			if(index===0){
-				message.reveal();
+				// my_message.reveal();
 			}
 		});
-		var d2 = new Date().getTime();
-		// console.log('thread render time: '+(d2-d1));
 		return this;
 	},
 	printTop: function(mail_objs){
@@ -126,8 +152,8 @@ function Message(message_data, par){
 	this.printHeaders();
 	this.printAttachmentIcons();
 	this.printBody();
-	this.resizeFrame();
-	this.addEventListeners();
+	// this.resizeFrame();
+	// this.addEventListeners();
 }
 Message.prototype = {
 	printHeaders:function(){
@@ -148,44 +174,20 @@ Message.prototype = {
 			date: this.parseDate(message_data.date)
 		})).appendTo(container);
 
-		// JQUERY METHOD
-		// var wrapper = $('<div>')
-		// 	.addClass('headers')
-		// 	.appendTo(container);
-		//
-		// $('<p>')
-		// 	.addClass('from')
-		// 	.html(this.getFromString(message_data))
-		// 	.appendTo(wrapper);
-		//
-		// $('<p>')
-		// 	.addClass('to')
-		// 	.html('To: '+this.getToString(message_data) +
-		// 		(message_data.cc?' | cc: ' + this.getToString(message_data,true):''))
-		// 	.appendTo(wrapper);
-		//
-		// $('<div>')
-		// 	.addClass('date')
-		// 	.html(this.parseDate(message_data.date))
-		// 	.appendTo(container);
-
 		this.headers_wrapper = wrapper;
 		return this;
 	},
 	printBody:function(){
+		console.log($('#message_viewer')[0]);
+		$('<iframe>')
+			.appendTo('#message_viewer')
+			.remove();
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
 			.appendTo(this.container);
-		var iframe = $('<iframe>')
-			.attr('frameborder',0)
-			.attr('scrolling','no')
-			.css('height','100%')
-			.appendTo(this.iframe_wrapper)
-			.contents()
-				.find('head')
-					.html('<style>'+message_css+'</style>')
-					.end();
+		var message_container = $('<div>')
+			.appendTo(this.iframe_wrapper);
 		this.injected_wrapper = $('<div>')
 			.html(this.prepHTMLshort(message_data))
 			.find('a')
@@ -196,7 +198,7 @@ Message.prototype = {
 					exec(command);
 				})
 				.end()
-			.appendTo(iframe.contents().find('body'));
+			.appendTo(message_container);
 		return this;
 	},
 	printAttachmentIcons:function(){

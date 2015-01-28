@@ -2,7 +2,8 @@ global.document = window.document;
 global.navigator = window.navigator;
 
 var $ = require('jquery');
-var dbHandler = require('./dbHandler');
+// var dbHandler = require('./dbHandler');
+var dbHandler = window.dbHandler;
 var mustache = require('mustache');
 var Typeahead = require('typeahead');
 

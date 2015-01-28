@@ -1,10 +1,11 @@
 var $ = require('jquery');
 var fs = require('fs');
-var dbHandler = require('../modules/dbHandler.js');
+// var dbHandler = require('../modules/dbHandler.js');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
+var dbHandler = window.dbHandler;
 
 function ProjectView(project_name, initial_thread){
 	console.log('NEW PROJECT VIEW: '+project_name);

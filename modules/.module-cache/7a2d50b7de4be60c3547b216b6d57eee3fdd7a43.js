@@ -4,7 +4,7 @@ var $ = require('jquery');
 var Q = require('Q');
 // var dbHandler = require('./dbHandler');
 var React = require('react');
-var dbHandler = window.dbHandler;
+
 // REACT CLASSES
 var BoxViewer = React.createClass({displayName: "BoxViewer",
 	getInitialState:function(){

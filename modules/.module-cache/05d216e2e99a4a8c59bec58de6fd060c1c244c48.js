@@ -1,10 +1,10 @@
-global.document= window.document;
+global.document= window.document;;
 global.navigator = window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
-// var dbHandler = require('./dbHandler');
+var dbHandler = require('./dbHandler');
 var React = require('react');
-var dbHandler = window.dbHandler;
+
 // REACT CLASSES
 var BoxViewer = React.createClass({displayName: "BoxViewer",
 	getInitialState:function(){
@@ -78,8 +78,10 @@ var Message = React.createClass({displayName: "Message",
 	}
 });
 
+delete global.navigator;
+delete global.document;
+
 function MessageList(container, conf){
-	console.log(dbHandler);
 	var self = this;
 	this.container = container;
 	this.container

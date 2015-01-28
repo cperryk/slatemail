@@ -1,5 +1,6 @@
 var $ = require('jquery');
-var dbHandler = require('../modules/dbHandler.js');
+var dbHandler = window.dbHandler;
+// var dbHandler = require('../modules/dbHandler.js');
 
 function TreeView(container, conf){
 	var self = this;

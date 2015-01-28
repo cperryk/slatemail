@@ -5,7 +5,7 @@ var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
 var imapHandler = require('./modules/imapHandler.js');
 var syncer = require('./modules/syncer.js');
-var dbHandler = require('./modules/dbHandler.js');
+// var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
 var Q = require('q');
@@ -18,6 +18,7 @@ var test = require('./modules/testModule.js');
 
 var tree_view;
 var message_list;
+var message_view;
 var BOX = 'INBOX';
 var overlay_is_open = false;
 
@@ -38,6 +39,7 @@ $(function init(){
 					selectBox(box_path);
 				}
 			});
+			message_view = new MessageView($('#message_viewer'));
 			addEventListeners();
 			message_list.printBox(BOX);
 			// regularSync();
@@ -54,41 +56,35 @@ function addEventListeners(){
 			new MailComposer();
 		}
 	});
+	// $('body').on('click','.message', function(){
+	// 	var mailbox = $(this).data('mailbox');
+	// 	var uid = $(this).data('uid');
+	// 	emailSelected(mailbox, uid);
+	// });
 }
 function selectBox(box_name){
 	BOX = box_name;
-	$('#message_viewer').empty();
+	message_view.clear();
 	$('#box_selector').html('&#171; '+box_name);
 	tree_view.reflectActiveMailbox(box_name);
 	message_list.printBox(BOX);
 }
 function emailSelected(mailbox, uid){
-	console.log('getting email');
-	// var my_thread_obj;
-	// dbHandler.connect()
-	// 	.then(function(){
-	// 		return dbHandler.getMailFromLocalBox(mailbox,uid);
-	// 	})
-	// 	.then(function(mail_obj){
-	// 		console.log(mail_obj);
-	// 		return dbHandler.getThread(mail_obj.thread_id);
-	// 	})
-	// 	.then(function(thread_obj){
-	// 		console.log(thread_obj);
-	// 		my_thread_obj = thread_obj;
-	// 		return dbHandler.getThreadMessages(thread_obj);
-	// 	})
-	// 	.then(function(messages){
-	// 		console.log(messages);
-	// 		// markRead(messages);
-	// 		var messages_to_print = [];
-	// 		messages.forEach(function(message){
-	// 			if(message.mailbox!=='Drafts'){
-	// 				messages_to_print.push(message);
-	// 			}
-	// 		});
-	// 		new MessageView($('#message_viewer'), messages_to_print);
-	// 	})
+	console.log('');
+	console.log('');
+	console.log('---------------------------- EMAIL SELECTED -------------------------------');
+	var my_thread_obj;
+	dbHandler.connect()
+		.then(function(){
+			return dbHandler.getMailFromLocalBox(mailbox,uid);
+		})
+		.then(function(mail_obj){
+			console.log(mail_obj);
+			return message_view.printThread(mail_obj.thread_id);
+		})
+		.catch(function(err){
+			console.log(err);
+		});
 	// 	.then(function(){
 	// 		var thread_obj = my_thread_obj;
 	// 		if(thread_obj.project_id !== undefined){
