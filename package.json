@@ -1,6 +1,6 @@
 {
   "name": "SlateMail",
-  "main": "index.html",
+  "main": "main.html",
   "window":{
   	"toolbar":true,
   	"frame":true,
