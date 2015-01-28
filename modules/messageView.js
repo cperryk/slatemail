@@ -152,8 +152,8 @@ function Message(message_data, par){
 	this.printHeaders();
 	this.printAttachmentIcons();
 	this.printBody();
-	// this.resizeFrame();
-	// this.addEventListeners();
+	this.resizeFrame();
+	this.addEventListeners();
 }
 Message.prototype = {
 	printHeaders:function(){
@@ -178,16 +178,40 @@ Message.prototype = {
 		return this;
 	},
 	printBody:function(){
-		console.log($('#message_viewer')[0]);
-		$('<iframe>')
-			.appendTo('#message_viewer')
-			.remove();
+		// console.log($('#message_viewer')[0]);
+		// $('<iframe>')
+		// 	.appendTo('#message_viewer')
+		// 	.remove();
+		// var message_data = this.message_data;
+		// this.iframe_wrapper = $('<div>')
+		// 	.addClass('iframe_wrapper')
+		// 	.appendTo(this.container);
+		// var message_container = $('<div>')
+		// 	.appendTo(this.iframe_wrapper);
+		// this.injected_wrapper = $('<div>')
+		// 	.html(this.prepHTMLshort(message_data))
+		// 	.find('a')
+		// 		.click(function(e){
+		// 			e.preventDefault();
+		// 			var url = $(this).attr('href');
+		// 			var command = 'open ' + url;
+		// 			exec(command);
+		// 		})
+		// 		.end()
+		// 	.appendTo(message_container);
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
 			.appendTo(this.container);
-		var message_container = $('<div>')
-			.appendTo(this.iframe_wrapper);
+		var iframe = $('<iframe>')
+			.attr('frameborder',0)
+			.attr('scrolling','no')
+			.css('height','100%')
+			.appendTo(this.iframe_wrapper)
+			.contents()
+				.find('head')
+					.html('<style>'+message_css+'</style>')
+					.end();
 		this.injected_wrapper = $('<div>')
 			.html(this.prepHTMLshort(message_data))
 			.find('a')
@@ -198,7 +222,8 @@ Message.prototype = {
 					exec(command);
 				})
 				.end()
-			.appendTo(message_container);
+			.appendTo(iframe.contents().find('body'));
+
 		return this;
 	},
 	printAttachmentIcons:function(){
