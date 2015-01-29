@@ -70,7 +70,7 @@ MessageView.prototype = {
 		mail_objs.forEach(function(mail_obj, index){
 			var my_message = new Message(mail_obj, self);
 			if(index===0){
-				my_message.reveal();
+				my_message.printFull();
 			}
 		});
 		return this;
@@ -133,19 +133,18 @@ function Message(message_data, par){
 		.addClass('envelope')
 		.appendTo(par.messages_wrapper);
 
-	$('<div>')
-		.addClass('btn_reveal')
-		.appendTo(this.container)
-		.html('reveal')
-		.click(function(){
-			$(this).remove();
-			self.reveal();
-		});
+	// $('<div>')
+	// 	.addClass('btn_reveal')
+	// 	.appendTo(this.container)
+	// 	.html('reveal')
+	// 	.click(function(){
+	// 		$(this).remove();
+	// 		self.reveal();
+	// 	});
 
 	this.printHeaders()
 		.printAttachmentIcons()
 		.printBody()
-		.resizeFrame()
 		.addEventListeners();
 }
 Message.prototype = {
@@ -185,17 +184,8 @@ Message.prototype = {
 					.html('<style>'+message_css+'</style>')
 					.end();
 		this.injected_wrapper = $('<div>')
-			.html(this.prepHTML(message_data))
-			.find('a')
-				.click(function(e){
-					e.preventDefault();
-					var url = $(this).attr('href');
-					var command = 'open ' + url;
-					exec(command);
-				})
-				.end()
 			.appendTo(iframe.contents().find('body'));
-
+		this.printShort();
 		return this;
 	},
 	printAttachmentIcons:function(){
@@ -322,6 +312,10 @@ Message.prototype = {
 	},
 	addEventListeners:function(){
 		var self = this;
+		this.container.find('.headers')
+			.click(function(){
+				self.togglePrintState();
+			});
 		this.container.hover(function(){
 			self.printActionBtns();
 		}, function(){
@@ -439,22 +433,52 @@ Message.prototype = {
 		};
 		new MailComposer(null, conf);
 	},
-	reveal:function(){
+	togglePrintState:function(){
+		console.log('toggle print state');
+		if(this.printed_full === true){
+			this.printShort();
+		}
+		else{
+			this.printFull();
+		}
+	},
+	printFull:function(){
 		var html = this.message_data.html || this.message_data.text;
 		html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '');
 		this.injected_wrapper.html(html);
 		this.resizeFrame();
+		this.printed_full = true;
 	},
-	prepHTML: function(message_data){
-		var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
-		html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '');
+	printShort: function(){
+		console.log('printing short');
+		var self = this;
+		var html = (function(){
+			var message_data = self.message_data;
+			console.log(message_data);
+			var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
+			console.log(html);
+			html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '');
+			console.log(html);
+			var stage = $('<div>')
+				.html(html)
+				.find('style')
+					.remove()
+					.end();
+			var text = stage.text().replace(/\s+/g," ");
+			return text.substring(0, Math.min(200, text.length));
+		}());
 		console.log(html);
-		var stage = $('<div>')
-			.html(html)
-			.find('style')
-				.remove();
-		var text = stage.text().replace(/\s+/g," ");
-		return text.substring(0, Math.min(200, text.length));
+		this.injected_wrapper.html(html)
+			.find('a')
+				.click(function(e){
+					e.preventDefault();
+					var url = $(this).attr('href');
+					var command = 'open ' + url;
+					exec(command);
+				})
+				.end();
+		this.resizeFrame();
+		this.printed_full = false;
 	},
 };
 
