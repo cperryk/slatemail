@@ -194,11 +194,9 @@ Message.prototype = {
 		if(!message_data.attachments || message_data.attachments.length === 0){
 			return this;
 		}
-		var wrapper = $('<div>')
-			.addClass('message_attachments');
+		var wrapper = $('<div class="message_attachments">');
 		message_data.attachments.forEach(function(attachment){
-			$('<div>')
-				.addClass('message_attachment')
+			$('<div class="message_attachment">')
 				.html(attachment.fileName)
 				.appendTo(wrapper)
 				.click(function(){
@@ -322,7 +320,6 @@ Message.prototype = {
 			self.removeActionBtns();
 		});
 		this.injected_wrapper.on('click','a',function(e){
-			console.log('clicked');
 			e.preventDefault();
 			var url = $(this).attr('href');
 			var command = 'open "' + url + '"';
@@ -336,11 +333,9 @@ Message.prototype = {
 		var body = (function(){
 			var wrapper = $('<div><br/>');
 			var date_string = (function(){
-				if(console){console.log('getting date string');}
 				var date = new Date(message_data.date);
 				var months = ['Jan.','Feb.','March','April','May','June','July','Aug.','Oct.','Nov.','Dec.'];
 				var s = date.toString('MMM. dd')+', at '+date.toString('hh:mm tt');
-				if(console){console.log(s);}
 				return s;
 			}());
 			var from_string =  self.getFromString(message_data);
@@ -356,7 +351,6 @@ Message.prototype = {
 			in_reply_to: message_data.messageId,
 			body:body
 		};
-		console.log(conf);
 		return conf;
 	},
 	reply:function(){
@@ -380,20 +374,14 @@ Message.prototype = {
 		new MailComposer(null, conf);
 	},
 	getPeopleList:function(arr){
-		console.log('getting people list');
-		console.log(arr);
 		var self = this;
 		var out = [];
 		arr.forEach(function(ent){
 			out.push(self.getPersonString(ent));
 		});
-		console.log('returning people list');
-		console.log(out);
 		return out;
 	},
 	getPeopleString:function(arr){
-		console.log('get people string');
-		console.log(arr);
 		var out = this.getPeopleList(arr);
 		return out.join(', ');
 	},
@@ -442,7 +430,6 @@ Message.prototype = {
 		new MailComposer(null, conf);
 	},
 	togglePrintState:function(){
-		console.log('toggle print state');
 		if(this.printed_full === true){
 			this.printShort();
 		}
@@ -458,15 +445,11 @@ Message.prototype = {
 		this.printed_full = true;
 	},
 	printShort: function(){
-		console.log('printing short');
 		var self = this;
 		var html = (function(){
 			var message_data = self.message_data;
-			console.log(message_data);
 			var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
-			console.log(html);
 			html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '');
-			console.log(html);
 			var stage = $('<div>')
 				.html(html)
 				.find('style')
@@ -475,16 +458,7 @@ Message.prototype = {
 			var text = stage.text().replace(/\s+/g," ");
 			return text.substring(0, Math.min(200, text.length));
 		}());
-		console.log(html);
 		this.injected_wrapper.html(html);
-			// .find('a')
-			// 	.click(function(e){
-			// 		e.preventDefault();
-			// 		var url = $(this).attr('href');
-			// 		var command = 'open ' + url;
-			// 		exec(command);
-			// 	})
-			// 	.end();
 		this.resizeFrame();
 		this.printed_full = false;
 	},

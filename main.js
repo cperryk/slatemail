@@ -26,7 +26,8 @@ $(function init(){
 	dbHandler.connect()
 		// .then(function(){
 		// 	return syncer.syncAll();
-		// })
+		// 	regularSync();
+		// });
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){
@@ -41,8 +42,16 @@ $(function init(){
 			});
 			message_view = new MessageView($('#message_viewer'));
 			addEventListeners();
-			message_list.printBox(BOX);
-			// regularSync();
+			return true;
+		})
+		.then(function(){
+			return tree_view.printTree();
+		})
+		.then(function(){
+			return message_list.printBox(BOX);
+		})
+		.then(function(){
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -198,7 +207,7 @@ function regularSync(){
 	console.log('**** REGULAR SYNC ******');
 	syncer.syncAll()
 		.then(function(){
-			message_list.printBox(BOX);
+			return message_list.printBox(BOX);
 		})
 		.fin(function(){
 			console.log('queing next');

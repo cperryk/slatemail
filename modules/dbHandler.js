@@ -64,6 +64,16 @@ connect:function(callback){
 	request.onsuccess = function(){
 		console.log('success');
 		db = request.result;
+		db.onversionchange = function(event){
+			console.log('db version chagned');
+		};
+		db.onclose = function(event){
+			console.log('db closed');
+		};
+		db.onerorr = function(event){
+			console.log('db error');
+			console.log(event);
+		};
 		def.resolve(db);
 	};
 	request.onerror = function(){
@@ -95,6 +105,7 @@ ensureProjectStore:function(){ // Is this necessary? Isn't the project ensured i
 	return def.promise;
 },
 ensureLocalBox:function(mailbox_name){
+	console.log('ensuring local box');
 	// If local store for $mailbox_name does not exist, create it.
 	var def = Q.defer();
 	if(db.objectStoreNames.contains("box_"+mailbox_name)){
@@ -103,6 +114,7 @@ ensureLocalBox:function(mailbox_name){
 	}
 	var version =  parseInt(db.version);
 	db.close();
+	console.log(db);
 	var open_request = indexedDB.open('slatemail', version+1);
 	open_request.onupgradeneeded = function () {
 		db = open_request.result;
@@ -114,8 +126,14 @@ ensureLocalBox:function(mailbox_name){
 		object_store.createIndex("uid","uid", {unique:true});
 	};
 	open_request.onsuccess = function (e) {
-		//console.log('local mailbox '+mailbox_name+'created');
+		console.log('local mailbox '+mailbox_name+'created');
 		def.resolve();
+	};
+	open_request.onerror = function(event){
+		console.log(event);
+	};
+	open_request.onblocked = function(event){
+		console.log('blocked!');
 	};
 	return def.promise;
 },

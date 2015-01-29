@@ -6,7 +6,7 @@ var fs = require('fs');
 
 var imapHandler = {
 	connect:function(){
-		console.log('connecting');
+		// console.log('connecting');
 		var loc_imap = imap;
 		if(imap){
 			// console.log(imap.state);

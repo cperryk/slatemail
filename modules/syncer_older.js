@@ -293,17 +293,17 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index){
 			else{
 				mail_obj.flags = remote_descriptors[uid];
 				mail_obj.uid = uid;
-				dbHandler.isSenderBlocked(mail_obj.from[0].address)
-					.then(function(is_blocked){
-						if(is_blocked){
-							imapHandler.markDeleted(mailbox_name, uid)
-								.then(function(){
-									resolved_messages++;
-									console.log('\t\tMESSAGE '+uid+' (index '+ index +') NOT SAVED B/C BLOCKED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
-									def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});		
-								});
-						}
-						else{
+				// dbHandler.isSenderBlocked(mail_obj.from[0].address)
+				// 	.then(function(is_blocked){
+				// 		if(is_blocked){
+				// 			imapHandler.markDeleted(mailbox_name, uid)
+				// 				.then(function(){
+				// 					resolved_messages++;
+				// 					console.log('\t\tMESSAGE '+uid+' (index '+ index +') NOT SAVED B/C BLOCKED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
+				// 					def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});		
+				// 				});
+				// 		}
+				// 		else{
 							dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
 								.then(function(){
 									resolved_messages++;
@@ -322,9 +322,9 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index){
 									});
 								});
 						}
-					});
-			}
-		})
+		// 			});
+			})
+		// })
 		.catch(function(err){
 			console.log(err);
 		});

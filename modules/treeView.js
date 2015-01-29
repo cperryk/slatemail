@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var dbHandler = window.dbHandler;
+var Q = require('Q');
 // var dbHandler = require('../modules/dbHandler.js');
 
 function TreeView(container, conf){
@@ -14,17 +15,33 @@ function TreeView(container, conf){
 				// self.reflectActiveMailbox(box_path);
 			}
 		});
-	dbHandler.getMailboxTree()
-		.then(function(tree){
-			self.printTree(tree);
-			self.reflectActiveMailbox('INBOX');
-		});
 }
 TreeView.prototype = {
 	printTree: function(tree){
-		var s = '';
 		var self = this;
+		var def = Q.defer();
+		dbHandler.getMailboxTree()
+			.then(function(tree){
+				var html = self.getTreeHTML(tree);
+				self.container
+					.html(html)
+					.find('.tree_view_item').each(function(){
+						var box_path = self.getBoxPath($(this));
+						$(this).attr('data-box-path', box_path);
+					});
+				self.reflectActiveMailbox('INBOX');
+				def.resolve();
+			})
+			.catch(function(err){
+				console.log(err);
+			});
+		return def.promise;
+	},
+	getTreeHTML: function(tree){
+		console.log(tree);
+		var s = '';
 		printSubTree(tree);
+		return s;
 		function printSubTree(subtree){
 			s += '<ul>';
 			for(var i in subtree){
@@ -38,11 +55,6 @@ TreeView.prototype = {
 			}
 			s += '</ul>';
 		}
-		this.container.html(s);
-		this.container.find('.tree_view_item').each(function(){
-			var box_path = self.getBoxPath($(this));
-			$(this).attr('data-box-path', box_path);
-		});
 	},
 	getBoxPath: function(tree_view_item){
 		var box_path = tree_view_item.data('box');
