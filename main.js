@@ -42,7 +42,7 @@ $(function init(){
 			message_view = new MessageView($('#message_viewer'));
 			addEventListeners();
 			message_list.printBox(BOX);
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

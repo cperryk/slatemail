@@ -6,60 +6,60 @@ var Q = require('Q');
 var React = require('react');
 var dbHandler = window.dbHandler;
 // REACT CLASSES
-var BoxViewer = React.createClass({
+var BoxViewer = React.createClass({displayName: "BoxViewer",
 	getInitialState:function(){
 		return {data:[]};
 	},
 	render:function(){
 		return (
-			<div className="message_list">
-			<List data={this.props.data} />
-			</div>
+			React.createElement("div", {className: "message_list"}, 
+			React.createElement(List, {data: this.props.data})
+			)
 		);
 	}
 });
 
-var List = React.createClass({
+var List = React.createClass({displayName: "List",
 	render: function(){
 		console.log(this.props.data);
 		var message_group_nodes = this.props.data.map(function(group_data){
 			return (
-				<MessageGroup key={group_data.id} data={group_data}/>
+				React.createElement(MessageGroup, {key: group_data.id, data: group_data})
 			);
 		});
 		return (
-			<div className="message_groups">
-			{message_group_nodes}
-			</div>
+			React.createElement("div", {className: "message_groups"}, 
+			message_group_nodes
+			)
 		);
 	}
 });
 
-var MessageGroup = React.createClass({
+var MessageGroup = React.createClass({displayName: "MessageGroup",
 	render: function(){
 		var message_nodes = this.props.data.messages.map(function(message_data){
 			return (
-				<Message key={message_data.mailbox+':'+message_data.uid} data={message_data}/>
+				React.createElement(Message, {key: message_data.mailbox+':'+message_data.uid, data: message_data})
 			);
 		});
 		return (
-			<div className="message_group">
-				<div className="message_group_title">
-					<span className="triangle">&#9660;</span>&#160;
-					<span className="date_string">{this.props.data.id}</span>
-				</div>
-				{message_nodes}
-			</div>
+			React.createElement("div", {className: "message_group"}, 
+				React.createElement("div", {className: "message_group_title"}, 
+					React.createElement("span", {className: "triangle"}, "▼"), " ", 
+					React.createElement("span", {className: "date_string"}, this.props.data.id)
+				), 
+				message_nodes
+			)
 		);
 	}
 });
 
-var Message = React.createClass({
+var Message = React.createClass({displayName: "Message",
 	render: function(){
 		var mail_obj = this.props.data;
 		if(!mail_obj.from){
 			return (
-				<div className="message"></div>
+				React.createElement("div", {className: "message"})
 			);
 		}
 		var from = parseName(mail_obj.from);
@@ -69,13 +69,11 @@ var Message = React.createClass({
 		var unread = mail_obj.flags.indexOf('\\Seen')===-1;
 		var class_name = "message"+(unread?' unread':'');
 		return (
-			<div className={class_name} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid}>
-				<div className="from">{from}</div>
-				<div className="subject">{subject}</div>
-				<div className="text_preview">{preview_text}</div>
-			</div>
+			React.createElement("div", {className: class_name, "data-mailbox": mail_obj.mailbox, "data-uid": mail_obj.uid}, 
+				React.createElement("div", {className: "from"}, from), 
+				React.createElement("div", {className: "subject"}, subject)
+			)
 		);
-		// <div dangerouslySetInnerHTML={{__html: preview_text}} className="text_preview"/>
 	}
 });
 
@@ -118,7 +116,7 @@ function MessageList(container, conf){
 MessageList.prototype = {
 	render:function(groups){
 		console.log('RENDERING');
-		React.render(<BoxViewer data={groups}/>, this.container[0]);
+		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
 	printBox:function(box){
 		console.log('-------------- printing mail --------------');
@@ -249,7 +247,7 @@ function getPreviewText(mail_object){
 		return mail_object.text.replace(/[\n\r]/g, ' ').slice(0,125);
 	}
 	if(mail_object.html){
-		return $(mail_object.html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '')).text().replace(/[\n\r]/g, '').trim().slice(0,125);
+		return mail_object.html.replace(/<[^>]*>/g, '').replace(/[\n\r]/g, '').trim().slice(0,125);
 	}
 	return false;
 }
