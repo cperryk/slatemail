@@ -126,20 +126,29 @@ var imapHandler = {
 		return def.promise;
 	},
 	getMessageWithUID:function(box_name, uid){
-		// console.log('getting message with uid: '+uid);
+		console.log('getting message with uid: '+uid);
 		var def = Q.defer();
 		var message;
 		var message_found = false;
+		// if(uid == 29949){
+		// 	console.log('CANCELLING');
+		// 	def.resolve();
+		// 	return def.promise;	
+		// }
 		imapHandler.getMessagesWithSearchCriteria({
 			box_name:box_name,
 			criteria:[['UID',parseInt(uid,10)]]
 		})
 		.then(function(messages){
+			console.log('getting results for '+box_name+':'+uid+' search');
 			if(!messages || messages.length === 0){
+				console.log('imapHandler resolving with false');
 				def.resolve(false);
 			}
 			else{
-				def.resolve(messages[0]);
+				console.log('imapHandler resolving with message '+box_name+':'+uid);
+				// def.resolve(messages[0]);
+				def.resolve({});
 			}
 		})
 		.catch(function(err){

@@ -46,6 +46,9 @@ function syncAll(){
 				return [];
 			});
 			box_names.forEach(function(box_name){
+				if(box_name.substring(0, 'Deleted Items'.length) === 'Deleted Items' || box_name === "Drafts"){
+					return;
+				}
 				var link = function(arr){
 					var def = Q.defer();
 					syncBox(box_name)
@@ -53,7 +56,7 @@ function syncAll(){
 							setTimeout(function(){
 								arr.push(results);
 								def.resolve(arr);
-							},1000);
+							},0);
 						});
 					return def.promise;
 				};
@@ -129,6 +132,7 @@ function syncBox(mailbox_name){
 			});
 		})
 		.then(function(downloaded_messages){
+			console.log('syncing of '+mailbox_name+' complete');
 			def.resolve({
 				mailbox: mailbox_name,
 				new_messages: downloaded_messages
@@ -280,49 +284,39 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 var resolved_messages = 0;
 
 function downloadMessage(mailbox_name, uid, remote_descriptors, index){
-	// console.log('downloading message '+uid+', index = '+index);
+	console.log('downloading message '+mailbox_name+':'+uid+', index = '+index);
 	// console.log(remote_descriptors[uid]);
 	var def = Q.defer();
 	imapHandler.getMessageWithUID(mailbox_name, uid)
 		.then(function(mail_obj){
 			if(!mail_obj){
 				console.log('no mail object found... '+mailbox_name+':'+uid);
-				// console.log('RESOLVING '+uid);
 				def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});
 			}
 			else{
+				console.log(mail_obj);
+				// mail_obj.date = mail_obj.date.toString();
 				mail_obj.flags = remote_descriptors[uid];
 				mail_obj.uid = uid;
-				dbHandler.isSenderBlocked(mail_obj.from[0].address)
-					.then(function(is_blocked){
-						if(is_blocked){
-							imapHandler.markDeleted(mailbox_name, uid)
-								.then(function(){
-									resolved_messages++;
-									console.log('\t\tMESSAGE '+uid+' (index '+ index +') NOT SAVED B/C BLOCKED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
-									def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});		
-								});
-						}
-						else{
-							dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
-								.then(function(){
-									resolved_messages++;
-									console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
-									console.log(uid);
-									console.log(mail_obj.flags);
-									def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
-								})
-								.catch(function(err){
-									console.log("ERROR IN DOWNLOAD MESSAGE");
-									console.log(err);
-									def.resolve({
-										uid:uid,
-										downloaded:false,
-										flags:mail_obj.flags
-									});
-								});
-						}
-					});
+				console.log(mailbox_name+':'+uid+' retrieved');
+				def.resolve();
+				// dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
+				// 	.then(function(){
+				// 		resolved_messages++;
+				// 		console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
+				// 		// console.log('\t'+JSON.stringify(mail_obj.flags));
+				// 		// console.log(mail_obj.subject);
+				// 		def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
+				// 	})
+				// 	.catch(function(err){
+				// 		console.log("ERROR IN DOWNLOAD MESSAGE");
+				// 		console.log(err);
+				// 		def.resolve({
+				// 			uid:uid,
+				// 			downloaded:false,
+				// 			flags:mail_obj.flags
+				// 		});
+				// 	});
 			}
 		})
 		.catch(function(err){

@@ -152,7 +152,7 @@ saveMailToLocalBox:function(mailbox_name, mail_obj){
 			mail_obj.pid = dbHandler.getPID(mail_obj);
 			var put_request = store.put(mail_obj);
 			put_request.onsuccess = function(){
-				// console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
+				console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
 				// dbHandler.threadMail(mailbox_name, mail_obj);
 				def.resolve();
 			};
