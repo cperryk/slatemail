@@ -174,7 +174,7 @@ Message.prototype = {
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
 			.appendTo(this.container);
-		var iframe = $('<iframe>')
+		this.iframe = $('<iframe>')
 			.attr('frameborder',0)
 			.attr('scrolling','no')
 			.css('height','100%')
@@ -184,7 +184,7 @@ Message.prototype = {
 					.html('<style>'+message_css+'</style>')
 					.end();
 		this.injected_wrapper = $('<div>')
-			.appendTo(iframe.contents().find('body'));
+			.appendTo(this.iframe.contents().find('body'));
 		this.printShort();
 		return this;
 	},
@@ -320,6 +320,14 @@ Message.prototype = {
 			self.printActionBtns();
 		}, function(){
 			self.removeActionBtns();
+		});
+		this.injected_wrapper.on('click','a',function(e){
+			console.log('clicked');
+			e.preventDefault();
+			var url = $(this).attr('href');
+			var command = 'open "' + url + '"';
+			console.log(command);
+			exec(command);
 		});
 	},
 	getReplyConf:function(){
@@ -468,15 +476,15 @@ Message.prototype = {
 			return text.substring(0, Math.min(200, text.length));
 		}());
 		console.log(html);
-		this.injected_wrapper.html(html)
-			.find('a')
-				.click(function(e){
-					e.preventDefault();
-					var url = $(this).attr('href');
-					var command = 'open ' + url;
-					exec(command);
-				})
-				.end();
+		this.injected_wrapper.html(html);
+			// .find('a')
+			// 	.click(function(e){
+			// 		e.preventDefault();
+			// 		var url = $(this).attr('href');
+			// 		var command = 'open ' + url;
+			// 		exec(command);
+			// 	})
+			// 	.end();
 		this.resizeFrame();
 		this.printed_full = false;
 	},
