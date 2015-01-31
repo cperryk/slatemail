@@ -124,6 +124,8 @@ ensureLocalBox:function(mailbox_name){
 		object_store.createIndex("message_id", "messageId", { unique: false });
 		object_store.createIndex("short_subject", "short_subject", { unique: false });
 		object_store.createIndex("uid","uid", {unique:true});
+		object_store.createIndex("uid","uid", {unique:true});
+		object_store.createIndex("date","date",{unique: false});
 	};
 	open_request.onsuccess = function (e) {
 		console.log('local mailbox '+mailbox_name+'created');
@@ -152,7 +154,7 @@ saveMailToLocalBox:function(mailbox_name, mail_obj){
 			mail_obj.pid = dbHandler.getPID(mail_obj);
 			var put_request = store.put(mail_obj);
 			put_request.onsuccess = function(){
-				console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
+				// console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
 				// dbHandler.threadMail(mailbox_name, mail_obj);
 				def.resolve();
 			};
@@ -449,7 +451,7 @@ getUIDsFromMailbox:function(box_name, onKey, onEnd){
 getMessagesFromMailbox: function(box_name, onMessage){
 	console.log('get messages from '+box_name);
 	var def = Q.defer();
-	console.log(db);
+	var t1 = new Date().getTime();
 	if(!db.objectStoreNames.contains("box_"+box_name)){
 		console.log(box_name+' does not exist');
 		def.resolve();
@@ -467,6 +469,8 @@ getMessagesFromMailbox: function(box_name, onMessage){
 				cursor.continue();
 			}
 			else {
+				var t2 = new Date().getTime();
+				console.log(t2-t1);
 				def.resolve();
 			}
 		};
@@ -509,7 +513,7 @@ getThread:function(thread_id){
 	return def.promise;
 },
 getThreadMessages:function(thread_obj){
-	//console.log('getting thread messages');
+	// console.log('getting thread messages');
 	var def = Q.defer();
 	var message_umis = thread_obj.messages;
 	var messages_to_get = message_umis.length;
@@ -1026,18 +1030,20 @@ threadMessage:function(message_id){
 			var data = get_request.result;
 			data.thread_id = thread_id;
 			if(data.messages.indexOf(mailbox_name+':'+mail_uid)>-1){
-				updateMailObject(mail_obj.mailbox, mail_obj.uid, thread_id);
+				updateMailObject(mailbox_name, mail_uid, thread_id)
+					.then(function(){
+						def.resolve(thread_id);
+					});
 			}
 			else{
 				data.messages.push(mailbox_name+':'+mail_uid);
 				var request_update = store.put(data);
 				request_update.onsuccess = function(){
 					def.resolve(thread_id);
-					// console.log('saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
-					// updateMailObject(mail_obj.mailbox, mail_obj.uid, thread_id);
 				};
-				request_update.onerror = function(){
-					// console.log('FAILED: saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
+				request_update.onerror = function(err){
+					console.log('FAILED: saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
+					console.log(err);
 				};
 			}
 		};
