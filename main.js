@@ -24,38 +24,31 @@ var overlay_is_open = false;
 
 $(function init(){
 	dbHandler.connect()
-		// .then(function(){
-		// 	return imapHandler.getMessageWithUID('Deleted Items', 29949);
-		// })
-		// .then(function(mail_obj){
-		// 	console.log(mail_obj);
-		// 	return dbHandler.saveMailToLocalBox('Deleted Items', mail_obj);
-		// })
 		.then(function(){
-			return syncer.syncBox('Deleted Items');
+			return syncer.syncAll();
 		})
-		// .then(function(){
-		// 	message_list = new MessageList($('#inbox'), {
-		// 		onSelection:function(mailbox, uid){
-		// 			console.log('selected');
-		// 			emailSelected(mailbox, uid);
-		// 		}
-		// 	});
-		// 	tree_view = new treeView($('#tree_view .inner'), {
-		// 		onSelection:function(box_path){
-		// 			selectBox(box_path);
-		// 		}
-		// 	});
-		// 	message_view = new MessageView($('#message_viewer'));
-		// 	addEventListeners();
-		// 	return true;
-		// })
-		// .then(function(){
-		// 	return tree_view.printTree();
-		// })
-		// .then(function(){
-		// 	return message_list.printBox(BOX);
-		// })
+		.then(function(){
+			message_list = new MessageList($('#inbox'), {
+				onSelection:function(mailbox, uid){
+					console.log('selected');
+					emailSelected(mailbox, uid);
+				}
+			});
+			tree_view = new treeView($('#tree_view .inner'), {
+				onSelection:function(box_path){
+					selectBox(box_path);
+				}
+			});
+			message_view = new MessageView($('#message_viewer'));
+			addEventListeners();
+			return true;
+		})
+		.then(function(){
+			return tree_view.printTree();
+		})
+		.then(function(){
+			return message_list.printBox(BOX);
+		})
 		// .then(function(){
 		// 	regularSync();
 		// })

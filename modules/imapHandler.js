@@ -126,7 +126,7 @@ var imapHandler = {
 		return def.promise;
 	},
 	getMessageWithUID:function(box_name, uid){
-		console.log('getting message with uid: '+uid);
+		// console.log('getting message with uid: '+uid);
 		var def = Q.defer();
 		var message;
 		var message_found = false;
@@ -147,8 +147,7 @@ var imapHandler = {
 			}
 			else{
 				console.log('imapHandler resolving with message '+box_name+':'+uid);
-				// def.resolve(messages[0]);
-				def.resolve({});
+				def.resolve(messages[0]);
 			}
 		})
 		.catch(function(err){

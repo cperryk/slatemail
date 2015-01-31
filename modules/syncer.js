@@ -38,7 +38,7 @@ function syncAll(){
 				}
 			}());
 			return boxes;
-			// return ['INBOX', '2014', 'SlateMail/scheduled/1969-12-31'];
+			// return ['INBOX'];
 		})
 		.then(function syncBoxes(box_names){
 			// build and run a promise chain that syncs the boxes sequentially
@@ -115,6 +115,7 @@ function syncBox(mailbox_name){
 				// an IMAP box might report a UID before the message is available to download.
 				// If any messages failed to download, remove it from the new local descriptors record before it's saved.
 				// Otherwise, the client will think it has an email that it doesn't and never download it.
+				console.log(outputs);
 				var downloaded_messages = outputs[1];
 				var saved_messages = [];
 				downloaded_messages.forEach(function(msg){
@@ -265,26 +266,35 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 	
 	console.log('total messages to get: '+promises.length);
 
+	var results = [];
 	to_get.forEach(function(uid, index){
-		promises.push(downloadMessage(mailbox_name, uid, remote_descriptors, index));
+		promises.push(function(){
+			return downloadMessage(mailbox_name, uid, remote_descriptors, index, promises.length)
+				.then(function(res){
+					results.push(res);
+				});
+		});
 	});
 
-
-	Q.all(promises)
-		.then(function(results){
-			console.log('all messages downloaded');
+	promises.reduce(Q.when, Q(true))
+		.then(function(){
 			def.resolve(results);
-		})
-		.catch(function(err){
-			console.log(err);
 		});
+	// Q.all(promises)
+		// .then(function(results){
+		// 	console.log('all messages downloaded');
+		// 	def.resolve(results);
+		// })
+		// .catch(function(err){
+		// 	console.log(err);
+		// });
 	return def.promise;
 }
 
 var resolved_messages = 0;
 
-function downloadMessage(mailbox_name, uid, remote_descriptors, index){
-	console.log('downloading message '+mailbox_name+':'+uid+', index = '+index);
+function downloadMessage(mailbox_name, uid, remote_descriptors, index, l){
+	console.log('------------ downloading message '+mailbox_name+':'+uid+', index = '+index+' of '+l+'-------------------');
 	// console.log(remote_descriptors[uid]);
 	var def = Q.defer();
 	imapHandler.getMessageWithUID(mailbox_name, uid)
@@ -294,29 +304,25 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index){
 				def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});
 			}
 			else{
-				console.log(mail_obj);
+				// console.log(mail_obj);
 				// mail_obj.date = mail_obj.date.toString();
 				mail_obj.flags = remote_descriptors[uid];
 				mail_obj.uid = uid;
-				console.log(mailbox_name+':'+uid+' retrieved');
-				def.resolve();
-				// dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
-				// 	.then(function(){
-				// 		resolved_messages++;
-				// 		console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
-				// 		// console.log('\t'+JSON.stringify(mail_obj.flags));
-				// 		// console.log(mail_obj.subject);
-				// 		def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
-				// 	})
-				// 	.catch(function(err){
-				// 		console.log("ERROR IN DOWNLOAD MESSAGE");
-				// 		console.log(err);
-				// 		def.resolve({
-				// 			uid:uid,
-				// 			downloaded:false,
-				// 			flags:mail_obj.flags
-				// 		});
-				// 	});
+				dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
+					.then(function(){
+						resolved_messages++;
+						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
+						def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
+					})
+					.catch(function(err){
+						console.log("ERROR IN DOWNLOAD MESSAGE");
+						console.log(err);
+						def.resolve({
+							uid:uid,
+							downloaded:false,
+							flags:mail_obj.flags
+						});
+					});
 			}
 		})
 		.catch(function(err){
