@@ -124,7 +124,6 @@ ensureLocalBox:function(mailbox_name){
 		object_store.createIndex("message_id", "messageId", { unique: false });
 		object_store.createIndex("short_subject", "short_subject", { unique: false });
 		object_store.createIndex("uid","uid", {unique:true});
-		object_store.createIndex("uid","uid", {unique:true});
 		object_store.createIndex("date","date",{unique: false});
 	};
 	open_request.onsuccess = function (e) {
@@ -448,8 +447,8 @@ getUIDsFromMailbox:function(box_name, onKey, onEnd){
 		}
 	};
 },
-getMessagesFromMailbox: function(box_name, onMessage){
-	console.log('get messages from '+box_name);
+getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
+	console.log('get messages from '+box_name+', limit is '+limit+', offset is '+offset);
 	var def = Q.defer();
 	var t1 = new Date().getTime();
 	if(!db.objectStoreNames.contains("box_"+box_name)){
@@ -458,15 +457,29 @@ getMessagesFromMailbox: function(box_name, onMessage){
 	}
 	else{
 		var tx = db.transaction("box_"+box_name);
-		var objectStore = tx.objectStore("box_"+box_name);
-		objectStore.openCursor(null, 'prev').onsuccess = function(event) {
+		var store = tx.objectStore("box_"+box_name);
+		var index = store.index('date');
+		var count = 0;
+		index.openCursor(null, 'prev').onsuccess = function(event) {
 			var cursor = event.target.result;
 			if (cursor) {
-				var mail_object = cursor.value;
-				if(onMessage){
-					onMessage(mail_object);
+				if(offset !== undefined && offset > 0 && count === 0){
+					cursor.advance(offset);
+					offset = undefined;
 				}
-				cursor.continue();
+				else{
+					var mail_object = cursor.value;
+					if(onMessage){
+						onMessage(mail_object);
+					}
+					count ++;
+					if(limit === undefined || (count < limit)){
+						cursor.continue();					
+					}
+					else{
+						def.resolve();
+					}
+				}
 			}
 			else {
 				var t2 = new Date().getTime();

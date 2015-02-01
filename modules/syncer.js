@@ -38,7 +38,7 @@ function syncAll(){
 				}
 			}());
 			// return boxes;
-			return ['INBOX'];
+			return ['List/Slate Ed'];
 			// return ['INBOX'];
 		})
 		.then(function syncBoxes(box_names){
@@ -258,10 +258,10 @@ function saveDescriptors(mailbox_name, msgs){
 function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 	console.log('downloading new mail');
 
-	imapHandler.setError(function(){
-		console.log('error detected; responding');
-		return downloadNewMail(mailbox_name, local_descriptors, remote_descriptors);
-	});
+	// imapHandler.setError(function(){
+	// 	console.log('error detected; responding');
+	// 	return downloadNewMail(mailbox_name, local_descriptors, remote_descriptors);
+	// });
 
 	resolved_messages = 0;
 	var def = Q.defer();

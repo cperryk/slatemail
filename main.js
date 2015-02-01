@@ -23,10 +23,12 @@ var BOX = 'INBOX';
 var overlay_is_open = false;
 
 $(function init(){
+	// dbHandler.deleteDB();
+	// return;
 	dbHandler.connect()
-		.then(function(){
-			return syncer.syncAll();
-		})
+		// .then(function(){
+		// 	return syncer.syncAll();
+		// })
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){

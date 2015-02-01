@@ -6,62 +6,59 @@ var Q = require('Q');
 var React = require('react');
 var dbHandler = window.dbHandler;
 // REACT CLASSES
-var BoxViewer = React.createClass({
+var BoxViewer = React.createClass({displayName: "BoxViewer",
 	getInitialState:function(){
 		return {data:[]};
 	},
 	render:function(){
 		return (
-			<div className="message_list">
-				<List data={this.props.data} />
-				<div className="btn_print_more">
-					Print more messages
-				</div>
-			</div>
+			React.createElement("div", {className: "message_list"}, 
+			React.createElement(List, {data: this.props.data})
+			)
 		);
 	}
 });
 
-var List = React.createClass({
+var List = React.createClass({displayName: "List",
 	render: function(){
 		var message_group_nodes = this.props.data.map(function(group_data){
 			return (
-				<MessageGroup key={group_data.id} data={group_data}/>
+				React.createElement(MessageGroup, {key: group_data.id, data: group_data})
 			);
 		});
 		return (
-			<div className="message_groups">
-			{message_group_nodes}
-			</div>
+			React.createElement("div", {className: "message_groups"}, 
+			message_group_nodes
+			)
 		);
 	}
 });
 
-var MessageGroup = React.createClass({
+var MessageGroup = React.createClass({displayName: "MessageGroup",
 	render: function(){
 		var message_nodes = this.props.data.messages.map(function(message_data){
 			return (
-				<Message key={message_data.mailbox+':'+message_data.uid} data={message_data}/>
+				React.createElement(Message, {key: message_data.mailbox+':'+message_data.uid, data: message_data})
 			);
 		});
 		return (
-			<div className="message_group">
-				<div className="message_group_title">
-					<span className="triangle">&#9660;</span>&#160;
-					<span className="date_string">{this.props.data.id}</span>
-				</div>
-				{message_nodes}
-			</div>
+			React.createElement("div", {className: "message_group"}, 
+				React.createElement("div", {className: "message_group_title"}, 
+					React.createElement("span", {className: "triangle"}, "▼"), " ", 
+					React.createElement("span", {className: "date_string"}, this.props.data.id)
+				), 
+				message_nodes
+			)
 		);
 	}
 });
 
-var Message = React.createClass({
+var Message = React.createClass({displayName: "Message",
 	render: function(){
 		var mail_obj = this.props.data;
 		if(!mail_obj.from){
 			return (
-				<div className="message"></div>
+				React.createElement("div", {className: "message"})
 			);
 		}
 		var from = parseName(mail_obj.from);
@@ -71,11 +68,11 @@ var Message = React.createClass({
 		var unread = mail_obj.flags.indexOf('\\Seen')===-1;
 		var class_name = "message"+(unread?' unread':'');
 		return (
-			<div className={class_name} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid}>
-				<div className="from">{from}</div>
-				<div className="subject">{subject}</div>
-				<div className="text_preview">{preview_text}</div>
-			</div>
+			React.createElement("div", {className: class_name, "data-mailbox": mail_obj.mailbox, "data-uid": mail_obj.uid}, 
+				React.createElement("div", {className: "from"}, from), 
+				React.createElement("div", {className: "subject"}, subject), 
+				React.createElement("div", {className: "text_preview"}, preview_text)
+			)
 		);
 		// <div dangerouslySetInnerHTML={{__html: preview_text}} className="text_preview"/>
 	}
@@ -114,14 +111,11 @@ function MessageList(container, conf){
 						.html('&#9654;')
 						.end();
 				}
-		})
-		.on('click','.btn_print_more', function(){
-			self.printMore();
 		});
 }
 MessageList.prototype = {
 	render:function(groups){
-		React.render(<BoxViewer data={groups}/>, this.container[0]);
+		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
 	printBox:function(box){
 		console.log('-------------- printing mail --------------');
@@ -132,7 +126,6 @@ MessageList.prototype = {
 		this.offset = 0;
 		this.messages_to_print = [];
 		this.printed_threads = [];
-		this.box = box;
 		this.addMessages(box, 0)
 			.then(function(){
 				if(box === 'INBOX'){
@@ -141,9 +134,9 @@ MessageList.prototype = {
 						dbHandler.getDueMail()
 							.then(function(due_mail){
 								due_mail.forEach(function(mail_obj){
-									if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
-										self.messages_to_print.push(mail_obj);
-										self.printed_threads.push(mail_obj.thread_id);
+									if(printed_threads.indexOf(mail_obj.thread_id)===-1){
+										messages_to_print.push(mail_obj);
+										printed_threads.push(mail_obj.thread_id);
 									}
 								});
 								def.resolve();
@@ -158,7 +151,7 @@ MessageList.prototype = {
 			.then(function(){
 				console.log('messages to print...');
 				// console.log(messages_to_print);
-				return self.reflectMessages();
+				return self.reflectMessages(messages_to_print);
 			})
 			.fin(function(){
 				def.resolve();
@@ -168,19 +161,11 @@ MessageList.prototype = {
 			});
 			return def.promise;
 	},
-	printMore:function(){
-		var self = this;
-		this.offset += 100;
-		this.addMessages(this.offset)
-			.then(function(){
-				self.reflectMessages();
-			});
-	},
-	addMessages:function(offset){
+	addMessages:function(box, offset){
 		var self = this;
 		var def = Q.defer();
-		dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
-			if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
+		dbHandler.getMessagesFromMailbox(box, function(mail_obj){
+			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
 				self.messages_to_print.push(mail_obj);
 				self.printed_threads.push(mail_obj.thread_id);
 			}
@@ -191,11 +176,8 @@ MessageList.prototype = {
 			});
 		return def.promise;
 	},
-	reflectMessages: function(){
-		console.log('reflect messages');
+	reflectMessages: function(messages){
 		var self = this;
-		console.log(this.messages_to_print);
-		var messages = this.messages_to_print;
 		var groups = (function(){
 			var out = [];
 			var groups_added = {};
