@@ -41,6 +41,9 @@ var imapHandler = {
 		imap = loc_imap;
 		return def.promise;
 	},
+	setError:function(fnc){
+		imap.once('error', fnc);
+	},
 	connectAndOpen:function(box_name){
 		// console.log('connecting and opening: '+box_name);
 		var def = Q.defer();
@@ -130,15 +133,23 @@ var imapHandler = {
 		var def = Q.defer();
 		var message;
 		var message_found = false;
+		// if(uid == 29949){
+		// 	console.log('CANCELLING');
+		// 	def.resolve();
+		// 	return def.promise;	
+		// }
 		imapHandler.getMessagesWithSearchCriteria({
 			box_name:box_name,
 			criteria:[['UID',parseInt(uid,10)]]
 		})
 		.then(function(messages){
+			// console.log('getting results for '+box_name+':'+uid+' search');
 			if(!messages || messages.length === 0){
+				// console.log('imapHandler resolving with false');
 				def.resolve(false);
 			}
 			else{
+				// console.log('imapHandler resolving with message '+box_name+':'+uid);
 				def.resolve(messages[0]);
 			}
 		})

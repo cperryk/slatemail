@@ -23,11 +23,12 @@ var BOX = 'INBOX';
 var overlay_is_open = false;
 
 $(function init(){
+	// dbHandler.deleteDB();
+	// return;
 	dbHandler.connect()
 		// .then(function(){
 		// 	return syncer.syncAll();
-		// 	regularSync();
-		// });
+		// })
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){
@@ -50,9 +51,9 @@ $(function init(){
 		.then(function(){
 			return message_list.printBox(BOX);
 		})
-		.then(function(){
-			regularSync();
-		})
+		// .then(function(){
+		// 	regularSync();
+		// })
 		.catch(function(err){
 			console.log(err);
 		});

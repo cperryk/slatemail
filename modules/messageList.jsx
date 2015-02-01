@@ -2,9 +2,11 @@ global.document= window.document;
 global.navigator = window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
+var favicon = require('favicon');
 // var dbHandler = require('./dbHandler');
 var React = require('react');
 var dbHandler = window.dbHandler;
+var favicons = {};
 // REACT CLASSES
 var BoxViewer = React.createClass({
 	getInitialState:function(){
@@ -13,7 +15,10 @@ var BoxViewer = React.createClass({
 	render:function(){
 		return (
 			<div className="message_list">
-			<List data={this.props.data} />
+				<List data={this.props.data} />
+				<div className="btn_print_more">
+					Print more messages
+				</div>
 			</div>
 		);
 	}
@@ -54,6 +59,25 @@ var MessageGroup = React.createClass({
 });
 
 var Message = React.createClass({
+	componentDidMount: function () {
+		var node = this.getDOMNode();
+		var from_domain = $(node).data('from').replace(/.*@/, "");
+		getFaviconURL(from_domain, function(url){
+			$(node).children('.favicon')
+				.append('<img src="'+url+'"/>');
+		});
+		function getFaviconURL(from_domain, cb){
+			if(favicons[from_domain]){
+				cb(favicons[from_domain]);
+			}
+			else{
+				favicon("http://" + from_domain, function(err, favicon_url) {
+					favicons[from_domain] = favicon_url;
+					cb(favicon_url);
+				});
+			}
+		}
+	},
 	render: function(){
 		var mail_obj = this.props.data;
 		if(!mail_obj.from){
@@ -67,14 +91,15 @@ var Message = React.createClass({
 		var mailbox = mail_obj.mailbox;
 		var unread = mail_obj.flags.indexOf('\\Seen')===-1;
 		var class_name = "message"+(unread?' unread':'');
+		var from_address = mail_obj.from ? mail_obj.from[0].address : false;
 		return (
-			<div className={class_name} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid}>
+			<div className={class_name} data-from={from_address} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid}>
+				<div className="favicon"></div>
 				<div className="from">{from}</div>
 				<div className="subject">{subject}</div>
 				<div className="text_preview">{preview_text}</div>
 			</div>
 		);
-		// <div dangerouslySetInnerHTML={{__html: preview_text}} className="text_preview"/>
 	}
 });
 
@@ -111,6 +136,9 @@ function MessageList(container, conf){
 						.html('&#9654;')
 						.end();
 				}
+		})
+		.on('click','.btn_print_more', function(){
+			self.printMore();
 		});
 }
 MessageList.prototype = {
@@ -121,52 +149,76 @@ MessageList.prototype = {
 		console.log('-------------- printing mail --------------');
 		var self = this;
 		var def = Q.defer();
-		var printed_threads = [];
-		var messages_to_print = [];
-		dbHandler.getMessagesFromMailbox(box, function(mail_obj){
-			// console.log('retrieved message: '+mail_obj.uid);
-			if(printed_threads.indexOf(mail_obj.thread_id)===-1){
-				messages_to_print.push(mail_obj);
-				printed_threads.push(mail_obj.thread_id);
+		this.limitx = 0;
+		this.printed_threads = [];
+		this.offset = 0;
+		this.messages_to_print = [];
+		this.printed_threads = [];
+		this.box = box;
+		this.addMessages(box, 0)
+			.then(function(){
+				if(box === 'INBOX'){
+					return function(){
+						var def = Q.defer();
+						dbHandler.getDueMail()
+							.then(function(due_mail){
+								due_mail.forEach(function(mail_obj){
+									if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
+										self.messages_to_print.push(mail_obj);
+										self.printed_threads.push(mail_obj.thread_id);
+									}
+								});
+								def.resolve();
+							});
+						return def.promise;
+					};
+				}
+				else{
+					return true;
+				}
+			})
+			.then(function(){
+				console.log('messages to print...');
+				// console.log(messages_to_print);
+				return self.reflectMessages();
+			})
+			.fin(function(){
+				def.resolve();
+			})
+			.catch(function(err){
+				console.log(err);
+			});
+			return def.promise;
+	},
+	printMore:function(){
+		var self = this;
+		this.offset += 150;
+		this.addMessages(this.offset)
+			.then(function(){
+				self.reflectMessages();
+			});
+	},
+	addMessages:function(offset){
+		var self = this;
+		var def = Q.defer();
+		var d1 = new Date().getTime();
+		dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
+			if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
+				self.messages_to_print.push(mail_obj);
+				self.printed_threads.push(mail_obj.thread_id);
 			}
 			return true;
-		})
-		.then(function(){
-			if(box === 'INBOX'){
-				return function(){
-					var def = Q.defer();
-					dbHandler.getDueMail()
-						.then(function(due_mail){
-							due_mail.forEach(function(mail_obj){
-								if(printed_threads.indexOf(mail_obj.thread_id)===-1){
-									messages_to_print.push(mail_obj);
-									printed_threads.push(mail_obj.thread_id);
-								}
-							});
-							def.resolve();
-						});
-					return def.promise;
-				};
-			}
-			else{
-				return true;
-			}
-		})
-		.then(function(){
-			console.log('messages to print...');
-			console.log(messages_to_print);
-			return self.reflectMessages(messages_to_print);
-		})
-		.fin(function(){
-			def.resolve();
-		})
-		.catch(function(err){
-			console.log(err);
-		});
+		}, 150, offset)
+			.then(function(){
+				var d2 = new Date().getTime();
+				console.log('fetch time: '+(d2-d1));
+				def.resolve();
+			});
 		return def.promise;
 	},
-	reflectMessages: function(messages){
+	reflectMessages: function(){
 		var self = this;
+		var messages = this.messages_to_print;
 		var groups = (function(){
 			var out = [];
 			var groups_added = {};
@@ -190,7 +242,10 @@ MessageList.prototype = {
 			});
 			return out;
 		}());
+		var d1 = new Date().getTime();
 		this.render(groups);
+		var d2 = new Date().getTime();
+		console.log('render time: '+(d2-d1));
 	},
 	getSelection: function(){
 		return {mailbox: this.selected_email.data('mailbox'), uid: this.selected_email.data('uid')};
