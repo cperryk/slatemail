@@ -59,3 +59,12 @@
     margin-bottom: 100px;
     cursor: pointer;
     background-color: #e3e3e3; }
+  .message_list .favicon {
+    width: 16px;
+    height: 16px;
+    float: left;
+    margin-right: 2px;
+    margin-bottom: 2px; }
+    .message_list .favicon img {
+      width: 16px;
+      height: 16px; }

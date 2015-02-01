@@ -450,7 +450,6 @@ getUIDsFromMailbox:function(box_name, onKey, onEnd){
 getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
 	console.log('get messages from '+box_name+', limit is '+limit+', offset is '+offset);
 	var def = Q.defer();
-	var t1 = new Date().getTime();
 	if(!db.objectStoreNames.contains("box_"+box_name)){
 		console.log(box_name+' does not exist');
 		def.resolve();
@@ -482,8 +481,6 @@ getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
 				}
 			}
 			else {
-				var t2 = new Date().getTime();
-				console.log(t2-t1);
 				def.resolve();
 			}
 		};

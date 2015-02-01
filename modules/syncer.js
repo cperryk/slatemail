@@ -37,8 +37,8 @@ function syncAll(){
 					}
 				}
 			}());
-			// return boxes;
-			return ['List/Slate Ed'];
+			return boxes;
+			// return ['List/Slate Ed'];
 			// return ['INBOX'];
 		})
 		.then(function syncBoxes(box_names){

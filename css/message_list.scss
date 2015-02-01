@@ -76,4 +76,15 @@ $selection_yellow: #feffaf;
 		cursor:pointer;
 		background-color:#e3e3e3;
 	}
+	.favicon{
+		width:16px;
+		height:16px;
+		float:left;
+		margin-right:2px;
+		margin-bottom:2px;
+		img{
+			width:16px;
+			height:16px;
+		}
+	}
 }
