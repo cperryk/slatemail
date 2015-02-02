@@ -72,6 +72,9 @@ var Message = React.createClass({
 			}
 			else{
 				favicon("http://" + from_domain, function(err, favicon_url) {
+					if(!favicon_url){
+						favicon_url = 'graphics/mail.png';
+					}
 					favicons[from_domain] = favicon_url;
 					cb(favicon_url);
 				});
@@ -143,6 +146,7 @@ function MessageList(container, conf){
 }
 MessageList.prototype = {
 	render:function(groups){
+		console.log(groups);
 		React.render(<BoxViewer data={groups}/>, this.container[0]);
 	},
 	printBox:function(box){

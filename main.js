@@ -13,8 +13,6 @@ var gui = require('nw.gui');
 var Overlay = require('./modules/overlay.js');
 var ProjectSelector = require('./modules/ProjectSelector');
 var indexedDB = window.indexedDB;
-var test = require('./modules/testModule.js');
-// var test = require('./modules/test.js');
 
 var tree_view;
 var message_list;
