@@ -462,6 +462,7 @@ getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
 		index.openCursor(null, 'prev').onsuccess = function(event) {
 			var cursor = event.target.result;
 			if (cursor) {
+				console.log(count);
 				if(offset !== undefined && offset > 0 && count === 0){
 					cursor.advance(offset);
 					offset = undefined;
@@ -476,11 +477,13 @@ getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
 						cursor.continue();					
 					}
 					else{
+						console.log('resolving because limit is undefined or count is less than limit, offset is '+offset+' and limit is '+limit);
 						def.resolve();
 					}
 				}
 			}
 			else {
+				console.log('resolving because no cursor anymore');
 				def.resolve();
 			}
 		};
@@ -857,7 +860,10 @@ threadMessage:function(message_id){
 	
 	dbHandler.getMailFromLocalBox(mailbox, uid)
 		.then(function(mail_obj){
-			console.log(mail_obj);
+			if(mail_obj.thread_id){
+				console.log(mailbox+':'+uid+' already has thread; skipping');
+				return true;
+			}
 			return findMatchingThread(mail_obj)
 				.then(function(thread_id){
 					console.log('matched thread_id for '+message_id+'? '+thread_id);

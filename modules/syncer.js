@@ -37,9 +37,10 @@ function syncAll(){
 					}
 				}
 			}());
-			return boxes;
+			// return boxes;
 			// return ['List/Slate Ed'];
-			// return ['INBOX'];
+			// return ['List/Slate Tech'];
+			return ['INBOX'];
 		})
 		.then(function syncBoxes(box_names){
 			// build and run a promise chain that syncs the boxes sequentially
