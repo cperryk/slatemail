@@ -89,8 +89,14 @@ var imapHandler = {
 		var def = Q.defer();
 		imapHandler.connectAndOpen(box_name)
 			.then(function(box){
+				// if you try to fetch on a box that doesn't have any messages,
+				// the IMAP connection may break.
+				console.log(box);
+				if(box.messages.total === 0){
+					def.resolve([]);
+					return;
+				}
 				var message_identifiers = [];
-				//var range_string = Math.max(1,(box.messages.total-Math.min(box.messages.total,50)))+':'+box.messages.total;
 				var range_string = 1+':'+box.messages.total;
 				var f = imap.seq.fetch(range_string)
 					.on('message', function(msg, seqno) {
@@ -250,12 +256,36 @@ var imapHandler = {
 		return def.promise;
 	},
 	getBoxes:function(){
+		// returns an object reflecting the organizational structure of the user's mailboxes
 		var def = Q.defer();
 		imapHandler.connect()
 			.then(function(){
 				imap.getBoxes(function(err, boxes){
 					def.resolve(boxes);
 				});
+			});
+		return def.promise;
+	},
+	getBoxPaths:function(){
+		/* Resolves with an array of mailboxes in the user's mailbox.
+			Includes only boxes that contain email.
+		*/
+		var def = Q.defer();
+		imapHandler.getBoxes()
+			.then(function(boxes){ // get the mailbox names for syncing
+				var box_names = [];
+				for(var i in boxes){
+					if(i!=='Calendar' && i!=='Contacts' && i!=='Tasks'){ // skip these boxes as they do not have email
+						addBoxes(i, boxes[i]);
+					}
+				}
+				def.resolve(box_names);
+				function addBoxes(box_path, box_properties){
+					box_names.push(box_path);
+					for(var i in box_properties.children){
+						addBoxes(box_path+'/'+i, box_properties.children[i]);
+					}
+				}
 			});
 		return def.promise;
 	},

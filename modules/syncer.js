@@ -19,76 +19,83 @@ function syncAll(){
 		syncing = true;
 	}
 	var def = Q.defer();
-	imapHandler.getBoxes() // returns an object reflecting the organizational structure of the user's mailboxes
-		.then(function(boxes){ // get the mailbox names for syncing
-			boxes = (function toArray(){
-				// returns an array of all box paths
-				var box_names = [];
-				for(var i in boxes){
-					if(i!=='Calendar' && i!=='Contacts' && i!=='Tasks'){ // skip these boxes as they do not have email
-						addBoxes(i, boxes[i]);
-					}
-				}
-				return box_names;
-				function addBoxes(box_path, box_properties){
-					box_names.push(box_path);
-					for(var i in box_properties.children){
-						addBoxes(box_path+'/'+i, box_properties.children[i]);
-					}
-				}
-			}());
-			// return boxes;
-			// return ['List/Slate Ed'];
-			// return ['List/Slate Tech'];
-			return ['INBOX'];
+	var box_paths = box_paths;
+	var remote_descriptors;
+	imapHandler.getBoxPaths()
+		.then(function(paths){
+			// console.log(paths);
+			// paths.splice(paths.indexOf('Deleted Items'), 1);
+			// paths.splice(paths.indexOf('Drafts'), 1);
+			// paths.splice(paths.indexOf('List'), 1);
+			box_paths = paths;
+			box_paths = ['INBOX','2014/08/quiz: yogurt'];
 		})
-		.then(function syncBoxes(box_names){
-			// build and run a promise chain that syncs the boxes sequentially
-			var chain = Q.fcall(function(){
-				return [];
-			});
-			box_names.forEach(function(box_name){
-				if(box_name.substring(0, 'Deleted Items'.length) === 'Deleted Items' || box_name === "Drafts"){
-					return;
-				}
-				var link = function(arr){
+		.then(function(){
+			console.log(box_paths);
+			var def = Q.defer();
+			var promises = [];
+			var box_results = {};
+			box_paths.forEach(function(box_path){
+				promises.push(function(){
 					var def = Q.defer();
-					syncBox(box_name)
+					getRemoteDescriptors(box_path)
 						.then(function(results){
-							setTimeout(function(){
-								arr.push(results);
-								def.resolve(arr);
-							},0);
+							box_results[box_path] = results;
+							def.resolve();
 						});
 					return def.promise;
-				};
-				chain = chain.then(link);
-			});
-			return chain;
-		})
-		.then(function listNewMessages(sync_results){
-			// compile a single list of message IDs for all new messages that have just been downloaded
-			console.log('getting list of new messages');
-			var all_new_messages = [];
-			sync_results.forEach(function(box){
-				box.new_messages.forEach(function(message){
-					if(message.downloaded){
-						all_new_messages.push(box.mailbox+':'+message.uid);
-					}
 				});
 			});
-			console.log(all_new_messages);
-			return all_new_messages;
+			promises.reduce(Q.when, Q())
+				.then(function(){
+					remote_descriptors = box_results;
+					def.resolve();
+				})
+				.catch(function(err){
+					console.log(err);
+				});
+			return def.promise;
 		})
-		.then(function(new_messages){
-			console.log(new_messages);
-			// thread all these new messages
-			return dbHandler.threadMessages(new_messages);
+		.then(function(){
+			var promises = [];
+			box_paths.forEach(function(box_path){
+				promises.push(function(){
+					return syncBox(box_path, remote_descriptors[box_path]);
+				});
+			});
+			return promises.reduce(Q.when, Q());
 		})
-		.fin(function(){
-			console.log('*** SYNCING COMPLETE ***');
-			syncing = false;
-			def.resolve();
+		.then(function(){
+			console.log('downloading and deletion complete; threading now');
+			var def = Q.defer();
+			var promises = [];
+			for(var box in remote_descriptors){
+				for(var uid in remote_descriptors[box]){
+					addIt(box, uid);
+				}
+			}
+			console.log('plength: '+promises.length);
+			console.log(promises);
+			promises.reduce(Q.when, Q())
+				.then(function(){
+					def.resolve();
+				});
+			return def.promise;
+			function addIt(box, uid){
+				promises.push(function(){
+					return dbHandler.threadMessage(box, uid);
+				});
+			}
+			function thread(box, uid){
+				return dbHandler.threadMessage(box, uid);
+			}
+		})
+		.then(function(){
+			var def = Q.defer();
+			return saveAllDescriptors(remote_descriptors);
+		})
+		.then(function(){
+			console.log('SYNCING COMPLETE');
 		})
 		.catch(function(err){
 			console.log(err);
@@ -96,47 +103,52 @@ function syncAll(){
 	return def.promise;
 }
 
-function syncBox(mailbox_name){
+function saveAllDescriptors(descriptors){
+	console.log('HELLO< WTF');
+	var def = Q.defer();
+	var promises = [];
+	for(var i in descriptors){
+		promises.push(saveDescriptors(i, descriptors[i]));
+	}
+	Q.all(promises)
+		.then(function(){
+			def.resolve();
+		});
+	return def.promise;
+}
+
+function syncBox(mailbox_name, remote_descriptors){
 	/* Syncs a box. Returns a list of UIDs of new messages saved */
 	console.log('---------------- syncing: '+mailbox_name+' ----------------');
+	console.log(remote_descriptors);
 	var def = Q.defer();
+	var local_descriptors;
+	var downloaded_messages;
 	dbHandler.ensureLocalBox(mailbox_name)
 		.then(function(){
-			return Q.all([
-				getLocalDescriptors(mailbox_name),
-				getRemoteDescriptors(mailbox_name)
-			]);
+			return getLocalDescriptors(mailbox_name);
 		})
-		.then(function(descriptors){
-			var local_descriptors = descriptors[0];
-			var remote_descriptors = descriptors[1];
+		.then(function(local_descriptors){
 			return Q.all([
 				deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors), // delete any local messages that are no longer in remote messages
 				downloadNewMail(mailbox_name, local_descriptors, remote_descriptors), // download any remote messages that are not in local messages
 				updateFlags(mailbox_name, local_descriptors, remote_descriptors) // update local flags with remote flags where they differ
-			])
-			.then(function(outputs){
-				// an IMAP box might report a UID before the message is available to download.
-				// If any messages failed to download, remove it from the new local descriptors record before it's saved.
-				// Otherwise, the client will think it has an email that it doesn't and never download it.
-				console.log(outputs);
-				var downloaded_messages = outputs[1];
-				var saved_messages = [];
-				downloaded_messages.forEach(function(msg){
-					if(msg.downloaded === false){
-						delete remote_descriptors[msg.uid];
-					}
-				});
-				return Q.all([
-					saveDescriptors(mailbox_name, remote_descriptors), // save the remote descriptors to local descriptor file
-					imapHandler.expunge(mailbox_name)
-				])
-				.then(function(){
-					return downloaded_messages;
-				});
-			});
+			]);
 		})
-		.then(function(downloaded_messages){
+		.then(function(outputs){
+			// an IMAP box might report a UID before the message is available to download.
+			// If any messages failed to download, remove it from the new local descriptors record before it's saved.
+			// Otherwise, the client will think it has an email that it doesn't and never download it.
+			console.log(outputs);
+			downloaded_messages = outputs[1];
+			downloaded_messages.forEach(function(msg){
+				if(msg.downloaded === false){
+					delete remote_descriptors[msg.uid];
+				}
+			});
+			return imapHandler.expunge(mailbox_name);
+		})
+		.then(function(){
 			console.log('syncing of '+mailbox_name+' complete');
 			def.resolve({
 				mailbox: mailbox_name,
@@ -186,6 +198,7 @@ function updateFlags(mailbox_name, local_descriptors, remote_descriptors){
 }
 
 function getRemoteDescriptors(mailbox_name){
+	console.log('get remote descriptor: '+mailbox_name);
 	var def = Q.defer();
 	imapHandler.getUIDsFlags(mailbox_name)
 		.then(function(msgs){
@@ -193,7 +206,7 @@ function getRemoteDescriptors(mailbox_name){
 			msgs.forEach(function(msg){
 				out[msg.uid] = msg.flags;
 			});
-			def.resolve(out);
+			def.resolve(out);			
 		})
 		.catch(function(err){
 			console.log(err);
@@ -245,13 +258,13 @@ function deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors
 
 function saveDescriptors(mailbox_name, msgs){
 	console.log('saving descriptors');
-	var deferred = Q.defer();
+	var def = Q.defer();
 	var file_name = './descriptors/'+mailbox_name+'_uids.json';
 	var data = JSON.stringify(msgs);
 	fs.outputFile(file_name, data, function(err){
-		deferred.resolve();
+		def.resolve();
 	});
-	return deferred.promise;
+	return def.promise;
 }
 
 
@@ -294,7 +307,7 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 		});
 	});
 
-	promises.reduce(Q.when, Q(true))
+	promises.reduce(Q.when, Q())
 		.then(function(){
 			def.resolve(results);
 		});

@@ -25,9 +25,6 @@ $(function init(){
 	// return;
 	dbHandler.connect()
 		.then(function(){
-			return syncer.syncAll();
-		})
-		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){
 					console.log('selected');
@@ -48,6 +45,9 @@ $(function init(){
 		})
 		.then(function(){
 			return message_list.printBox(BOX);
+		})
+		.then(function(){
+			return syncer.syncAll();
 		})
 		// .then(function(){
 		// 	regularSync();

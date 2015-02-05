@@ -270,7 +270,7 @@ findMailWithProperty:function(property, value){
 	return def.promise;
 },
 getMailFromBoxWithProperty:function(mailbox_name, property, value){
-	console.log('getting mail from box '+mailbox_name + ' with property '+property+' set to '+value);
+	// console.log('getting mail from box '+mailbox_name + ' with property '+property+' set to '+value);
 	var def = Q.defer();
 	var store_name = 'box_'+mailbox_name;
 	if(!db.objectStoreNames.contains(store_name)){
@@ -297,7 +297,7 @@ getMailFromBoxWithProperty:function(mailbox_name, property, value){
 	return def.promise;
 },
 getMailFromLocalBox:function(mailbox_name, uid){
-	console.log('getting mail from local box '+mailbox_name+':'+uid);
+	// console.log('getting mail from local box '+mailbox_name+':'+uid);
 	uid = parseInt(uid, 10);
 	var def = Q.defer();
 	var tx = db.transaction("box_"+mailbox_name,"readonly");
@@ -831,7 +831,7 @@ schedule:function(date, box_name, uid){
 },
 threadMessages:function(message_ids){
 	/* 
-		For all messages in array $message_ids:
+		For all messages in array $message_ids (e.g. "INBOX:100"):
 			1. Thread the message, updating the local message object with a thread_id.
 			2. Update the thread with the message id.
 			3. Store the thread ID with the message's PID.
@@ -851,22 +851,18 @@ threadMessages:function(message_ids){
 	});
 	return def.promise;
 },
-threadMessage:function(message_id){
-	console.log('---- threading message: '+message_id+' ----');
+threadMessage:function(mailbox, uid){
+	console.log('---- threading message: '+mailbox+':'+uid+' ----');
 	var def = Q.defer();
-	var split = message_id.split(':');
-	var mailbox = split[0];
-	var uid = split[1];
-	
 	dbHandler.getMailFromLocalBox(mailbox, uid)
-		.then(function(mail_obj){
+		.then(function(mail_obj){ 
 			if(mail_obj.thread_id){
 				console.log(mailbox+':'+uid+' already has thread; skipping');
-				return true;
+				return;
 			}
 			return findMatchingThread(mail_obj)
 				.then(function(thread_id){
-					console.log('matched thread_id for '+message_id+'? '+thread_id);
+					console.log('matched thread_id for '+mailbox+':'+uid+'? '+thread_id);
 					return thread_id === false ? saveToNewThread(mailbox, uid) : saveToExistingThread(mailbox, uid, thread_id);
 				})
 				.then(function(thread_id){
@@ -880,10 +876,12 @@ threadMessage:function(message_id){
 				});
 		})
 		.fin(function(){
-			console.log('*** threading of message '+message_id+' complete');
+			console.log('*** threading of message '+mailbox+':'+uid+' complete');
 			def.resolve();
+		})
+		.catch(function(err){
+			console.log(err);
 		});
-
 	return def.promise;
 
 	function findMatchingThread(mail_obj){
@@ -986,7 +984,7 @@ threadMessage:function(message_id){
 		function traceMessage(message_ids){
 			// Searches all mailboxes for a message with a message_id inside $message_ids.
 			// Stops when it finds one. Callbacks with the thread id of that message.
-			console.log('tracing message');
+			// console.log('tracing message');
 			var def = Q.defer();
 			dbHandler.findFirstMailWithProperty('message_id', message_ids, 0, function(mail_obj){
 				if(mail_obj === false){
@@ -1072,8 +1070,6 @@ threadMessage:function(message_id){
 		/* Adds $thread_id to a message's local mail object */
 		var def = Q.defer();
 		console.log('updating mail object: '+box_name+':'+uid);
-		console.log(box_name);
-		console.log(uid);
 		dbHandler.getMailFromLocalBox(box_name, uid)
 			.then(function(mail_obj){
 				mail_obj.thread_id = thread_id;
