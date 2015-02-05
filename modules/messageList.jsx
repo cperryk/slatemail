@@ -208,6 +208,9 @@ MessageList.prototype = {
 		dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
 			console.log(mail_obj);
 			console.log(self.printed_threads);
+			if(mail_obj.thread_id === undefined){
+				return;
+			}
 			if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
 				self.messages_to_print.push(mail_obj);
 				self.printed_threads.push(mail_obj.thread_id);

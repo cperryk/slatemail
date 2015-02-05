@@ -24,11 +24,35 @@ function syncAll(){
 	imapHandler.getBoxPaths()
 		.then(function(paths){
 			// console.log(paths);
-			// paths.splice(paths.indexOf('Deleted Items'), 1);
-			// paths.splice(paths.indexOf('Drafts'), 1);
-			// paths.splice(paths.indexOf('List'), 1);
+			paths.splice(paths.indexOf('Deleted Items'), 1);
+			paths.splice(paths.indexOf('Drafts'), 1);
+			paths.splice(paths.indexOf('List'), 1);
 			box_paths = paths;
-			box_paths = ['INBOX','2014/08/quiz: yogurt'];
+			// box_paths = ['INBOX','2014/08/quiz: yogurt'];
+		})
+		.then(function(){
+			console.log('deleting boxes');
+			var def = Q.defer();
+			dbHandler.getAllMailboxes()
+				.then(function(local_boxes){
+					var boxes_to_delete = [];
+					local_boxes.forEach(function(local_box){
+						if(box_paths.indexOf(local_box)===-1){
+							boxes_to_delete.push(local_box);
+						}
+					});
+					if(boxes_to_delete.length > 0){
+						dbHandler.deleteBoxes(boxes_to_delete)
+							.then(function(){
+								def.resolve();
+							});
+					}
+					else{
+						console.log('no local boxes to delete');
+						def.resolve();
+					}
+				});
+			return def.promise;
 		})
 		.then(function(){
 			console.log(box_paths);
@@ -94,7 +118,8 @@ function syncAll(){
 			var def = Q.defer();
 			return saveAllDescriptors(remote_descriptors);
 		})
-		.then(function(){
+		.fin(function(){
+			syncing = false;
 			console.log('SYNCING COMPLETE');
 		})
 		.catch(function(err){
@@ -102,6 +127,7 @@ function syncAll(){
 		});
 	return def.promise;
 }
+
 
 function saveAllDescriptors(descriptors){
 	console.log('HELLO< WTF');

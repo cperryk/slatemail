@@ -1239,6 +1239,25 @@ getMailboxTree:function(){
 		});
 		return tree;
 	}
+},
+deleteBoxes:function(box_pathes){
+	var def = Q.defer();
+	var version =  parseInt(db.version);
+	db.close();
+	var open_request = indexedDB.open('slatemail',version+1);
+	console.log('open request made');
+	open_request.onupgradeneeded = function(event){
+		console.log('go');
+		var db = event.target.result;
+		box_pathes.forEach(function(box_path){
+			console.log('DELETE '+box_path);
+			db.deleteObjectStore('box_'+box_path);
+		});
+	};
+	open_request.onsuccess = function(){
+		def.resolve();
+	};
+	return def.promise;
 }
 
 };
