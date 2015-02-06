@@ -83,6 +83,8 @@ body{
 		position:relative;
 		padding-bottom:0.5em;
 		border-bottom:1px solid #e3e3e3;
+		-moz-user-select:-moz-none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;
+		cursor: pointer;
 		.from{
 			font-family: 'Overlock';
 			font-size:1.5em;
@@ -118,6 +120,9 @@ body{
 				padding:0.2em 0.5em;
 				&:last-child{
 					border-right:0;
+				}
+				&:hover{
+					background-color:#e3e3e3;
 				}
 			}
 		}

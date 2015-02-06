@@ -552,10 +552,18 @@
 			}
 		},
 		{
-			"file": "modules/test.js",
+			"file": "mailComposer/mailComposer.js",
 			"settings":
 			{
-				"buffer_size": 689,
+				"buffer_size": 3328,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "http://www.amazon.com/Cool-MGS5-Snake-Eyepatch-Cosplay/dp/B00JP7O9L0/ref=sr_1_2?ie=UTF8&qid=1423257090&sr=8-2&keywords=eyepatch\n\nDid you lose that eye killin' zombies or killin' people? Do I really want to mess with you? Whether you have one eye or two, don this mysterious eyepatch and scoundrels will think twice before stealing your food and taking your people. Intimidate your fellow survivors into joining your camp, and soon you'll have amassed a small army of the living to take on the dead.",
+			"settings":
+			{
+				"buffer_size": 498,
 				"line_ending": "Unix"
 			}
 		},
@@ -563,7 +571,7 @@
 			"file": "modules/imapHandler.js",
 			"settings":
 			{
-				"buffer_size": 9227,
+				"buffer_size": 9512,
 				"line_ending": "Unix"
 			}
 		}
@@ -1117,6 +1125,7 @@
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
@@ -1181,7 +1190,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor3/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/cached.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/overlay.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/MobileSafariClickEventPlugin.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/cached.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
@@ -1262,6 +1270,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"smtp",
+			"send",
 			"regularsync",
 			"onupgradeneeded",
 			"regularsync",
@@ -1387,9 +1397,7 @@
 			"new mailcomposer",
 			"dbhandler",
 			"project",
-			"dbhandler",
-			"emailselected",
-			"emailselect"
+			"dbhandler"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1407,7 +1415,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -1437,7 +1445,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1464,10 +1472,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 642.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1496,8 +1504,8 @@
 						"selection":
 						[
 							[
-								6505,
-								6505
+								21900,
+								21903
 							]
 						],
 						"settings":
@@ -1507,10 +1515,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3383.0,
+						"translation.y": 14009.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1526,8 +1534,8 @@
 						"selection":
 						[
 							[
-								5753,
-								5753
+								5179,
+								5183
 							]
 						],
 						"settings":
@@ -1537,27 +1545,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3416.0,
+						"translation.y": 2894.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "modules/test.js",
+					"file": "mailComposer/mailComposer.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 689,
+						"buffer_size": 3328,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								662,
-								662
+								891,
+								891
 							]
 						],
 						"settings":
@@ -1570,24 +1578,52 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "modules/imapHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9227,
+						"buffer_size": 498,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1092,
-								1092
+								498,
+								498
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "modules/imapHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9512,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1597,10 +1633,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 253.0,
+						"translation.y": 1.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1660,6 +1696,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"mailcompser",
+				"mailComposer/mailComposer.js"
+			],
 			[
 				"main",
 				"main.js"
@@ -1782,10 +1822,6 @@
 			],
 			[
 				"mailcomps",
-				"mailComposer/mailComposer.js"
-			],
-			[
-				"mailcompser",
 				"mailComposer/mailComposer.js"
 			],
 			[

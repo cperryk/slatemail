@@ -71,7 +71,13 @@ body {
 .message_view .headers {
   position: relative;
   padding-bottom: 0.5em;
-  border-bottom: 1px solid #e3e3e3; }
+  border-bottom: 1px solid #e3e3e3;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer; }
   .message_view .headers .from {
     font-family: 'Overlock';
     font-size: 1.5em;
@@ -102,6 +108,8 @@ body {
       padding: 0.2em 0.5em; }
       .message_view .headers .action_btns .action_btn:last-child {
         border-right: 0; }
+      .message_view .headers .action_btns .action_btn:hover {
+        background-color: #e3e3e3; }
 .message_view .date {
   position: absolute;
   top: 0px;

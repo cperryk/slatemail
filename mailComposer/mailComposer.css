@@ -28,6 +28,8 @@ body {
   width: 96%;
   min-height: 100px;
   height: 100%; }
+  #message_body p {
+    line-height: 150%; }
 
 #cke_1_top {
   position: fixed;
