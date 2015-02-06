@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"remote",
+				"remote_boxes"
+			],
+			[
+				"save",
+				"saveDescriptors"
+			],
+			[
+				"rmeote",
+				"remote_descriptors"
+			],
+			[
 				"sync",
 				"syncAll"
 			],
@@ -210,10 +222,6 @@
 			[
 				"saveMail",
 				"saveMailObjectToNewThread"
-			],
-			[
-				"remote",
-				"remote_descriptors"
 			],
 			[
 				"to",
@@ -506,14 +514,6 @@
 			[
 				"parse",
 				"parseHeader"
-			],
-			[
-				"max",
-				"maximum_uid"
-			],
-			[
-				"connec",
-				"connectAndOpenInbox"
 			]
 		]
 	},
@@ -523,15 +523,15 @@
 			"file": "modules/syncer.js",
 			"settings":
 			{
-				"buffer_size": 9924,
+				"buffer_size": 10380,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/kirkcp/Desktop/test2.js",
+			"file": "modules/treeView.js",
 			"settings":
 			{
-				"buffer_size": 152,
+				"buffer_size": 2091,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,23 +539,7 @@
 			"file": "modules/dbHandler.js",
 			"settings":
 			{
-				"buffer_size": 35556,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/messageList.js",
-			"settings":
-			{
-				"buffer_size": 8667,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/imapHandler.js",
-			"settings":
-			{
-				"buffer_size": 8350,
+				"buffer_size": 36032,
 				"line_ending": "Unix"
 			}
 		},
@@ -563,50 +547,23 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 6256,
+				"buffer_size": 6255,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "main.html",
+			"file": "modules/test.js",
 			"settings":
 			{
-				"buffer_size": 1000,
+				"buffer_size": 689,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "css/styles.scss",
+			"file": "modules/imapHandler.js",
 			"settings":
 			{
-				"buffer_size": 4654,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "css/message_list.scss",
-			"settings":
-			{
-				"buffer_size": 1477,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/messageList.jsx",
-			"settings":
-			{
-				"buffer_size": 8224,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "var $ = require('jquery');\nvar favicon = require('favicon');\nvar favicon_urls = {};\nvar mustache = require('mustache');\n\nvar onSelectEmail;\nvar onDeselectEmail;\n\nvar last_printed_date;\nvar message_groups = {};\n\nmailboxView = {\n	clear:function(){\n		$('#inbox').empty();\n		message_groups = {};\n	},\n	addEventListeners:function(){\n		var self = this;\n		$(function(){\n			$('#inbox').on('click','.inbox_email',function(){\n				mailboxView.select($(this));\n				$(this).removeClass('unseen');\n			});\n		});\n	},\n	reflectMessages:function(mail_objs){\n		mail_objs.sort(function(a,b){\n			return a.date > b.date ? -1 : 1;\n		});\n		var mids = {};\n		mail_objs.forEach(function(mail_obj, index){\n			var mid = mail_obj.mailbox + ':' + mail_obj.uid;\n			if($('#'+mid).length === 0){\n				mailboxView.printMessage(mail_obj);				\n			}\n		});\n	},\n	printMessage:function(mail_object){\n		// console.log('print message: '+mail_object.short_subject);\n		var mid = mail_object.mailbox+':'+mail_object.uid;\n		// console.log('MID: '+mid);\n		// if($('#'+mid).length > 0){\n		// 	return;\n		// }\n		var template = '<div id=\"'+mid+'\" data-mailbox=\"'+mail_object.mailbox+'\" data-uid=\"'+mail_object.uid+'\" class=\"inbox_email\">'+\n			'<div class=\"from\">'+mailboxView.parseName(mail_object.from)+'</div>'+\n			'<div class=\"subject\">'+mail_object.headers.subject+'</div>'+\n			'<div class=\"text_preview\">'+mailboxView.getPreviewText(mail_object)+'</div>'+\n		'</div>';\n		var message_wrapper = $(template);\n		if(mail_object.flags.indexOf('\\\\Seen')===-1){\n			message_wrapper.addClass('unseen');\n		}\n		mailboxView.insertFavicon(message_wrapper, mail_object);\n		(function(){\n			var group_id = (function(){\n				if(mail_object.mailbox.substring(0, 'SlateMail/scheduled/'.length) === 'SlateMail/scheduled/'){\n					return 'Past Due';\n				}\n				return mailboxView.getDateString(mail_object.date);\n			}());\n			var element = message_groups[group_id];\n			if(!element){\n				element = $('<div class=\"date_group\">');\n				if(group_id==='Past Due'){\n					element.prependTo('#inbox');\n				}\n				else{\n					element.appendTo('#inbox');\n				}\n				mailboxView.printDateSeparator(group_id, element);\n				message_groups[group_id] = element;\n			}\n			message_wrapper.appendTo(element);\n		}());\n	},\n	insertDateSeparator:function(mail_object){\n		var date_string = mailboxView.getDateString(mail_object.date);\n		if(date_string && date_string !== last_printed_date){\n			mailboxView.printDateSeparator(date_string);\n			last_printed_date = date_string;\n		}\n	},\n	getDateString:function(date){\n		var today = new Date();\n		var days_diff = Math.abs(Math.round(daysDiff(today, date)));\n		var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];\n		if(days_diff===0){\n			return 'today';\n		}\n		if(days_diff===1){\n			return 'yestersday';\n		}\n		if(days_diff>=2 && days_diff < 7){\n			return days_of_week[date.getDay()];\n		}\n		if(days_diff >= 7 && days_diff < 14){\n			return 'One week ago';\n		}\n		if(days_diff >= 14){\n			return 'Two weeks ago +';\n		}\n		if(days_diff >= 30){\n			return 'One month ago';\n		}\n		if(days_diff >= 60){\n			return 'Two months ago';\n		}\n		if(days_diff >= 90){\n			return 'Three months ago';\n		}\n		if(days_diff >= 360){\n			return 'One year ago';\n		}\n		return false;\n\n		function daysDiff(first, second) {\n			return (second-first)/(1000*60*60*24);\n		}\n		return false;\n	},\n	printDateSeparator:function(s, target){\n		$('<div>')\n			.addClass('date_separator')\n			.html('<span class=\"triangle\">&#9660;</span> <span class=\"date_string\">'+s+'</span>')\n			.appendTo(target)\n			.click(function(){\n				if($(this).hasClass('collapsed')){\n					$(this)\n						.find('.triangle')\n							.html('&#9660;')\n							.end()\n						.closest('.message_group')\n							.removeClass('collapsed');\n				}\n				else{\n					$(this)\n						.find('.triangle')\n							.html('&#9654;')\n							.end()\n						.closest('.message_group')\n							.addClass('collapsed');\n				}\n			});\n	},\n	insertFavicon:function(message_wrapper, mail_object){\n		var url = getFaviconUrl(mail_object, function(url){\n			if(!url){\n				return;\n			}\n			var img = $('<img>')\n				.attr('src', url)\n				.addClass('icon')\n				.load(function(){\n					$(this).prependTo(message_wrapper);\n				});\n\n		});\n		function getFaviconUrl(mail_object, callback){\n			if(!mail_object.from){\n				callback(false);\n				return;\n			}\n			var from = mail_object.from[0].address;\n			var domain = from.replace(/.*@/, \"\");\n			if(favicon_urls[domain]){\n				callback(favicon_urls[domain]);\n			}\n			else{\n				favicon(\"http://\"+domain, function(err, favicon_url) {\n					callback(favicon_url);\n				});\n			}\n		}\n	},\n	select:function(inbox_email){\n		if(console){console.log('--------- selection -----------');}\n		var self = this;\n		if(mailboxView.selected_email && (mailboxView.selected_email.data('uid') === inbox_email.data('uid'))){\n			inbox_email.removeClass('selected');\n			delete mailboxView.selected_email;\n			if(onDeselectEmail){\n				onDeselectEmail(inbox_email.data('uid'));\n			}\n		}\n		else{\n			if(mailboxView.selected_email){\n				mailboxView.selected_email.removeClass('selected');\n			}\n			inbox_email.addClass('selected');\n			if(onSelectEmail){\n				onSelectEmail(inbox_email.data('mailbox'), inbox_email.data('uid'));\n			}\n			mailboxView.selected_email = inbox_email;\n		}\n	},\n	getPreviewText:function(mail_object){\n		/**\n		 * Return the preview text of a mail object. The preview text is a slice of\n		 * the email's message text.\n		 * @param {object} mail_object\n		 */\n		if(mail_object.text){\n			return mail_object.text.replace(/[\\n\\r]/g, ' ').slice(0,125);\n		}\n		if(mail_object.html){\n			return mail_object.html.replace(/<[^>]*>/g, '').replace(/[\\n\\r]/g, '').trim().slice(0,125);\n		}\n		return false;\n	},\n	parseName:function(from_header){\n		if(!from_header || from_header.length === 0){\n			return '';\n		}\n		if(from_header[0].name){\n			s = from_header[0].name;\n			s = s.replace(/\"/g,\"\");\n			s = s.split(',');\n			if(s.length>1){\n				s.reverse();\n				return s.join(' ');\n			}\n			else{\n				return s;\n			}\n		}\n		else{\n			return from_header[0].address;\n		}\n		return '';\n	},\n	onSelect:function(fnc){\n		onSelectEmail = fnc;\n	},\n	onDeselect:function(fnc){\n		onDeselectEmail = fnc;\n	}\n};\nmailboxView.addEventListeners();\n\nmodule.exports = mailboxView;\n",
-			"file": "modules/mailboxView.js",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 6218,
+				"buffer_size": 9227,
 				"line_ending": "Unix"
 			}
 		}
@@ -1155,49 +1112,57 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/kirkcp/Documents/node_play/slatemail"
+		"/Users/kirkcp/Documents/node_play/slatemail",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules"
 	],
 	"file_history":
 	[
-		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/test/readme.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/node_modules/through/readme.markdown",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/threader.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/var/indexOf.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/node_modules/inherits/inherits_browser.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
+		"/Users/kirkcp/Desktop/test2.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/main.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView2.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/2366111/Ben Boggs.vcf",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticDragEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticClipboardEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_older.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/littleSyncer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/q_test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ClientReactRootIndex.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/Gruntfile.js",
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldPrepHtml.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldPrepHtml",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectSelector.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/projectSelector.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/projectSelector.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/node_modules/minimist/test/parse_modified.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/testModule.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.scss",
@@ -1264,7 +1229,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
 		"/Users/kirkcp/Desktop/Fresca/combined.txt",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js",
@@ -1280,13 +1244,7 @@
 		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/apple/apple.cson",
 		"/Users/kirkcp/Documents/interactives/src/features/lib/js/intSharing/intSharing.scss",
 		"/Users/kirkcp/Documents/interactives/src/features/lib/js/intSharing/intSharing.js",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/graves.scss",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/gruntfile.js",
-		"/Users/kirkcp/Documents/interactives/server/graves/getFlowers.php",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/assets/graveyards/got/got.cson",
-		"/Users/kirkcp/Documents/interactives/server/graves/submitFlower.php",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/graves.js",
-		"/Applications/MAMP/htdocs/editorial-interactives/14-04/got_graveyard/htdocs/got_graveyard.js"
+		"/Users/kirkcp/Documents/interactives/src/features/2014/09/graves/src/graves.scss"
 	],
 	"find":
 	{
@@ -1304,6 +1262,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"regularsync",
+			"onupgradeneeded",
+			"regularsync",
+			"savedescriptros",
+			"storepid",
+			"updatemailobject",
+			"getting mail",
+			"getting mail from",
+			"thread",
+			"threadmessage",
+			"remote_des",
+			"savedescriptors",
+			"reduce",
+			"getremotedescriptors",
 			"threading",
 			"threadmessages",
 			"getmessagesfrommailbox",
@@ -1417,21 +1389,7 @@
 			"project",
 			"dbhandler",
 			"emailselected",
-			"emailselect",
-			"onselect",
-			"dbhandler",
-			"DB.",
-			"db.",
-			"DB.",
-			"db.",
-			"DB.",
-			"db.",
-			"self.indexeddb",
-			"indexedDB",
-			"indexeddb",
-			"dbhandler",
-			"self",
-			"self."
+			"emailselect"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1449,7 +1407,7 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1458,119 +1416,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9924,
+						"buffer_size": 10380,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1264,
-								1264
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"history_list_is_closing": true,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 158.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/Users/kirkcp/Desktop/test2.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 152,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								152,
-								152
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "modules/dbHandler.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 35556,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										13283,
-										13283
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								26134,
-								26134
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"history_list_is_closing": true,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 17215.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "modules/messageList.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8667,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6048,
-								6052
+								471,
+								471
 							]
 						],
 						"settings":
@@ -1578,97 +1432,6 @@
 							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3632.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "modules/imapHandler.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8350,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1791,
-								1791
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6256,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1456,
-								1456
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 306.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "main.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1000,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								825,
-								839
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1678,110 +1441,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "css/styles.scss",
+					"buffer": 1,
+					"file": "modules/treeView.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4654,
+						"buffer_size": 2091,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								168,
-								168
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/SCSS/SCSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1528.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "css/message_list.scss",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1477,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1169,
-								1169
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/SCSS/SCSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 859.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "modules/messageList.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8224,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5229,
-								5229
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JSX/JSX.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3337.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "modules/mailboxView.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6218,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4200,
-								4200
+								1799,
+								1801
 							]
 						],
 						"settings":
@@ -1791,10 +1464,143 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2492.0,
+						"translation.y": 642.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "modules/dbHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 36032,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										24989,
+										25005
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								6505,
+								6505
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3383.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6255,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5753,
+								5753
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3416.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "modules/test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 689,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								662,
+								662
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "modules/imapHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9227,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1092,
+								1092
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 253.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
 					"type": "text"
 				}
 			]
@@ -1859,16 +1665,28 @@
 				"main.js"
 			],
 			[
-				"dbhandl",
-				"modules/dbHandler.js"
+				"treeview",
+				"modules/treeView.js"
+			],
+			[
+				"treevei",
+				"modules/treeView.js"
 			],
 			[
 				"messagelist",
 				"modules/messageList.jsx"
 			],
 			[
+				"dbha",
+				"modules/dbHandler.js"
+			],
+			[
 				"syncer",
 				"modules/syncer.js"
+			],
+			[
+				"dbhandl",
+				"modules/dbHandler.js"
 			],
 			[
 				"mailboxview",
@@ -1971,20 +1789,12 @@
 				"mailComposer/mailComposer.js"
 			],
 			[
-				"treeview",
-				"modules/treeView.js"
-			],
-			[
 				"testmod",
 				"modules/testModule.js"
 			],
 			[
 				"pack",
 				"package.json"
-			],
-			[
-				"dbha",
-				"modules/dbHandler.js"
 			],
 			[
 				"packag",
@@ -2215,16 +2025,16 @@
 		"selected_items":
 		[
 			[
+				"simple",
+				"~/Documents/interactives/src/features/2014/05/simple_quiz/simple_quiz.sublime-project"
+			],
+			[
 				"outrage",
 				"~/Documents/interactives/src/features/2014/09/outrage/outrage.sublime-project"
 			],
 			[
 				"rei",
 				"/Applications/MAMP/htdocs/editorial-interactives/14-03/reincarnation/reincarnation.sublime-workspace"
-			],
-			[
-				"simple",
-				"~/Documents/interactives/src/features/2014/05/simple_quiz/simple_quiz.sublime-project"
 			],
 			[
 				"rein",

@@ -52,9 +52,6 @@ $(function init(){
 		.fin(function(){
 			regularSync();
 		})
-		.then(function(){
-			regularSync();
-		})
 		.catch(function(err){
 			console.log(err);
 		});

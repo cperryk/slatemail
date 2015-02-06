@@ -371,6 +371,17 @@ var imapHandler = {
 				console.log(err);
 			});
 		return def.promise;
+	},
+	addMessageToBox:function(box_name, message_data){
+		var def = Q.defer();
+		imapHandler.connectAndOpen(box_name)
+			.then(function(box){
+				imap.append(message_data, function(){
+					console.log('message appended to box');
+					def.resolve();
+				});
+			});
+		return def.promise;
 	}
 };
 
