@@ -297,7 +297,7 @@ getMailFromBoxWithProperty:function(mailbox_name, property, value){
 	return def.promise;
 },
 getMailFromLocalBox:function(mailbox_name, uid){
-	// console.log('getting mail from local box '+mailbox_name+':'+uid);
+	console.log('getting mail from local box '+mailbox_name+':'+uid);
 	uid = parseInt(uid, 10);
 	var def = Q.defer();
 	var tx = db.transaction("box_"+mailbox_name,"readonly");

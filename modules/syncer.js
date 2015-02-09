@@ -28,7 +28,7 @@ function syncAll(){
 			paths.splice(paths.indexOf('Drafts'), 1);
 			paths.splice(paths.indexOf('List'), 1);
 			box_paths = paths;
-			// box_paths = ['INBOX','2014/08/quiz: yogurt'];
+			box_paths = ['INBOX'];
 		})
 		.then(function(){
 			console.log('deleting boxes');
@@ -82,37 +82,41 @@ function syncAll(){
 		})
 		.then(function(){
 			var promises = [];
+			var results = [];
+			var def = Q.defer();
 			box_paths.forEach(function(box_path){
 				promises.push(function(){
-					return syncBox(box_path, remote_descriptors[box_path]);
+					return syncBox(box_path, remote_descriptors[box_path])
+						.then(function(box_results){
+							results.push(box_results);
+						});
 				});
 			});
-			return promises.reduce(Q.when, Q());
+			promises.reduce(Q.when, Q())
+				.then(function(){
+					def.resolve(results);
+				});
+			return def.promise;
 		})
-		.then(function(){
+		.then(function(results){
 			console.log('downloading and deletion complete; threading now');
 			var def = Q.defer();
 			var promises = [];
-			for(var box in remote_descriptors){
-				for(var uid in remote_descriptors[box]){
-					addIt(box, uid);
-				}
-			}
-			console.log('plength: '+promises.length);
-			console.log(promises);
+			results.forEach(function(mailbox){
+				mailbox.new_messages.forEach(function(msg){
+					if(msg.downloaded === true){
+						promises.push(function(){
+							dbHandler.threadMessage(mailbox.mailbox, msg.uid);
+						});
+					}
+				});			
+			});
+			console.log(promises.length);
 			promises.reduce(Q.when, Q())
 				.then(function(){
 					def.resolve();
 				});
 			return def.promise;
-			function addIt(box, uid){
-				promises.push(function(){
-					return dbHandler.threadMessage(box, uid);
-				});
-			}
-			function thread(box, uid){
-				return dbHandler.threadMessage(box, uid);
-			}
 		})
 		.then(function(){
 			var def = Q.defer();
@@ -130,7 +134,6 @@ function syncAll(){
 
 
 function saveAllDescriptors(descriptors){
-	console.log('HELLO< WTF');
 	var def = Q.defer();
 	var promises = [];
 	for(var i in descriptors){
@@ -328,6 +331,11 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 						}
 					else{
 						console.log('skipping download of '+mailbox_name+':'+uid+'; already in local database');
+						results.push({
+							uid: uid,
+							downloaded: true,
+							flags: mail_obj.flags
+						});
 					}
 				});
 		});
@@ -337,14 +345,6 @@ function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 		.then(function(){
 			def.resolve(results);
 		});
-	// Q.all(promises)
-		// .then(function(results){
-		// 	console.log('all messages downloaded');
-		// 	def.resolve(results);
-		// })
-		// .catch(function(err){
-		// 	console.log(err);
-		// });
 	return def.promise;
 }
 
@@ -369,7 +369,11 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index, l){
 					.then(function(){
 						resolved_messages++;
 						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
-						def.resolve({uid:uid, downloaded:true, flags:mail_obj.flags});
+						def.resolve({
+							uid:uid,
+							downloaded:true,
+							flags:mail_obj.flags
+						});
 					})
 					.catch(function(err){
 						console.log("ERROR IN DOWNLOAD MESSAGE");
