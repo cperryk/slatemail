@@ -21,7 +21,13 @@ function syncAll(){
 	var def = Q.defer();
 	var box_paths = box_paths;
 	var remote_descriptors;
-	imapHandler.getBoxPaths()
+	imapHandler.connect()
+		.then(function(){
+			imapHandler.setError(syncAll);
+		})
+		.then(function(){
+			return imapHandler.getBoxPaths();
+		})
 		.then(function(paths){
 			// console.log(paths);
 			paths.splice(paths.indexOf('Deleted Items'), 1);
@@ -300,11 +306,6 @@ function saveDescriptors(mailbox_name, msgs){
 
 function downloadNewMail(mailbox_name, local_descriptors, remote_descriptors){
 	console.log('downloading new mail');
-
-	// imapHandler.setError(function(){
-	// 	console.log('error detected; responding');
-	// 	return downloadNewMail(mailbox_name, local_descriptors, remote_descriptors);
-	// });
 
 	resolved_messages = 0;
 	var def = Q.defer();
