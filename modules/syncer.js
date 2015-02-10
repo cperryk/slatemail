@@ -10,15 +10,34 @@ function Syncer(){
 }
 Syncer.prototype = {
 	start: function(){
+		var self = this;
+		this.runSync();
 		this.interval = setInterval(function(){
-				syncAll();
-			}, 5000);
+			self.runSync();
+		}, 5000);
 		return this;
 	},
-	end: function(){
+	stop: function(){
 		if(this.interval){
 			clearInterval(this.interval);
 		}
+		return this;
+	},
+	runSync: function(){
+		console.log('attempting sync run');
+		var self = this;
+		syncAll()
+			.then(function(results){
+				if(results !== false){
+					if(self.syncComplete){
+						console.log('running syncComplete');
+						self.syncComplete();
+					}
+				}
+			});
+	},
+	onSyncComplete:function(fnc){
+		this.syncComplete = fnc;
 		return this;
 	}
 };
@@ -30,14 +49,15 @@ function syncAll(){
 	Updates any local flags that do reflect the remote server.
 	Threads all new messages.
 	 */
+	var def = Q.defer();
 	if(syncing === true){
-		return;
+		def.resolve(false);
+		return def.promise;
 	}
 	else{
 		syncing = true;
 	}
 	console.log('syncing all boxes');
-	var def = Q.defer();
 	var box_paths = box_paths;
 	var remote_descriptors;
 	imapHandler.connect()
@@ -140,12 +160,12 @@ function syncAll(){
 			return def.promise;
 		})
 		.then(function(){
-			var def = Q.defer();
 			return saveAllDescriptors(remote_descriptors);
 		})
 		.fin(function(){
 			syncing = false;
 			console.log('SYNCING COMPLETE');
+			def.resolve(true);
 		})
 		.catch(function(err){
 			console.log(err);

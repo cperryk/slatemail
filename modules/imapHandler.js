@@ -91,7 +91,7 @@ var imapHandler = {
 			.then(function(box){
 				// if you try to fetch on a box that doesn't have any messages,
 				// the IMAP connection may break.
-				console.log(box);
+				// console.log(box);
 				if(box.messages.total === 0){
 					def.resolve([]);
 					return;
