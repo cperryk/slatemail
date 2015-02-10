@@ -4,12 +4,25 @@ var Q = require('Q');
 var fs = require('fs-extra');
 var syncing = false;
 
-function startSync(){
-	syncAll();
-	setInterval(function(){
-		syncAll();
-	}, 5000);
+
+function Syncer(){
+	return this;
 }
+Syncer.prototype = {
+	start: function(){
+		this.interval = setInterval(function(){
+				syncAll();
+			}, 5000);
+		return this;
+	},
+	end: function(){
+		if(this.interval){
+			clearInterval(this.interval);
+		}
+		return this;
+	}
+};
+
 function syncAll(){
 	/*
 	Syncs all local boxes with all remotes boxes.
@@ -120,7 +133,6 @@ function syncAll(){
 					}
 				});			
 			});
-			console.log(promises.length);
 			promises.reduce(Q.when, Q())
 				.then(function(){
 					def.resolve();
@@ -158,7 +170,6 @@ function saveAllDescriptors(descriptors){
 function syncBox(mailbox_name, remote_descriptors){
 	/* Syncs a box. Returns a list of UIDs of new messages saved */
 	console.log('---------------- syncing: '+mailbox_name+' ----------------');
-	console.log(remote_descriptors);
 	var def = Q.defer();
 	var local_descriptors;
 	var downloaded_messages;
@@ -177,7 +188,6 @@ function syncBox(mailbox_name, remote_descriptors){
 			// an IMAP box might report a UID before the message is available to download.
 			// If any messages failed to download, remove it from the new local descriptors record before it's saved.
 			// Otherwise, the client will think it has an email that it doesn't and never download it.
-			console.log(outputs);
 			downloaded_messages = outputs[1];
 			downloaded_messages.forEach(function(msg){
 				if(msg.downloaded === false){
@@ -200,7 +210,7 @@ function syncBox(mailbox_name, remote_descriptors){
 }
 
 function updateFlags(mailbox_name, local_descriptors, remote_descriptors){
-	console.log('updating flags');
+	console.log('updating flags for '+mailbox_name);
 	var def = Q.defer();
 	var to_update = [];
 	for(var uid in local_descriptors){
@@ -396,4 +406,4 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index, l){
 	return def.promise;
 }
 
-module.exports = {syncAll:syncAll, syncBox:syncBox, startSync:startSync};
+module.exports = Syncer;

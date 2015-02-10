@@ -4,7 +4,7 @@ var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
 var imapHandler = require('./modules/imapHandler.js');
-var syncer = require('./modules/syncer.js');
+var Syncer = require('./modules/syncer.js');
 // var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
@@ -204,7 +204,8 @@ function addSelectedEmailListeners(){
 
 function regularSync(){
 	console.log('**** REGULAR SYNC ******');
-	syncer.startSync();
+	var syncer = new Syncer();
+	syncer.start();
 	// syncer.syncAll()
 	// 	.then(function(){
 	// 		return message_list.printBox(BOX);
