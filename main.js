@@ -204,17 +204,18 @@ function addSelectedEmailListeners(){
 
 function regularSync(){
 	console.log('**** REGULAR SYNC ******');
-	syncer.syncAll()
-		.then(function(){
-			return message_list.printBox(BOX);
-		})
-		.fin(function(){
-			console.log('queing next');
-			setTimeout(regularSync,60000);
-		})
-		.catch(function(err){
-			console.log(err);
-		});
+	syncer.startSync();
+	// syncer.syncAll()
+	// 	.then(function(){
+	// 		return message_list.printBox(BOX);
+	// 	})
+	// 	.fin(function(){
+	// 		console.log('queing next');
+	// 		setTimeout(regularSync,60000);
+	// 	})
+	// 	.catch(function(err){
+	// 		console.log(err);
+	// 	});
 }
 
 function markRead(mail_objs){

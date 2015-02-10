@@ -4,6 +4,12 @@ var Q = require('Q');
 var fs = require('fs-extra');
 var syncing = false;
 
+function startSync(){
+	syncAll();
+	setInterval(function(){
+		syncAll();
+	}, 5000);
+}
 function syncAll(){
 	/*
 	Syncs all local boxes with all remotes boxes.
@@ -11,20 +17,17 @@ function syncAll(){
 	Updates any local flags that do reflect the remote server.
 	Threads all new messages.
 	 */
-	console.log('syncing all boxes');
 	if(syncing === true){
 		return;
 	}
 	else{
 		syncing = true;
 	}
+	console.log('syncing all boxes');
 	var def = Q.defer();
 	var box_paths = box_paths;
 	var remote_descriptors;
 	imapHandler.connect()
-		.then(function(){
-			imapHandler.setError(syncAll);
-		})
 		.then(function(){
 			return imapHandler.getBoxPaths();
 		})
@@ -34,7 +37,7 @@ function syncAll(){
 			paths.splice(paths.indexOf('Drafts'), 1);
 			paths.splice(paths.indexOf('List'), 1);
 			box_paths = paths;
-			box_paths = ['INBOX'];
+			// box_paths = ['INBOX'];
 		})
 		.then(function(){
 			console.log('deleting boxes');
@@ -112,7 +115,7 @@ function syncAll(){
 				mailbox.new_messages.forEach(function(msg){
 					if(msg.downloaded === true){
 						promises.push(function(){
-							dbHandler.threadMessage(mailbox.mailbox, msg.uid);
+							return dbHandler.threadMessage(mailbox.mailbox, msg.uid);
 						});
 					}
 				});			
@@ -393,4 +396,4 @@ function downloadMessage(mailbox_name, uid, remote_descriptors, index, l){
 	return def.promise;
 }
 
-module.exports = {syncAll:syncAll, syncBox:syncBox};
+module.exports = {syncAll:syncAll, syncBox:syncBox, startSync:startSync};
