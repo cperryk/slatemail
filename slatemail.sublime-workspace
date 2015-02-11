@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"message",
+				"message_list"
+			],
+			[
+				"sync",
+				"syncComplete"
+			],
+			[
 				"remote",
 				"remote_boxes"
 			],
@@ -14,10 +22,6 @@
 			[
 				"rmeote",
 				"remote_descriptors"
-			],
-			[
-				"sync",
-				"syncAll"
 			],
 			[
 				"favic",
@@ -38,10 +42,6 @@
 			[
 				"e",
 				"ensureProjectStore"
-			],
-			[
-				"message",
-				"message_view"
 			],
 			[
 				"messae",
@@ -523,7 +523,7 @@
 			"file": "modules/imapHandler.js",
 			"settings":
 			{
-				"buffer_size": 9512,
+				"buffer_size": 9515,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "modules/syncer.js",
 			"settings":
 			{
-				"buffer_size": 10348,
+				"buffer_size": 10829,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,15 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 6309,
+				"buffer_size": 6240,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/messageList.jsx",
+			"settings":
+			{
+				"buffer_size": 8282,
 				"line_ending": "Unix"
 			}
 		}
@@ -547,9 +555,13 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 400.0,
+		"height": 296.0,
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"nog",
 				"Snippet: noHighlight"
@@ -641,10 +653,6 @@
 			[
 				"gru",
 				"Grunt"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"sublimelinter",
@@ -1094,7 +1102,14 @@
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/move.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/mapObject.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/Makefile",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getEventModifierState.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/49438/HorrorMovieMusicQuizCopy.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/mailboxView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
@@ -1111,7 +1126,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/DOMChildrenOperations.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticClipboardEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticTouchEvent.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/test/readme.js",
@@ -1133,7 +1147,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/2366111/Ben Boggs.vcf",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticDragEvent.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_older.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
@@ -1216,12 +1229,7 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
 		"/Users/kirkcp/Desktop/Fresca/combined.txt",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/2014_uids.json",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/getCSV.js",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/10/president_tracker/tracker.js",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-cssmin/node_modules/clean-css/node_modules/commander/index.js",
-		"/Users/kirkcp/Documents/interactives/src/features/2014/09/outrage/node_modules/grunt-contrib-htmlmin/node_modules/html-minifier/node_modules/clean-css/node_modules/commander/index.js"
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js"
 	],
 	"find":
 	{
@@ -1239,6 +1247,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"regularsync",
+			"message_list",
+			"box",
+			"message_list",
+			"syncer",
+			"console",
+			"console.log(",
 			"syncall",
 			"seterror",
 			"thread",
@@ -1359,13 +1374,6 @@
 			"messages",
 			"printmail()",
 			"BOX",
-			"printmail",
-			"selectbox",
-			"regularsync",
-			"getmailfromlocalbox",
-			"updatemailobject",
-			"mailselected",
-			"document",
 			"printmail"
 		],
 		"highlight": true,
@@ -1384,7 +1392,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1393,15 +1401,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9512,
+						"buffer_size": 9515,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								785,
-								785
+								8305,
+								8305
 							]
 						],
 						"settings":
@@ -1411,10 +1419,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 77.0,
+						"translation.y": 5834.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1423,15 +1431,24 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10348,
+						"buffer_size": 10829,
 						"regions":
 						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+								],
+								"scope": "bookmarks"
+							}
 						},
 						"selection":
 						[
 							[
-								546,
-								546
+								689,
+								689
 							]
 						],
 						"settings":
@@ -1441,10 +1458,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1453,15 +1470,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6309,
+						"buffer_size": 6240,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5818,
-								5818
+								1477,
+								1477
 							]
 						],
 						"settings":
@@ -1471,10 +1488,40 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3416.0,
+						"translation.y": 578.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "modules/messageList.jsx",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8282,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4086,
+								4089
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JSX/JSX.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2478.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1539,6 +1586,10 @@
 				"main.js"
 			],
 			[
+				"messagelist",
+				"modules/messageList.jsx"
+			],
+			[
 				"syncer",
 				"modules/syncer.js"
 			],
@@ -1565,10 +1616,6 @@
 			[
 				"treevei",
 				"modules/treeView.js"
-			],
-			[
-				"messagelist",
-				"modules/messageList.jsx"
 			],
 			[
 				"dbha",
