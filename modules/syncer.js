@@ -10,6 +10,7 @@ function Syncer(){
 }
 Syncer.prototype = {
 	start: function(){
+		// Starts the syncer, which syncs the mailboxes at regular intervals
 		var self = this;
 		this.runSync();
 		this.interval = setInterval(function(){
@@ -18,6 +19,7 @@ Syncer.prototype = {
 		return this;
 	},
 	stop: function(){
+		// Stops running the syncer
 		if(this.interval){
 			clearInterval(this.interval);
 		}
