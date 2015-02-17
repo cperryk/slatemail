@@ -209,7 +209,8 @@ body {
     list-style: none; }
   .tree_view .tree_view_item {
     cursor: pointer;
-    margin: 4px 0; }
+    margin: 4px 0;
+    white-space: nowrap; }
   .tree_view span:hover {
     text-decoration: underline; }
   .tree_view .selected > span {

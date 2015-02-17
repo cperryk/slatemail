@@ -250,6 +250,7 @@ body{
 	.tree_view_item{
 		cursor:pointer;
 		margin:4px 0;
+		white-space: nowrap;
 	}
 	span:hover{
 		text-decoration: underline;
