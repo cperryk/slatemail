@@ -4,6 +4,7 @@ var Q = require('Q');
 var fs = require('fs-extra');
 var syncing = false;
 
+var indexedDB = window.indexedDB;
 
 function Syncer(){
 	this.imaper = new Imaper();
@@ -291,15 +292,22 @@ Syncer.prototype.getRemoteDescriptors = function(mailbox_name){
 
 Syncer.prototype.getLocalDescriptors = function(mailbox_name){
 	var def = Q.defer();
-	var file_path = './descriptors/'+mailbox_name+'_uids.json';
-	fs.exists(file_path, function(exists){
-		if(!exists){
-			def.resolve({});
-		}
-		fs.readJson(file_path, 'utf8', function(err, msgs){
-			def.resolve(msgs);
-		});
-	});
+	var request = indexedDB.open('slatemail');
+	request.onsuccess = function(){
+		var db = request.result;
+		var tx = db.transaction("descriptors",'readonly');
+		var object_store = tx.objectStore('descriptors');
+		var get_request = object_store.get(mailbox_name);
+		get_request.onsuccess = function(){
+			var result = get_request.result;
+			if(result){
+				def.resolve(result.descriptors);
+			}
+			else{
+				def.resolve({});
+			}
+		};
+	};
 	return def.promise;
 };
 
@@ -330,14 +338,22 @@ Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors,
 Syncer.prototype.saveDescriptors = function(mailbox_name, msgs){
 	console.log('saving descriptors');
 	var def = Q.defer();
-	var file_name = './descriptors/'+mailbox_name+'_uids.json';
-	var data = JSON.stringify(msgs);
-	fs.outputFile(file_name, data, function(err){
-		def.resolve();
-	});
+	var request = indexedDB.open('slatemail');
+	request.onsuccess = function(){
+		var db = request.result;
+		var tx = db.transaction("descriptors",'readwrite');
+		var object_store = tx.objectStore('descriptors');
+		var insert_obj = {
+			mailbox: mailbox_name,
+			descriptors: msgs
+		};
+		var put_request = object_store.put(insert_obj);
+		put_request.onsuccess = function(){
+			def.resolve();
+		};
+	};
 	return def.promise;
 };
-
 
 
 Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, remote_descriptors){

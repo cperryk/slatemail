@@ -20,9 +20,14 @@ var overlay_is_open = false;
 var dbHandler = new dbHandler();
 
 $(function init(){
-	// dbHandler.deleteDB();
-	// return;
 	dbHandler.connect()
+		.then(function(){
+			return dbHandler.addObjectStore('descriptors', {keyPath:'mailbox'});
+		});
+		regularSync();
+	return;
+	dbHandler
+		.connect()
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){

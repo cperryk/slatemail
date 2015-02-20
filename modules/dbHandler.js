@@ -13,11 +13,26 @@ console.log('DBHANDLER IMPORTED');
 function dbHandler(){
 	this.imaper = new Imaper();
 }
-dbHandler.prototype = {
-	test:function(){
-		console.log('test');
-	},
 
+dbHandler.prototype = {
+addObjectStore: function(store_name, store_conf){
+	var def = Q.defer();
+	if(db.objectStoreNames.contains(store_name)){
+		def.resolve();
+		return def.promise;
+	}
+	var version =  parseInt(db.version);
+	db.close();
+	var open_request = indexedDB.open('slatemail',version+1);
+	open_request.onupgradeneeded = function(){
+		db = open_request.result;
+		db.createObjectStore(store_name, store_conf);
+	};
+	open_request.onsuccess = function(){
+		def.resolve();
+	};
+	return def.promise;
+},
 deleteDB:function(){
 	console.log('delete request');
 	console.trace();
@@ -65,6 +80,10 @@ connect:function(callback){
 
 		// Caches user actons, like marking an email as complete
 		db.createObjectStore('actions', {keyPath:'action_id', autoIncrement:true});
+
+		// Caches descriptors for each mailbox. Descriptors are a snapshot of the UIDs and flags
+		// in each mailbox according to the LAST sync.
+		db.createObjectStore('descriptors', {keyPath:'mailbox'});
 
 	};
 	request.onsuccess = function(){
@@ -388,6 +407,7 @@ removeLocalMessage:function(box_name, uid){
 	// remove the message's PID.
 	var self = this;
 	var def = Q.defer();
+	uid = parseInt(uid, 10);
 	console.log('deleting local '+box_name+':'+uid);
 	// var get_request = db.transaction("box_"+box_name,'readonly').objectStore("box_"+box_name).get(uid);
 	this.getMailFromLocalBox(box_name, uid)
