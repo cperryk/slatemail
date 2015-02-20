@@ -8,57 +8,57 @@ var React = require('react');
 var DbHandler = window.dbHandler;
 var favicons = {};
 // REACT CLASSES
-var BoxViewer = React.createClass({
+var BoxViewer = React.createClass({displayName: "BoxViewer",
 	getInitialState:function(){
 		return {data:[]};
 	},
 	render:function(){
 		return (
-			<div className="message_list">
-				<List data={this.props.data} />
-				<div className="btn_print_more">
-					Print more messages
-				</div>
-			</div>
+			React.createElement("div", {className: "message_list"}, 
+				React.createElement(List, {data: this.props.data}), 
+				React.createElement("div", {className: "btn_print_more"}, 
+					"Print more messages"
+				)
+			)
 		);
 	}
 });
 
-var List = React.createClass({
+var List = React.createClass({displayName: "List",
 	render: function(){
 		var message_group_nodes = this.props.data.map(function(group_data){
 			return (
-				<MessageGroup key={group_data.id} data={group_data}/>
+				React.createElement(MessageGroup, {key: group_data.id, data: group_data})
 			);
 		});
 		return (
-			<div className="message_groups">
-			{message_group_nodes}
-			</div>
+			React.createElement("div", {className: "message_groups"}, 
+			message_group_nodes
+			)
 		);
 	}
 });
 
-var MessageGroup = React.createClass({
+var MessageGroup = React.createClass({displayName: "MessageGroup",
 	render: function(){
 		var message_nodes = this.props.data.messages.map(function(message_data){
 			return (
-				<Message key={message_data.mailbox+':'+message_data.uid} data={message_data}/>
+				React.createElement(Message, {key: message_data.mailbox+':'+message_data.uid, data: message_data})
 			);
 		});
 		return (
-			<div className="message_group">
-				<div className="message_group_title">
-					<span className="triangle">&#9660;</span>&#160;
-					<span className="date_string">{this.props.data.id}</span>
-				</div>
-				{message_nodes}
-			</div>
+			React.createElement("div", {className: "message_group"}, 
+				React.createElement("div", {className: "message_group_title"}, 
+					React.createElement("span", {className: "triangle"}, "▼"), " ", 
+					React.createElement("span", {className: "date_string"}, this.props.data.id)
+				), 
+				message_nodes
+			)
 		);
 	}
 });
 
-var Message = React.createClass({
+var Message = React.createClass({displayName: "Message",
 	componentDidMount: function () {
 		var node = this.getDOMNode();
 		var from_domain = $(node).data('from').replace(/.*@/, "");
@@ -85,7 +85,7 @@ var Message = React.createClass({
 		var mail_obj = this.props.data;
 		if(!mail_obj.from){
 			return (
-				<div className="message"></div>
+				React.createElement("div", {className: "message"})
 			);
 		}
 		var from = parseName(mail_obj.from);
@@ -97,19 +97,18 @@ var Message = React.createClass({
 		var from_address = mail_obj.from ? mail_obj.from[0].address : false;
 		var id = mail_obj.mailbox+':'+mail_obj.uid;
 		return (
-			<div className={class_name} data-from={from_address} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid} id={id}>
-				<div className="favicon"></div>
-				<div className="from">{from}</div>
-				<div className="subject">{subject}</div>
-				<div className="text_preview">{preview_text}</div>
-			</div>
+			React.createElement("div", {className: class_name, "data-from": from_address, "data-mailbox": mail_obj.mailbox, "data-uid": mail_obj.uid, id: id}, 
+				React.createElement("div", {className: "favicon"}), 
+				React.createElement("div", {className: "from"}, from), 
+				React.createElement("div", {className: "subject"}, subject), 
+				React.createElement("div", {className: "text_preview"}, preview_text)
+			)
 		);
 	}
 });
 
 function MessageList(container, conf){
 	var self = this;
-	this.conf = conf;
 	this.dbHandler = new DbHandler();
 	this.container = container;
 	this.container
@@ -145,7 +144,7 @@ function MessageList(container, conf){
 MessageList.prototype = {
 	render:function(groups){
 		console.log(groups);
-		React.render(<BoxViewer data={groups}/>, this.container[0]);
+		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
 	printBox:function(box){
 		console.log('-------------- printing mail --------------');
@@ -299,9 +298,9 @@ MessageList.prototype = {
 		ele.removeClass('unread');
 		if(this.conf.onSelection){
 			this.conf.onSelection(ele.data('mailbox'), ele.data('uid'));
-			this.container.find('.selected').removeClass('selected');
+			container.find('.selected').removeClass('selected');
 			ele.addClass('selected');
-			this.selected_email = ele;
+			self.selected_email = ele;
 		}
 	}
 };
