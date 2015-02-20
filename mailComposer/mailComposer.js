@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var stubTransport = require('nodemailer-stub-transport');
 var fs = require('fs-extra');
-var imaper = require('../modules/imaper');
+var Imaper = require('../modules/imaper');
 var CKEDITOR;
 
 function MailComposer(container, conf){
@@ -16,7 +16,6 @@ function MailComposer(container, conf){
 		});
 	}
 	else{
-		console.log('has container');
 		this.container = container;
 		this.conf = JSON.parse(fs.readFileSync('mailComposer/cached.json', 'utf8'));
 		this.CKEDITOR = window.CKEDITOR;
@@ -28,9 +27,7 @@ function MailComposer(container, conf){
 }
 MailComposer.prototype = {
 	addEventListeners:function(){
-		console.log('adding event listeners');
 		var self = this;
-		console.log(this.container.find('.btn_send')[0]);
 		this.container.find('.btn_send')
 			.click(function(){
 				$(this).unbind('click');
@@ -40,7 +37,6 @@ MailComposer.prototype = {
 	preload:function(){
 		var self = this;
 		var conf = this.conf;
-		console.log('preloading');
 		console.log(conf);
 		if(conf.to){
 			this.container.find('.input_to')
@@ -103,8 +99,9 @@ MailComposer.prototype = {
 				console.log('Message sent: ' + info.response);
 			}
 			var transporter2 = nodemailer.createTransport(stubTransport());
-			transporter2.sendMail(mail_options, function(error, info){	
-		   	imaper.addMessageToBox('Sent Items', info.response.toString())
+			transporter2.sendMail(mail_options, function(error, info){
+				var imaper = new Imaper();
+				imaper.addMessageToBox('Sent Items', info.response.toString())
 		   		.then(function(){
 						window.close();
 		   		});

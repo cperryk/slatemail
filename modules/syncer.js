@@ -16,9 +16,9 @@ Syncer.prototype = {
 		// Starts the syncer, which syncs the mailboxes at regular intervals
 		var self = this;
 		this.runSync();
-		// this.interval = setInterval(function(){
-		// 	self.runSync();
-		// }, 5000);
+		this.interval = setInterval(function(){
+			self.runSync();
+		}, 5000);
 		return this;
 	},
 	stop: function(){
@@ -316,6 +316,7 @@ Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors,
 	var def = Q.defer();
 	var promises = [];
 	var messages_to_delete = [];
+	var self = this;
 	for(var uid in local_descriptors){
 		if(uid in remote_descriptors === false){
 			messages_to_delete.push(parseInt(uid,10));

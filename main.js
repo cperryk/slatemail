@@ -20,12 +20,12 @@ var overlay_is_open = false;
 var dbHandler = new dbHandler();
 
 $(function init(){
-	dbHandler.connect()
-		.then(function(){
-			return dbHandler.addObjectStore('descriptors', {keyPath:'mailbox'});
-		});
-		regularSync();
-	return;
+	// dbHandler.connect()
+	// 	.then(function(){
+	// 		return dbHandler.addObjectStore('descriptors', {keyPath:'mailbox'});
+	// 	});
+	// 	regularSync();
+	// return;
 	dbHandler
 		.connect()
 		.then(function(){
@@ -51,7 +51,7 @@ $(function init(){
 			return message_list.printBox(BOX);
 		})
 		.fin(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

@@ -16,6 +16,7 @@ function dbHandler(){
 
 dbHandler.prototype = {
 addObjectStore: function(store_name, store_conf){
+	// Convenience function for creating an object store manually
 	var def = Q.defer();
 	if(db.objectStoreNames.contains(store_name)){
 		def.resolve();
