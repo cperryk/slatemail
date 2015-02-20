@@ -6,12 +6,13 @@ var message_css = fs.readFileSync('css/message.css','utf8');
 var MailComposer = require('../mailComposer/mailComposer.js');
 var exec = require('child_process').exec;
 // var dbHandler = require('../modules/dbHandler.js');
-var dbHandler = window.dbHandler;
+var DbHandler = window.dbHandler;
 var mustache = require('mustache');
 var Q = require('Q');
 require('datejs');
 
 function MessageView(container){
+	this.dbHandler = new DbHandler();
 	this.container = container
 		.empty()
 		.addClass('message_view');
@@ -40,7 +41,7 @@ MessageView.prototype = {
 		this.clear();
 		var self = this;
 		var def = Q.defer();
-		dbHandler.getThreadMessages(thread_obj)
+		this.dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
 				console.log(thread_messages);
 				self.messages = thread_messages;

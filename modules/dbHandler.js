@@ -1,5 +1,4 @@
-var MailParser = require("mailparser").MailParser;
-var imapHandler = require("./modules/imapHandler.js");
+var Imaper = require("./modules/imaper.js");
 var fs = require('fs-extra');
 var Q = require('q');
 var db;
@@ -11,7 +10,10 @@ var indexedDB = window.indexedDB;
 
 console.log('DBHANDLER IMPORTED');
 
-var dbHandler = {
+function dbHandler(){
+	this.imaper = new Imaper();
+}
+dbHandler.prototype = {
 	test:function(){
 		console.log('test');
 	},
@@ -360,13 +362,14 @@ updateFlags:function(box_name, uid, flags, callback){
 eraseMessage:function(box_name, uid){
 	// Removes every trace of the message everywhere.
 	var def = Q.defer();
+	var self = this;
 	Q.all([
 		dbHandler.removeLocalMessage(box_name, uid),
 		// dbHandler.removePid(), // TO-DO
-		imapHandler.markDeleted(box_name, uid)
+		self.imaper.markDeleted(box_name, uid)
 	])
 	.then(function(){
-		imapHandler.expunge(box_name);
+		self.imaper.expunge(box_name);
 		def.resolve();
 	});
 	return def.promise;
@@ -614,13 +617,14 @@ saveAttachments:function(box_name, mail_object){
 markSeen:function(box_name,uid){
 	var def = Q.defer();
 	var store_name = 'box_'+box_name;
+	var self = this;
 	console.log(store_name);
 	var store = db.transaction(store_name,"readwrite").objectStore(store_name);
 	var get_request = store.get(uid);
 	get_request.onsuccess = function(){
 		var mail_obj = get_request.result;
 		if(mail_obj.flags.indexOf('\\Seen')===-1){
-			imapHandler.markSeen(box_name, uid)
+			self.imaper.markSeen(box_name, uid)
 				.then(function(){
 					mail_obj.flags.push('\\Seen');
 					var store2 = db.transaction(store_name,"readwrite").objectStore(store_name);
@@ -783,6 +787,7 @@ listProjects:function(){
 markComplete:function(box_name, uid){
 	console.log('marking complete: '+box_name+':'+uid);
 	var def = Q.defer();
+	var self = this;
 	dbHandler.getMailFromLocalBox(box_name, uid)
 		.then(function(mail_obj){
 			return dbHandler.getThread(mail_obj.thread_id);
@@ -798,7 +803,7 @@ markComplete:function(box_name, uid){
 		var uid = message_id.split(':')[1];
 		console.log('uid is '+uid);
 		if(box_name!=='complete'){
-			imapHandler.move(box_name, 'complete', uid)
+			self.imaper.move(box_name, 'complete', uid)
 				.then(function(){
 					dbHandler.removeLocalMessage(box_name, uid);
 				});
@@ -809,9 +814,10 @@ markComplete:function(box_name, uid){
 schedule:function(date, box_name, uid){
 	console.log(box_name);
 	var def = Q.defer();
+	var self = this;
 	var date_box = 'SlateMail/scheduled/'+[date.getFullYear(), date.getMonth()+1, date.getDate()].join('-');
 	console.log(date_box);
-	imapHandler.ensureBox(date_box)
+	self.imaper.ensureBox(date_box)
 		.then(function(){
 			return dbHandler.getMailFromLocalBox(box_name, uid);
 		})
@@ -822,7 +828,7 @@ schedule:function(date, box_name, uid){
 			thread.messages.forEach(function(message_id){
 				var box_name = message_id.split(':')[0];
 				var uid = message_id.split(':')[1];
-				imapHandler.move(box_name, date_box, uid);
+				self.imaper.move(box_name, date_box, uid);
 			});
 		})
 		.then(function(){
@@ -1265,6 +1271,3 @@ deleteBoxes:function(box_pathes){
 }
 
 };
-
-
-// module.exports = dbHandler;

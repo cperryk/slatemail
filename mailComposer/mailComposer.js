@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var stubTransport = require('nodemailer-stub-transport');
 var fs = require('fs-extra');
-var imapHandler = require('../modules/imapHandler');
+var imaper = require('../modules/imaper');
 var CKEDITOR;
 
 function MailComposer(container, conf){
@@ -104,7 +104,7 @@ MailComposer.prototype = {
 			}
 			var transporter2 = nodemailer.createTransport(stubTransport());
 			transporter2.sendMail(mail_options, function(error, info){	
-		   	imapHandler.addMessageToBox('Sent Items', info.response.toString())
+		   	imaper.addMessageToBox('Sent Items', info.response.toString())
 		   		.then(function(){
 						window.close();
 		   		});

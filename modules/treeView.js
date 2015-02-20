@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var dbHandler = window.dbHandler;
+var dbHandler = new window.dbHandler();
 var Q = require('Q');
 // var dbHandler = require('../modules/dbHandler.js');
 

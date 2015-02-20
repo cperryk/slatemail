@@ -3,7 +3,6 @@ var $ = require('jquery');
 var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
-var imapHandler = require('./modules/imapHandler.js');
 var Syncer = require('./modules/syncer.js');
 // var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
@@ -19,6 +18,7 @@ var message_list;
 var message_view;
 var BOX = 'INBOX';
 var overlay_is_open = false;
+var dbHandler = new dbHandler();
 
 $(function init(){
 	// dbHandler.deleteDB();
