@@ -531,15 +531,31 @@
 			"file": "modules/syncer.js",
 			"settings":
 			{
-				"buffer_size": 10829,
+				"buffer_size": 10930,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "main.js",
+			"file": "css/styles.scss",
 			"settings":
 			{
-				"buffer_size": 6240,
+				"buffer_size": 4883,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/dbHandler.js",
+			"settings":
+			{
+				"buffer_size": 36029,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "modules/userActions.js",
+			"settings":
+			{
+				"buffer_size": 47,
 				"line_ending": "Unix"
 			}
 		},
@@ -555,9 +571,29 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 296.0,
+		"height": 400.0,
 		"selected_items":
 		[
+			[
+				"term",
+				"Open in terminal"
+			],
+			[
+				"terminal",
+				"Open in terminal"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"find",
+				"Finder: Open here"
+			],
+			[
+				"gr",
+				"Grunt"
+			],
 			[
 				"install",
 				"Package Control: Install Package"
@@ -647,10 +683,6 @@
 				"Scope Hunter: Toggle Instant Scoper"
 			],
 			[
-				"instal",
-				"Package Control: Install Package"
-			],
-			[
 				"gru",
 				"Grunt"
 			],
@@ -681,10 +713,6 @@
 			[
 				"left",
 				"Snippet: insert left guillmet arrows"
-			],
-			[
-				"gr",
-				"Grunt"
 			],
 			[
 				"disabe",
@@ -1057,18 +1085,6 @@
 			[
 				"word",
 				"Word Wrap: Toggle"
-			],
-			[
-				"leafl",
-				"Snippet: makeLeafletMap"
-			],
-			[
-				"zoom",
-				"Snippet: insertLeaflet.ZoomFS"
-			],
-			[
-				"leaflet",
-				"Snippet: insertLeaflet.ZoomFS"
 			]
 		],
 		"width": 475.0
@@ -1097,18 +1113,31 @@
 	"expanded_folders":
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules"
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/skins/moono/editor.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3561/AmazonPrimeCalculator.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/effects/animatedSelector.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactRootIndex.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactOwner.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/az-Cyrl-AZ.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11560/Code of Business Conduct sign off sheet.doc",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Archive_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/userActions.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/move.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/mapObject.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/Makefile",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getEventModifierState.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/49438/HorrorMovieMusicQuizCopy.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/mailboxView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
@@ -1127,14 +1156,11 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticClipboardEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticTouchEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/test/readme.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/node_modules/through/readme.markdown",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/threader.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/imapHandler.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/var/indexOf.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/node_modules/inherits/inherits_browser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
@@ -1218,18 +1244,7 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/codeStyleSettings.xml",
 		"/Users/kirkcp/Documents/node_play/slatemail/.idea/.name",
-		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
-		"/Users/kirkcp/Desktop/sony/quiz/src/index.html",
-		"/Users/kirkcp/Documents/node_play/thoughts.txt",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/form-data/lib/form_data.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/root.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/graceful-fs/fs.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/986113/PricingResearchSummary.doc",
-		"/Users/kirkcp/Desktop/Fresca/combined.txt",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_old.js"
+		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js"
 	],
 	"find":
 	{
@@ -1247,6 +1262,27 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"downloadnewmail",
+			"stop",
+			"imapSession",
+			"syncall",
+			"imap.",
+			"imapHandler",
+			"imap",
+			"imaphandler",
+			"imap",
+			"imaphandler",
+			"imap",
+			"imap.",
+			"local_imap",
+			"this.imap",
+			"loc_imap",
+			"imaphandler",
+			"imapHandler",
+			"imaphandler",
+			"imapHandler",
+			"imaphandler",
+			"runsync",
 			"regularsync",
 			"message_list",
 			"box",
@@ -1353,28 +1389,7 @@
 			"thread_id",
 			"message_list",
 			"printmessages",
-			"markcomplete",
-			"block",
-			"selectbox(",
-			"dbhandler",
-			"module.",
-			"dbhandler",
-			"return def;",
-			"messages_wrapper",
-			".messages",
-			"messages",
-			"messages_wrapper",
-			"messages",
-			"message_view",
-			"this.messages_wrapper = $('<div>')\n			.addClass('messages')\n			.appendTo(this.container);",
-			"printbody",
-			"iframe",
-			"printbody",
-			"message_view",
-			"messages",
-			"printmail()",
-			"BOX",
-			"printmail"
+			"markcomplete"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1392,7 +1407,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1408,8 +1423,8 @@
 						"selection":
 						[
 							[
-								8305,
-								8305
+								2595,
+								2598
 							]
 						],
 						"settings":
@@ -1419,10 +1434,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5834.0,
+						"translation.y": 1777.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1431,7 +1446,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10829,
+						"buffer_size": 10930,
 						"regions":
 						{
 							"bookmarks":
@@ -1447,8 +1462,8 @@
 						"selection":
 						[
 							[
-								689,
-								689
+								510,
+								510
 							]
 						],
 						"settings":
@@ -1461,24 +1476,54 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "main.js",
+					"file": "css/styles.scss",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6240,
+						"buffer_size": 4883,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1477,
-								1477
+								4241,
+								4241
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/SCSS/SCSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4654.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "modules/dbHandler.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 36029,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3029,
+								3029
 							]
 						],
 						"settings":
@@ -1488,14 +1533,43 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 578.0,
+						"translation.y": 1626.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
+					"file": "modules/userActions.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 47,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								47,
+								47
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "modules/messageList.jsx",
 					"semi_transient": false,
 					"settings":
@@ -1507,8 +1581,8 @@
 						"selection":
 						[
 							[
-								4086,
-								4089
+								1482,
+								1482
 							]
 						],
 						"settings":
@@ -1518,10 +1592,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2478.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -1582,12 +1656,16 @@
 		"selected_items":
 		[
 			[
-				"main",
-				"main.js"
-			],
-			[
 				"messagelist",
 				"modules/messageList.jsx"
+			],
+			[
+				"styles",
+				"css/styles.scss"
+			],
+			[
+				"dbhand",
+				"modules/dbHandler.js"
 			],
 			[
 				"syncer",
@@ -1598,8 +1676,12 @@
 				"modules/imapHandler.js"
 			],
 			[
-				"styles",
-				"css/styles.scss"
+				"main",
+				"main.js"
+			],
+			[
+				"index.html",
+				"mailComposer/ckeditor/samples/index.html"
 			],
 			[
 				"messageview",
@@ -1652,10 +1734,6 @@
 			[
 				"credent",
 				"credentials/credentials2.json"
-			],
-			[
-				"dbhand",
-				"modules/dbHandler.js"
 			],
 			[
 				"treev",

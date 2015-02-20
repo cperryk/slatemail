@@ -60,6 +60,7 @@ connect:function(callback){
 		// Stores email addresses that the user has blocked. Messages from these addresses are
 		// downloaded but are never stored in a local box. An IMAP request is sent to delete them.
 		db.createObjectStore('blocked', {keyPath:'address'});
+
 	};
 	request.onsuccess = function(){
 		console.log('success');
