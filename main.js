@@ -51,7 +51,7 @@ $(function init(){
 			return message_list.printBox(BOX);
 		})
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -102,6 +102,9 @@ function emailSelected(mailbox, uid){
 				$('#project_viewer').hide();
 				$('body').removeClass('project_viewer_open');
 			}
+		})
+		.then(function(){
+			return dbHandler.markSeenSeries(my_thread_obj.messages);
 		})
 		.catch(function(error){
 			console.log(error);
@@ -204,9 +207,6 @@ function regularSync(){
 	var syncer = new Syncer()
 		.start()
 		.onSyncComplete(function(){
-			console.log('go on...');
-			console.log('box is '+BOX);
-			console.log(message_list.printBox);
 			message_list.printBox(BOX);
 		});
 }

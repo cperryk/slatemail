@@ -656,32 +656,6 @@ saveAttachments:function(box_name, mail_object){
 		});
 	}
 },
-markSeen:function(box_name,uid){
-	var def = Q.defer();
-	var store_name = 'box_'+box_name;
-	var self = this;
-	console.log(store_name);
-	var store = db.transaction(store_name,"readwrite").objectStore(store_name);
-	var get_request = store.get(uid);
-	get_request.onsuccess = function(){
-		var mail_obj = get_request.result;
-		if(mail_obj.flags.indexOf('\\Seen')===-1){
-			self.imaper.markSeen(box_name, uid)
-				.then(function(){
-					mail_obj.flags.push('\\Seen');
-					var store2 = db.transaction(store_name,"readwrite").objectStore(store_name);
-					var put_request = store2.put(mail_obj);
-					put_request.onsuccess = function(){
-						def.resolve();
-					};
-					put_request.onerror = function(err){
-						console.log(err);
-					};
-				});
-		}
-	};
-	return def.promise;
-},
 ensureProject:function(project_name){
 	//console.log('ensuring project: '+project_name);
 	var def = Q.defer();
@@ -1335,8 +1309,56 @@ deleteBoxes:function(box_pathes){
 	};
 	return def.promise;
 },
-markRead:function(box_name, uid){
-
-}
+markSeen:function(box_name, uid){
+	console.log('mark seen: '+box_name+':'+uid);
+	uid = parseInt(uid,10);
+	var def = Q.defer();
+	var store_name = 'box_'+box_name;
+	var self = this;
+	var store = db.transaction(store_name,"readwrite").objectStore(store_name);
+	var get_request = store.get(uid);
+	get_request.onsuccess = function(){
+		var mail_obj = get_request.result;
+		if(mail_obj.flags.indexOf('\\Seen')===-1){
+			self.imaper.markSeen(box_name, uid)
+				.then(function(){
+					mail_obj.flags.push('\\Seen');
+					var store2 = db.transaction(store_name,"readwrite").objectStore(store_name);
+					var put_request = store2.put(mail_obj);
+					put_request.onsuccess = function(){
+						def.resolve();
+					};
+					put_request.onerror = function(err){
+						console.log(err);
+					};
+				});
+		}
+	};
+	return def.promise;
+},
+markSeenSeries:function(mids){
+	console.log('mark seen series',mids);
+	var def = Q.defer();
+	var self = this;
+	if(typeof mids === 'string'){
+		this.markRead([mids]);
+	}
+	else{
+		var promises = [];
+		mids.forEach(function(mid){
+			var split = mid.split(':');
+			promises.push(self.markSeen(split[0], split[1]));
+		});
+		Q.all(promises)
+			.then(function(){
+				console.log('COMPLETE');
+				def.resolve();
+			})
+			.catch(function(err){
+				console.log(err);
+			});
+	}
+	return def.promise;
+},
 
 };

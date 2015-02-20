@@ -31,16 +31,11 @@ ProjectView.prototype = {
 		$('<h3>')
 			.html('Threads')
 			.appendTo(this.thread_container);
-		console.log('GETTING PROJECT THREADS');
 		dbHandler.getProject(this.project_name)
 			.then(function(project_obj){
-				console.log('PROJECT...');
-				console.log(project_obj);
 				return dbHandler.getThreads(project_obj.threads);
 			})
 			.then(function(thread_objs){
-				console.log('PROJECT THREADS...');
-				console.log(thread_objs);
 				var def = Q.defer();
 				thread_objs.forEach(function(thread_obj, index){
 					self.printThread(thread_obj)
