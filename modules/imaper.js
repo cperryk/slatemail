@@ -27,7 +27,7 @@ Imaper.prototype = {
 		this.imap.connect();
 		this.imap
 			.once('ready',function(){
-				console.log('ready');
+				// console.log('ready');
 				def.resolve();
 			})
 			.once('error',function(err){

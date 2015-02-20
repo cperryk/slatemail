@@ -5,12 +5,12 @@ var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
-var dbHandler = window.dbHandler;
+var dbHandler = new window.dbHandler();
 
-function ProjectView(project_name, initial_thread, conf){
+function ProjectView(project_name, initial_thread_id, conf){
 	console.log('NEW PROJECT VIEW: '+project_name);
 	this.project_name = project_name;
-	this.initial_thread = initial_thread;
+	this.initial_thread_id = initial_thread_id;
 	this.conf = conf;
 	this.container = $('#project_viewer')
 		.empty();
@@ -69,7 +69,6 @@ ProjectView.prototype = {
 			complete:'graphics/icon_45161/icon_45161.png',
 			defer:'graphics/icon_1303/icon_1303.png'
 		};
-		var initial_thread = this.initial_thread;
 		dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
 				var thread_action_status = (function(){
@@ -97,7 +96,7 @@ ProjectView.prototype = {
 				var thread_container = $(mustache.render(html))
 					.appendTo('.thread_container')
 					.click(threadClick);
-				if(thread_obj.thread_id === initial_thread.thread_id){
+				if(thread_obj.thread_id === self.initial_thread_id){
 					thread_container.addClass('selected');
 				}
 				thread_messages.forEach(function(mail_obj){

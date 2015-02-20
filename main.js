@@ -92,18 +92,8 @@ function emailSelected(mailbox, uid){
 		.then(function(){
 			var thread_obj = my_thread_obj;
 			if(thread_obj.project_id !== undefined){
-				$('body').addClass('project_viewer_open');
-				$('#project_viewer').show();
-				new ProjectView(thread_obj.project_id, thread_obj, {
-					onSelection: function(thread_id){
-						dbHandler.getThread(thread_id)
-							.then(function(thread_obj){
-								console.log('thread obj is ');
-								console.log(thread_obj);
-								message_view.printThread(thread_obj);
-							});
-					}
-				});
+				console.log(thread_obj);
+				openProjectView(thread_obj.project_id, thread_obj.thread_id);
 				// ^ careful where you put this last line. If it runs the same time
 				// as you get the thread messages for the selected message,
 				// things will break.
@@ -137,7 +127,13 @@ function addSelectedEmailListeners(){
 				var project_selector = new ProjectSelector(overlay.container, {
 					onSelection:function(project_id){
 						var selected_email = message_list.getSelection();
-						dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id);
+						dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
+							.then(function(){
+								dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid)
+									.then(function(mail_obj){
+										openProjectView(project_id, mail_obj.thread_id);
+									});
+							});
 						overlay.close();
 					}
 				});
@@ -213,6 +209,22 @@ function regularSync(){
 			console.log(message_list.printBox);
 			message_list.printBox(BOX);
 		});
+}
+
+function openProjectView(project_id, initial_thread_id){
+	console.log('initial_thread_id = '+initial_thread_id);
+	$('body').addClass('project_viewer_open');
+	$('#project_viewer').show();
+	new ProjectView(project_id, initial_thread_id, {
+	onSelection: function(thread_id){
+		dbHandler.getThread(thread_id)
+			.then(function(thread_obj){
+				console.log('thread obj is ');
+				console.log(thread_obj);
+				message_view.printThread(thread_obj);
+			});
+		}
+	});
 }
 
 function markRead(mail_objs){

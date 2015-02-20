@@ -724,6 +724,7 @@ ensureProject:function(project_name){
 },
 putInProject:function(box_name, uid, project_name){
 	//console.log('putting '+box_name+':'+uid+' in project: '+project_name);
+	var def = Q.defer();
 	var self = this;
 	this.ensureProjectStore()
 		.then(function(){
@@ -790,9 +791,13 @@ putInProject:function(box_name, uid, project_name){
 			};
 			return def.promise;
 		})
+		.fin(function(){
+			def.resolve();
+		})
 		.catch(function(error){
 			//console.log(error);
 		});
+	return def.promise;
 },
 getProject:function(project_name){
 	var def = Q.defer();
