@@ -1,0 +1,15 @@
+Avoiding a race condition
+
+Possible user actions:
+
+- Mark an email as complete (change its flags)
+- Delete an email
+- Move an email (aka delete and append to another mailbox)
+- Delete a mailbox
+- Add a mailbox
+
+The expectation is that these actions must be reflected in the local client IMMEDIATELY.
+
+However, you must avoid a race condition that would temporarily undo these actions mid-sync.
+
+Do these actions create race conditions with the syncing process?

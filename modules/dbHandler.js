@@ -61,6 +61,9 @@ connect:function(callback){
 		// downloaded but are never stored in a local box. An IMAP request is sent to delete them.
 		db.createObjectStore('blocked', {keyPath:'address'});
 
+		// Caches user actons, like marking an email as complete
+		db.createObjectStore('actions', {keyPath:'action_id', autoIncrement:true});
+
 	};
 	request.onsuccess = function(){
 		console.log('success');
