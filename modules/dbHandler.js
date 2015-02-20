@@ -148,15 +148,16 @@ saveMailToLocalBox:function(mailbox_name, mail_obj){
 	var def = Q.defer();
 	// console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
 	process.stdout.write('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
-	dbHandler.saveAttachments(mailbox_name, mail_obj)
+	var self = this;
+	this.saveAttachments(mailbox_name, mail_obj)
 		.then(function(mail_obj){
 			mail_obj.mailbox = mailbox_name;
 			var tx = db.transaction("box_"+mailbox_name,"readwrite");
 			var store = tx.objectStore("box_"+mailbox_name);
 			mail_obj.uid = parseInt(mail_obj.uid,10);
 			mail_obj.subject = mail_obj.subject ? mail_obj.subject : '';
-			mail_obj.short_subject = dbHandler.shortenSubject(mail_obj.subject);
-			mail_obj.pid = dbHandler.getPID(mail_obj);
+			mail_obj.short_subject = self.shortenSubject(mail_obj.subject);
+			mail_obj.pid = self.getPID(mail_obj);
 			var put_request = store.put(mail_obj);
 			put_request.onsuccess = function(){
 				// console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
@@ -223,12 +224,13 @@ findFirstMailWithProperty:function(property, values, current_index, callback){
 		callback = current_index;
 		current_index = 0;
 	}
+	var self = this;
 	var value = values[current_index];
-	dbHandler.findMailWithProperty(property, value)
+	this.findMailWithProperty(property, value)
 		.then(function(mail_object){
 			if(mail_object === false || !mail_object.thread_id){
 				if(current_index < values.length - 1){
-					dbHandler.findFirstMailWithProperty(property, values, current_index+1, callback);
+					self.findFirstMailWithProperty(property, values, current_index+1, callback);
 				}
 				else{
 					callback(false);
@@ -249,12 +251,13 @@ findMailWithProperty:function(property, value){
 	// indexed.
 	// console.log('searching for: '+property+', '+value);
 	var def = Q.defer();
-	var boxes = dbHandler.getLocalMailboxes();
+	var boxes = this.getLocalMailboxes();
+	var self = this;
 	iteration(boxes, 0, function(mail_obj){
 		def.resolve(mail_obj);
 	});
 	function iteration(boxes, index, cb){
-		dbHandler.getMailFromBoxWithProperty(boxes[index], property, value)
+		self.getMailFromBoxWithProperty(boxes[index], property, value)
 			.then(function(mail_obj){
 				// console.log(mail_obj);
 				if(!mail_obj){
@@ -364,7 +367,7 @@ eraseMessage:function(box_name, uid){
 	var def = Q.defer();
 	var self = this;
 	Q.all([
-		dbHandler.removeLocalMessage(box_name, uid),
+		self.removeLocalMessage(box_name, uid),
 		// dbHandler.removePid(), // TO-DO
 		self.imaper.markDeleted(box_name, uid)
 	])
@@ -383,6 +386,7 @@ removeLocalMessage:function(box_name, uid){
 	// Removes a message from the local store and removes it from its thread.
 	// This does NOT delete the message on the IMAP server. It also does NOT
 	// remove the message's PID.
+	var self = this;
 	var def = Q.defer();
 	// console.log('deleting local '+box_name+':'+uid);
 	var get_request = db.transaction("box_"+box_name,'readonly').objectStore("box_"+box_name).get(uid);
@@ -397,7 +401,7 @@ removeLocalMessage:function(box_name, uid){
 		var delete_request = db.transaction("box_"+box_name,'readwrite').objectStore("box_"+box_name).delete(uid);
 		delete_request.onsuccess = function(){
 			//console.log('deleted: '+box_name+':'+uid);
-			dbHandler.removeMessageFromThread(thread, box_name, uid)
+			self.removeMessageFromThread(thread, box_name, uid)
 				.then(function(){
 					def.resolve();
 				});
@@ -503,8 +507,9 @@ getThreads:function(thread_ids){
 	var def = Q.defer();
 	var thread_objs = [];
 	var promises = [];
+	var self = this;
 	thread_ids.forEach(function(thread_id){
-		promises.push(dbHandler.getThread(thread_id));
+		promises.push(self.getThread(thread_id));
 	});
 	Q.all(promises)
 		.then(function(out){
@@ -539,11 +544,12 @@ getThreadMessages:function(thread_obj){
 	var messages_to_get = message_umis.length;
 	var mail_objs = [];
 	var messages_checked = 0;
+	var self = this;
 	message_umis.forEach(function(umi, index){
 		umi = umi.split(':');
 		var mailbox_name = umi[0];
 		var uid = parseInt(umi[1],10);
-		dbHandler.getMailFromLocalBox(mailbox_name, uid)
+		self.getMailFromLocalBox(mailbox_name, uid)
 			.then(function(mail_obj){
 				if(mail_obj!==false){
 					mail_objs.push(mail_obj);
@@ -682,12 +688,13 @@ ensureProject:function(project_name){
 },
 putInProject:function(box_name, uid, project_name){
 	//console.log('putting '+box_name+':'+uid+' in project: '+project_name);
-	dbHandler.ensureProjectStore()
+	var self = this;
+	this.ensureProjectStore()
 		.then(function(){
-			return dbHandler.ensureProject(project_name);
+			return self.ensureProject(project_name);
 		})
 		.then(function(){
-			return dbHandler.getMailFromLocalBox(box_name, uid);
+			return self.getMailFromLocalBox(box_name, uid);
 		})
 		.then(function(message_obj){
 			//console.log('adding thread id to project object');
@@ -788,9 +795,9 @@ markComplete:function(box_name, uid){
 	console.log('marking complete: '+box_name+':'+uid);
 	var def = Q.defer();
 	var self = this;
-	dbHandler.getMailFromLocalBox(box_name, uid)
+	this.getMailFromLocalBox(box_name, uid)
 		.then(function(mail_obj){
-			return dbHandler.getThread(mail_obj.thread_id);
+			return self.getThread(mail_obj.thread_id);
 		})
 		.then(function(thread){
 			thread.messages.forEach(function(message_id){
@@ -805,7 +812,7 @@ markComplete:function(box_name, uid){
 		if(box_name!=='complete'){
 			self.imaper.move(box_name, 'complete', uid)
 				.then(function(){
-					dbHandler.removeLocalMessage(box_name, uid);
+					self.removeLocalMessage(box_name, uid);
 				});
 		}
 	}
@@ -819,10 +826,10 @@ schedule:function(date, box_name, uid){
 	console.log(date_box);
 	self.imaper.ensureBox(date_box)
 		.then(function(){
-			return dbHandler.getMailFromLocalBox(box_name, uid);
+			return self.getMailFromLocalBox(box_name, uid);
 		})
 		.then(function(mail_obj){
-			return dbHandler.getThread(mail_obj.thread_id);
+			return self.getThread(mail_obj.thread_id);
 		})
 		.then(function(thread){
 			thread.messages.forEach(function(message_id){
@@ -847,13 +854,14 @@ threadMessages:function(message_ids){
 			3. Store the thread ID with the message's PID.
 	*/
 	console.log('threading messages');
+	var self = this;
 	var def = Q.defer();
 	var chain = Q.fcall(function(){
 		return true;
 	});
 	message_ids.forEach(function(message_id){
 		chain = chain.then(function(){
-			return dbHandler.threadMessage(message_id);
+			return self.threadMessage(message_id);
 		});
 	});
 	chain.then(function(){
@@ -864,7 +872,8 @@ threadMessages:function(message_ids){
 threadMessage:function(mailbox, uid){
 	console.log('---- threading message: '+mailbox+':'+uid+' ----');
 	var def = Q.defer();
-	dbHandler.getMailFromLocalBox(mailbox, uid)
+	var self = this;
+	self.getMailFromLocalBox(mailbox, uid)
 		.then(function(mail_obj){ 
 			if(mail_obj.thread_id){
 				console.log(mailbox+':'+uid+' already has thread; skipping');
@@ -970,7 +979,7 @@ threadMessage:function(mailbox, uid){
 			// console.log('by subject');
 			// return function(){
 			var def = Q.defer();
-			dbHandler.findFirstMailWithProperty('short_subject', [mail_obj.short_subject], function(mail_obj){
+			self.findFirstMailWithProperty('short_subject', [mail_obj.short_subject], function(mail_obj){
 				def.resolve(mail_obj.thread_id || false);
 			});
 			return def.promise;
@@ -996,7 +1005,7 @@ threadMessage:function(mailbox, uid){
 			// Stops when it finds one. Callbacks with the thread id of that message.
 			// console.log('tracing message');
 			var def = Q.defer();
-			dbHandler.findFirstMailWithProperty('message_id', message_ids, 0, function(mail_obj){
+			self.findFirstMailWithProperty('message_id', message_ids, 0, function(mail_obj){
 				if(mail_obj === false){
 					def.resolve(false);
 				}
@@ -1080,7 +1089,7 @@ threadMessage:function(mailbox, uid){
 		/* Adds $thread_id to a message's local mail object */
 		var def = Q.defer();
 		console.log('updating mail object: '+box_name+':'+uid);
-		dbHandler.getMailFromLocalBox(box_name, uid)
+		self.getMailFromLocalBox(box_name, uid)
 			.then(function(mail_obj){
 				mail_obj.thread_id = thread_id;
 				var tx = db.transaction("box_"+box_name,"readwrite");
@@ -1139,9 +1148,10 @@ getDueMail:function(){ // TO-DO
 	// Collects all mail that is past due from the scheduled local boxes.
 	// Resolves with an array of mail objects sorted descended by date.
 	var def = Q.defer();
+	var self = this;
 	function getAllScheduleBoxes(){
 		var def = Q.defer();
-		dbHandler.getAllStores()
+		self.getAllStores()
 			.then(function(stores){
 				var arr = [];
 				for(var i=0;i<stores.length;i++){
@@ -1174,7 +1184,7 @@ getDueMail:function(){ // TO-DO
 			stores.forEach(function(store){
 				var mailbox_name = store.substring(4, store.length);
 				promises.push(
-					dbHandler.getMessagesFromMailbox(mailbox_name, function(mail_obj){
+					self.getMessagesFromMailbox(mailbox_name, function(mail_obj){
 						msgs.push(mail_obj);
 					})
 				);
@@ -1205,7 +1215,7 @@ getAllStores:function(){
 getAllMailboxes: function(){
 	// Resolves with all local mailboxes (no box_ prefix) in an array.
 	var def = Q.defer();
-	dbHandler.getAllStores()
+	this.getAllStores()
 		.then(function(stores){
 			var out = [];
 			for(var i=0; i<stores.length; i++){
@@ -1222,7 +1232,7 @@ getMailboxTree:function(){
 	// Gets all of the local mailboxes, and resolves with a tree-like structure describing the hierarchy
 	// e.g. {INBOX:{},FolderA:{FolderB:{}}} etc.
 	var def = Q.defer();
-	dbHandler.getAllMailboxes()
+	this.getAllMailboxes()
 		.then(function(boxes){
 			var tree = arrToTree(boxes);
 			def.resolve(tree);
@@ -1268,6 +1278,9 @@ deleteBoxes:function(box_pathes){
 		def.resolve();
 	};
 	return def.promise;
+},
+markRead:function(box_name, uid){
+
 }
 
 };
