@@ -204,7 +204,6 @@ MessageList.prototype = {
 		var d1 = new Date().getTime();
 		this.dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
 			// console.log(self.printed_threads);
-			// console.log(mail_obj);
 			if(mail_obj.thread_id === undefined){
 				return;
 			}

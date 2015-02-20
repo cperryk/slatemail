@@ -388,26 +388,42 @@ removeLocalMessage:function(box_name, uid){
 	// remove the message's PID.
 	var self = this;
 	var def = Q.defer();
-	// console.log('deleting local '+box_name+':'+uid);
-	var get_request = db.transaction("box_"+box_name,'readonly').objectStore("box_"+box_name).get(uid);
-	get_request.onsuccess = function(){
-		console.log('deleting local '+box_name+':'+uid);
-		var message_obj = get_request.result;
-		if(!message_obj){
-			def.resolve();
-			return;
-		}
-		var thread = message_obj.thread_id;
-		var delete_request = db.transaction("box_"+box_name,'readwrite').objectStore("box_"+box_name).delete(uid);
-		delete_request.onsuccess = function(){
-			//console.log('deleted: '+box_name+':'+uid);
-			self.removeMessageFromThread(thread, box_name, uid)
-				.then(function(){
+	console.log('deleting local '+box_name+':'+uid);
+	// var get_request = db.transaction("box_"+box_name,'readonly').objectStore("box_"+box_name).get(uid);
+	this.getMailFromLocalBox(box_name, uid)
+		.then(function(mail_obj){
+			if(!mail_obj){
+				console.log('resolving because no mail object found');
+				def.resolve();
+			}
+			else{
+				console.log('message retrieved, ',mail_obj);
+				var thread = mail_obj.thread_id;
+				var tx = db.transaction("box_"+box_name,'readwrite');
+				var object_store = tx.objectStore("box_"+box_name);
+				var delete_request = object_store.delete(uid);
+				delete_request.onsuccess = function(event){
+					console.log('deleted: '+box_name+':'+uid);
 					def.resolve();
-				});
-		};
-
-	};
+					// self.removeMessageFromThread(thread, box_name, uid)
+					// 	.then(function(){
+					// 		def.resolve();
+					// 	});
+				};
+				delete_request.onerror = function(err){
+					console.log(err);
+				};
+				tx.onsuccess = function(){
+					console.log('transaction success');
+				};
+				tx.onerror = function(err){
+					console.log('transaction error: ',err);
+				};
+			}
+		})
+		.catch(function(err){
+			console.log(err);
+		});
 	return def.promise;
 },
 removeMessageFromThread:function(thread_id, box_name, uid){
@@ -473,7 +489,6 @@ getMessagesFromMailbox: function(box_name, onMessage, limit, offset){
 		index.openCursor(null, 'prev').onsuccess = function(event) {
 			var cursor = event.target.result;
 			if (cursor) {
-				console.log(count);
 				if(offset !== undefined && offset > 0 && count === 0){
 					cursor.advance(offset);
 					offset = undefined;
@@ -800,21 +815,36 @@ markComplete:function(box_name, uid){
 			return self.getThread(mail_obj.thread_id);
 		})
 		.then(function(thread){
+			var promises = [];
 			thread.messages.forEach(function(message_id){
-				moveToComplete(message_id);
+				promises.push(function(){
+					return moveToComplete(message_id);
+				});
 			});
-			def.resolve();
+			promises.reduce(Q.when, Q())
+				.then(function(){
+					console.log('markComplete resolved');
+					def.resolve();			
+				});
+		})
+		.catch(function(err){
+			console.log(err);
 		});
 	function moveToComplete(message_id){
+		var def = Q.defer();
 		var box_name = message_id.split(':')[0];
-		var uid = message_id.split(':')[1];
+		var uid = parseInt(message_id.split(':')[1],10);
 		console.log('uid is '+uid);
 		if(box_name!=='complete'){
 			self.imaper.move(box_name, 'complete', uid)
 				.then(function(){
-					self.removeLocalMessage(box_name, uid);
+					self.removeLocalMessage(box_name, uid)
+						.then(function(){
+							def.resolve();
+						});
 				});
 		}
+		return def.promise;
 	}
 	return def.promise;
 },

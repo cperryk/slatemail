@@ -3,7 +3,6 @@ global.navigator = window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
 var favicon = require('favicon');
-// var dbHandler = require('./dbHandler');
 var React = require('react');
 var DbHandler = window.dbHandler;
 var favicons = {};
@@ -144,7 +143,7 @@ function MessageList(container, conf){
 }
 MessageList.prototype = {
 	render:function(groups){
-		console.log(groups);
+		// console.log(groups);
 		React.render(<BoxViewer data={groups}/>, this.container[0]);
 	},
 	printBox:function(box){
@@ -179,7 +178,7 @@ MessageList.prototype = {
 				}
 			})
 			.then(function(){
-				console.log('messages to print...');
+				// console.log('messages to print...');
 				// console.log(messages_to_print);
 				return self.reflectMessages();
 			})
@@ -204,8 +203,8 @@ MessageList.prototype = {
 		var def = Q.defer();
 		var d1 = new Date().getTime();
 		this.dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
-			console.log(mail_obj);
-			console.log(self.printed_threads);
+			// console.log(self.printed_threads);
+			// console.log(mail_obj);
 			if(mail_obj.thread_id === undefined){
 				return;
 			}

@@ -4,7 +4,6 @@ var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
 var Syncer = require('./modules/syncer.js');
-// var dbHandler = require('./modules/dbHandler.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
 var Q = require('q');
@@ -47,7 +46,7 @@ $(function init(){
 			return message_list.printBox(BOX);
 		})
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

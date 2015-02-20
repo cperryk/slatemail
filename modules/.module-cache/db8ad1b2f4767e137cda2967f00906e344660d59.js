@@ -143,7 +143,7 @@ function MessageList(container, conf){
 }
 MessageList.prototype = {
 	render:function(groups){
-		// console.log(groups);
+		console.log(groups);
 		React.render(React.createElement(BoxViewer, {data: groups}), this.container[0]);
 	},
 	printBox:function(box){
@@ -178,7 +178,7 @@ MessageList.prototype = {
 				}
 			})
 			.then(function(){
-				// console.log('messages to print...');
+				console.log('messages to print...');
 				// console.log(messages_to_print);
 				return self.reflectMessages();
 			})
@@ -203,8 +203,8 @@ MessageList.prototype = {
 		var def = Q.defer();
 		var d1 = new Date().getTime();
 		this.dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
-			// console.log(self.printed_threads);
-			// console.log(mail_obj);
+			console.log(mail_obj);
+			console.log(self.printed_threads);
 			if(mail_obj.thread_id === undefined){
 				return;
 			}
