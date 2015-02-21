@@ -167,7 +167,7 @@ ensureLocalBoxes:function(boxes){
 		});
 	};
 	open_request.onsuccess = function (e) {
-		console.log('local mailboxes created: ',boxes);
+		console.log('local mailboxes created: ',boxes_to_make);
 		def.resolve();
 	};
 	open_request.onerror = function(event){
@@ -1309,9 +1309,7 @@ deleteBoxes:function(box_pathes){
 	var version =  parseInt(db.version);
 	db.close();
 	var open_request = indexedDB.open('slatemail',version+1);
-	console.log('open request made');
 	open_request.onupgradeneeded = function(event){
-		console.log('go');
 		var db = event.target.result;
 		box_pathes.forEach(function(box_path){
 			console.log('DELETE '+box_path);

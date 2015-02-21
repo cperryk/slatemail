@@ -36,8 +36,12 @@ ProjectView.prototype = {
 				return dbHandler.getThreads(project_obj.threads);
 			})
 			.then(function(thread_objs){
+				console.log('thread_objs',thread_objs);
 				var def = Q.defer();
 				thread_objs.forEach(function(thread_obj, index){
+					if(thread_obj === undefined){
+						return;
+					}
 					self.printThread(thread_obj)
 						.then(function(){
 							if(index === thread_objs.length-1){
