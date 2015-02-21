@@ -184,6 +184,25 @@ function addSelectedEmailListeners(){
 							removeElement();
 						}
 					});
+			},
+			109: function(){ // m
+				var confirmation = confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.");
+				if(!confirmation){
+					return;
+				}
+				var selection = message_list.getSelection();
+				dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
+					.then(function(mail_obj){
+						return dbHandler.muteThread(mail_obj.thread_id);
+					})
+					.then(function(){
+						console.log('go on....');
+						removeElement();
+						return dbHandler.markComplete(selection.mailbox, selection.uid);
+					})
+					.catch(function(err){
+						console.log(err);
+					});
 			}
 		};
 		if(key_functions[key_code]){

@@ -1377,5 +1377,36 @@ markSeenSeries:function(mids){
 	}
 	return def.promise;
 },
+muteThread: function(thread_id){
+	console.log('muting thread '+thread_id);
+	return this.setThreadMuteState(thread_id, true);
+},
+unmuteThread: function(thread_id){
+	return this.setThreadMuteState(thread_id, false);
+},
+setThreadMuteState:function(thread_id, state){
+	console.log('set mute state: '+thread_id);
+	var def = Q.defer();
+	this.getThread(thread_id)
+		.then(function(thread_obj){
+			console.log('thread_obj', thread_obj);
+			thread_obj.muted = state;
+			var tx = db.transaction('threads',"readwrite");
+			var store = tx.objectStore('threads');
+			var put_request = store.put(thread_obj);
+			put_request.onsuccess = function(){
+				console.log('success');
+				def.resolve(true);
+			};
+			put_request.onerror = function(err){
+				console.log(err);
+				def.resolve(false);
+			};
+		})
+		.catch(function(err){
+			console.log(err);
+		});
+	return def.promise;
+}
 
 };
