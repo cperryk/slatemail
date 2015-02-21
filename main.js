@@ -180,19 +180,28 @@ function addSelectedEmailListeners(){
 					});
 			},
 			109: function(){ // m
-				var confirmation = confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.");
-				if(!confirmation){
-					return;
-				}
 				var selection = message_list.getSelection();
+				var my_mail_obj;
 				dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
-						return dbHandler.muteThread(mail_obj.thread_id);
+						my_mail_obj = mail_obj;
+						return dbHandler.getThread(mail_obj.thread_id);
 					})
-					.then(function(){
-						console.log('go on....');
-						removeElement();
-						return dbHandler.markComplete(selection.mailbox, selection.uid);
+					.then(function(thread_obj){
+						if(thread_obj.muted === true){
+							if(confirm("This thread is muted. Do you want to unmute it?")){
+								return dbHandler.unmuteThread(my_mail_obj.thread_id);
+							}
+						}
+						else{
+							if(confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.")){
+								return dbHandler.muteThread(my_mail_obj.thread_id)
+									.then(function(){
+										removeElement();
+										return dbHandler.markComplete(selection.mailbox, selection.uid);
+									});
+							}
+						}
 					})
 					.catch(function(err){
 						console.log(err);

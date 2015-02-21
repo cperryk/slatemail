@@ -935,7 +935,7 @@ threadMessage:function(mailbox, uid){
 					var promises = [
 						storePID(mail_obj, results.thread_id)
 					];
-					if(results.muted === true){
+					if(results.muted === true && mailbox !== 'complete'){
 						promises.push(self.moveToComplete(mailbox, uid));
 					}
 					else{
@@ -1378,7 +1378,6 @@ markSeenSeries:function(mids){
 		});
 		Q.all(promises)
 			.then(function(){
-				console.log('COMPLETE');
 				def.resolve();
 			})
 			.catch(function(err){
