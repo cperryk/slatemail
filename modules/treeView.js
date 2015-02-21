@@ -18,6 +18,7 @@ function TreeView(container, conf){
 }
 TreeView.prototype = {
 	printTree: function(tree){
+		console.log('TreeView - Print tree: '+tree);
 		var self = this;
 		var def = Q.defer();
 		dbHandler.getMailboxTree()
@@ -69,6 +70,7 @@ TreeView.prototype = {
 		return box_path;
 	},
 	reflectActiveMailbox: function(box_path){
+		console.log('Tree View - Reflect active mailbox: '+box_path);
 		this.container.find('.selected')
 			.removeClass('selected');
 		var items = this.container.find('.tree_view_item');

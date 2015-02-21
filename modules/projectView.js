@@ -106,7 +106,7 @@ ProjectView.prototype = {
 				def.resolve();
 			});
 		function threadClick(){
-			$('.selected')
+			self.container.find('.selected')
 				.removeClass('selected');
 			$(this)
 				.addClass('selected');

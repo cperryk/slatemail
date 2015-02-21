@@ -575,14 +575,12 @@ getThread:function(thread_id){
 	var objectStore = tx.objectStore('threads');
 	var get_request = objectStore.get(thread_id);
 	get_request.onsuccess = function(event){
-		console.log('-------------- SUCCESS');
 		var matching = get_request.result;
-		console.log('THREAD '+thread_id+' LOCATED, result is...');
-		console.log(matching);
+		// console.log('THREAD '+thread_id+' LOCATED, result is...');
+		// console.log(matching);
 		def.resolve(matching);
 	};
 	get_request.onerror = function(err){
-		console.log('-------------- ERROR');
 		def.resolve();
 	};
 	return def.promise;
