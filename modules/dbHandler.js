@@ -818,6 +818,22 @@ listProjects:function(){
 	};
 	return def.promise;
 },
+moveToComplete:function(box_name, uid){
+	console.log('Moving to complete: '+box_name+':'+uid);
+	var def = Q.defer();
+	var self = this;
+	console.log('uid is '+uid);
+	if(box_name!=='complete'){
+		self.imaper.move(box_name, 'complete', uid)
+			.then(function(){
+				self.removeLocalMessage(box_name, uid)
+					.then(function(){
+						def.resolve();
+					});
+			});
+	}
+	return def.promise;
+},
 markComplete:function(box_name, uid){
 	console.log('marking complete: '+box_name+':'+uid);
 	var def = Q.defer();
@@ -830,34 +846,23 @@ markComplete:function(box_name, uid){
 			var promises = [];
 			thread.messages.forEach(function(message_id){
 				promises.push(function(){
-					return moveToComplete(message_id);
+					var box_name = message_id.split(':')[0];
+					var uid = parseInt(message_id.split(':')[1],10);
+					return self.moveToComplete(box_name, uid);
 				});
 			});
 			promises.reduce(Q.when, Q())
 				.then(function(){
 					console.log('markComplete resolved');
 					def.resolve();			
+				})
+				.catch(function(err){
+					console.log(err);
 				});
 		})
 		.catch(function(err){
 			console.log(err);
 		});
-	function moveToComplete(message_id){
-		var def = Q.defer();
-		var box_name = message_id.split(':')[0];
-		var uid = parseInt(message_id.split(':')[1],10);
-		console.log('uid is '+uid);
-		if(box_name!=='complete'){
-			self.imaper.move(box_name, 'complete', uid)
-				.then(function(){
-					self.removeLocalMessage(box_name, uid)
-						.then(function(){
-							def.resolve();
-						});
-				});
-		}
-		return def.promise;
-	}
 	return def.promise;
 },
 schedule:function(date, box_name, uid){
@@ -923,14 +928,20 @@ threadMessage:function(mailbox, uid){
 			}
 			return findMatchingThread(mail_obj)
 				.then(function(thread_id){
-					console.log('matched thread_id for '+mailbox+':'+uid+'? '+thread_id);
 					return thread_id === false ? saveToNewThread(mailbox, uid) : saveToExistingThread(mailbox, uid, thread_id);
 				})
-				.then(function(thread_id){
-					return Q.all([
-						updateMailObject(mailbox, uid, thread_id),
-						storePID(mail_obj, thread_id)
-					]);
+				.then(function(results){
+					console.log('threading results', results);
+					var promises = [
+						storePID(mail_obj, results.thread_id)
+					];
+					if(results.muted === true){
+						promises.push(self.moveToComplete(mailbox, uid));
+					}
+					else{
+						promises.push(updateMailObject(mailbox, uid, results.thread_id));
+					}
+					return Q.all(promises);
 				})
 				.catch(function(err){
 					console.log(err);
@@ -1070,7 +1081,7 @@ threadMessage:function(mailbox, uid){
 		add_request.onsuccess = function(event){
 			var thread_id = event.target.result;
 			console.log('           saved message ' + mailbox + uid + ' to new thread ' + thread_id);
-			def.resolve(event.target.result);
+			def.resolve({thread_id: event.target.result});
 		};
 		return def.promise;
 	}
@@ -1102,21 +1113,20 @@ threadMessage:function(mailbox, uid){
 		var store = tx.objectStore("threads");
 		var get_request = store.get(thread_id);
 		get_request.onsuccess = function(){
-			var data = get_request.result;
-			data.thread_id = thread_id;
-			if(data.messages.indexOf(mailbox_name+':'+mail_uid)>-1){
+			var thread_obj = get_request.result;
+			if(thread_obj.messages.indexOf(mailbox_name+':'+mail_uid)>-1){
 				updateMailObject(mailbox_name, mail_uid, thread_id)
 					.then(function(){
-						def.resolve(thread_id);
+						def.resolve({thread_id: thread_id});
 					});
 			}
 			else{
-				data.messages.push(mailbox_name+':'+mail_uid);
-				var request_update = store.put(data);
-				request_update.onsuccess = function(){
-					def.resolve(thread_id);
+				thread_obj.messages.push(mailbox_name+':'+mail_uid);
+				var update_request = store.put(thread_obj);
+				update_request.onsuccess = function(){
+					def.resolve({thread_id: thread_id, muted: thread_obj.muted});
 				};
-				request_update.onerror = function(err){
+				update_request.onerror = function(err){
 					console.log('FAILED: saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
 					console.log(err);
 				};
