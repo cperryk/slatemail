@@ -94,7 +94,7 @@ var Message = React.createClass({
 		var unread = mail_obj.flags.indexOf('\\Seen')===-1;
 		var class_name = "message"+(unread?' unread':'');
 		var from_address = mail_obj.from ? mail_obj.from[0].address : false;
-		var id = mail_obj.mailbox+':'+mail_obj.uid;
+		var id = mail_obj.thread_id;
 		return (
 			<div className={class_name} data-from={from_address} data-mailbox={mail_obj.mailbox} data-uid={mail_obj.uid} id={id}>
 				<div className="favicon"></div>
@@ -292,6 +292,9 @@ MessageList.prototype = {
 			return (second-first)/(1000*60*60*24);
 		}
 		return false;
+	},
+	selectMessageByThreadID: function(thread_id){
+		this.selectMessage(this.container.find('#'+thread_id));
 	},
 	selectMessage:function(ele){
 		ele = $(ele);

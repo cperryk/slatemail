@@ -217,6 +217,7 @@ function openProjectView(project_id, initial_thread_id){
 	$('#project_viewer').show();
 	new ProjectView(project_id, initial_thread_id, {
 	onSelection: function(thread_id){
+		message_list.selectMessageByThreadID(thread_id);
 		dbHandler.getThread(thread_id)
 			.then(function(thread_obj){
 				console.log('thread obj is ');

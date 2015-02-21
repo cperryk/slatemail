@@ -293,8 +293,8 @@ MessageList.prototype = {
 		}
 		return false;
 	},
-	selectMessageByThreadID: function(thread_id){
-		this.selectMessage(this.container.find('#'+thread_id));
+	selectMessageByThreadID(thread_id){
+
 	},
 	selectMessage:function(ele){
 		ele = $(ele);
