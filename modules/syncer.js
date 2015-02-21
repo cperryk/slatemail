@@ -18,7 +18,7 @@ Syncer.prototype = {
 		this.runSync();
 		this.interval = setInterval(function(){
 			self.runSync();
-		}, 5000);
+		}, 500000);
 		return this;
 	},
 	stop: function(){
@@ -74,7 +74,7 @@ Syncer.prototype.syncAll = function(){
 			// console.log(paths);
 			paths.splice(paths.indexOf('Deleted Items'), 1);
 			paths.splice(paths.indexOf('Drafts'), 1);
-			paths.splice(paths.indexOf('List'), 1);
+			// paths.splice(paths.indexOf('List'), 1);
 			box_paths = paths;
 			// box_paths = ['INBOX'];
 		})
@@ -103,7 +103,9 @@ Syncer.prototype.syncAll = function(){
 			return def.promise;
 		})
 		.then(function(){
-			console.log(box_paths);
+			return self.dbHandler.ensureLocalBoxes(box_paths);
+		})
+		.then(function(){
 			var def = Q.defer();
 			var promises = [];
 			var box_results = {};
@@ -200,10 +202,7 @@ Syncer.prototype.syncBox = function(mailbox_name, remote_descriptors){
 	var local_descriptors;
 	var downloaded_messages;
 	var self = this;
-	self.dbHandler.ensureLocalBox(mailbox_name)
-		.then(function(){
-			return self.getLocalDescriptors(mailbox_name);
-		})
+	this.getLocalDescriptors(mailbox_name)
 		.then(function(local_descriptors){
 			return Q.all([
 				self.deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors), // delete any local messages that are no longer in remote messages

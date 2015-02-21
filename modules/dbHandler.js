@@ -130,30 +130,44 @@ ensureProjectStore:function(){ // Is this necessary? Isn't the project ensured i
 	};
 	return def.promise;
 },
-ensureLocalBox:function(mailbox_name){
-	console.log('ensuring local box');
+ensureLocalBoxes:function(boxes){
+	console.log('ensuring local boxes: ',boxes);
+	if(typeof boxes === 'string'){
+		return this.ensureLocalBoxes([boxes]);
+	}
 	// If local store for $mailbox_name does not exist, create it.
 	var def = Q.defer();
-	if(db.objectStoreNames.contains("box_"+mailbox_name)){
+	var boxes_to_make = (function(){
+		var out = [];
+		boxes.forEach(function(box){
+			if(db.objectStoreNames.contains('box_'+box) === false){
+				out.push(box);
+			}
+		});
+		return out;
+	}());
+	console.log('boxes to make: ',boxes_to_make);
+	if(boxes_to_make.length === 0){
 		def.resolve();
 		return def.promise;
 	}
-	var version =  parseInt(db.version);
+	var version = parseInt(db.version, 10);
 	db.close();
-	console.log(db);
 	var open_request = indexedDB.open('slatemail', version+1);
 	open_request.onupgradeneeded = function () {
 		db = open_request.result;
-		var object_store = db.createObjectStore('box_'+mailbox_name, {
-			keyPath: 'uid'
+		boxes_to_make.forEach(function(box){
+			var object_store = db.createObjectStore('box_'+box, {
+				keyPath: 'uid'
+			});
+			object_store.createIndex("message_id", "messageId", { unique: false });
+			object_store.createIndex("short_subject", "short_subject", { unique: false });
+			object_store.createIndex("uid","uid", {unique:true});
+			object_store.createIndex("date","date",{unique: false});
 		});
-		object_store.createIndex("message_id", "messageId", { unique: false });
-		object_store.createIndex("short_subject", "short_subject", { unique: false });
-		object_store.createIndex("uid","uid", {unique:true});
-		object_store.createIndex("date","date",{unique: false});
 	};
 	open_request.onsuccess = function (e) {
-		console.log('local mailbox '+mailbox_name+'created');
+		console.log('local mailboxes created: ',boxes);
 		def.resolve();
 	};
 	open_request.onerror = function(event){
@@ -1330,8 +1344,15 @@ markSeen:function(box_name, uid){
 					};
 					put_request.onerror = function(err){
 						console.log(err);
+						def.resolve();
 					};
+				})
+				.catch(function(err){
+					console.log(err);
 				});
+		}
+		else{
+			def.resolve();
 		}
 	};
 	return def.promise;
