@@ -826,11 +826,18 @@ moveToComplete:function(box_name, uid){
 	if(box_name!=='complete'){
 		self.imaper.move(box_name, 'complete', uid)
 			.then(function(){
-				self.removeLocalMessage(box_name, uid)
-					.then(function(){
-						def.resolve();
-					});
+				return self.removeLocalMessage(box_name, uid);
+			})
+			.fin(function(){
+				console.log('move complete successful');
+				def.resolve();
+			})
+			.catch(function(err){
+				console.log(err);
 			});
+	}
+	else{
+		def.resolve();
 	}
 	return def.promise;
 },

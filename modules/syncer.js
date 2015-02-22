@@ -18,7 +18,7 @@ Syncer.prototype = {
 		this.runSync();
 		this.interval = setInterval(function(){
 			self.runSync();
-		}, 500000);
+		}, 5000);
 		return this;
 	},
 	stop: function(){

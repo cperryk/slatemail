@@ -45,7 +45,7 @@ $(function init(){
 			return message_list.printBox(BOX);
 		})
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

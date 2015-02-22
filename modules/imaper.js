@@ -354,15 +354,9 @@ Imaper.prototype = {
 				console.log(err);
 			})
 			.fin(function(){
-				console.log('move complete');
+				console.log('imaper: move of '+from_box+':'+uid+' complete');
 				def.resolve();
 			});
-//		imapHandler.connectAndOpen(from_box)
-//			.then(function(){
-//				imap.move(uid, to_box, function(){
-//					def.resolve();
-//				});
-//			})
 		return def.promise;
 	},
 	addKeywords:function(box_name, uid, keywords){
