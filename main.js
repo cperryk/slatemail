@@ -102,8 +102,7 @@ function emailSelected(mailbox, uid){
 				// things will break.
 			}
 			else{
-				$('#project_viewer').hide();
-				$('body').removeClass('project_viewer_open');
+				closeProjectView();
 			}
 		})
 		.then(function(){
@@ -135,10 +134,13 @@ function addSelectedEmailListeners(){
 						var selected_email = message_list.getSelection();
 						dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
 							.then(function(){
-								dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid)
-									.then(function(mail_obj){
-										openProjectView(project_id, mail_obj.thread_id);
-									});
+								return dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid);
+							})
+							.then(function(mail_obj){
+								openProjectView(project_id, mail_obj.thread_id);
+							})
+							.then(function(){
+								project_list.render();
 							});
 						overlay.close();
 					}
@@ -247,16 +249,24 @@ function openProjectView(project_id, initial_thread_id){
 	$('body').addClass('project_viewer_open');
 	$('#project_viewer').show();
 	new ProjectView(project_id, initial_thread_id, {
-	onSelection: function(thread_id){
-		message_list.selectMessageByThreadID(thread_id);
-		dbHandler.getThread(thread_id)
-			.then(function(thread_obj){
-				console.log('thread obj is ');
-				console.log(thread_obj);
-				message_view.printThread(thread_obj);
-			});
+		onSelection: function(thread_id){
+			message_list.selectMessageByThreadID(thread_id);
+			dbHandler.getThread(thread_id)
+				.then(function(thread_obj){
+					console.log('thread obj is ');
+					console.log(thread_obj);
+					message_view.printThread(thread_obj);
+				});
+			},
+		onProjectDeletion: function(){
+			project_list.render();
+			closeProjectView();
 		}
 	});
+}
+function closeProjectView(){
+	$('#project_viewer').hide();
+	$('body').removeClass('project_viewer_open');
 }
 
 function markRead(mail_objs){

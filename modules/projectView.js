@@ -21,7 +21,12 @@ function ProjectView(project_name, initial_thread_id, conf){
 		.appendTo(this.container)
 		.click(function(){
 			if(window.confirm("Are you sure you want to delete project "+project_name+'? This will not delete its messages.')){
-				dbHandler.deleteProject(project_name);			
+				dbHandler.deleteProject(project_name)
+					.then(function(){
+						if(conf.onProjectDeletion){
+							conf.onProjectDeletion();
+						}
+					});
 			}
 		});
 	this.attachments = [];
