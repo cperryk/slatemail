@@ -30,14 +30,14 @@ var ProjectItem = React.createClass({displayName: "ProjectItem",
 	render: function(){
 		var project_data = this.props.data;
 		return (
-			React.createElement("div", {className: "project_item", "data-project-id": project_data}, project_data)
+			React.createElement("div", {className: "project_item"}, project_data)
 		);
 	}
 });
 
-function ProjectList(container, conf){
+function ProjectList(container){
 	this.container = container;
-	this.conf = conf;
+	console.log(this.container[0]);
 	this.dbHandler = new DbHandler();
 	this.render();
 	this.addEventListeners();
@@ -53,12 +53,8 @@ ProjectList.prototype = {
 			});
 	},
 	addEventListeners:function(){
-		var self = this;
 		this.container.on('click','.project_item', function(){
 			var project_id = $(this).data('project-id');
-			if(self.conf.onSelection){
-				self.conf.onSelection(project_id);
-			}
 		});
 	}
 };

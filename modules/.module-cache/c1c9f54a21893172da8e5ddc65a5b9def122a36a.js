@@ -53,12 +53,9 @@ ProjectList.prototype = {
 			});
 	},
 	addEventListeners:function(){
-		var self = this;
 		this.container.on('click','.project_item', function(){
 			var project_id = $(this).data('project-id');
-			if(self.conf.onSelection){
-				self.conf.onSelection(project_id);
-			}
+			console.log(project_id);
 		});
 	}
 };

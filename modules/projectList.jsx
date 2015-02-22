@@ -30,16 +30,17 @@ var ProjectItem = React.createClass({
 	render: function(){
 		var project_data = this.props.data;
 		return (
-			<div className="project_item">{project_data}</div>
+			<div className="project_item" data-project-id={project_data}>{project_data}</div>
 		);
 	}
 });
 
-function ProjectList(container){
+function ProjectList(container, conf){
 	this.container = container;
-	console.log(this.container[0]);
+	this.conf = conf;
 	this.dbHandler = new DbHandler();
 	this.render();
+	this.addEventListeners();
 }
 ProjectList.prototype = {
 	render:function(){
@@ -50,6 +51,15 @@ ProjectList.prototype = {
 				console.log("GO PROJECT LIST REACT");
 				React.render(<ProjectListReact data={project_names}/>, self.container[0]);
 			});
+	},
+	addEventListeners:function(){
+		var self = this;
+		this.container.on('click','.project_item', function(){
+			var project_id = $(this).data('project-id');
+			if(self.conf.onSelection){
+				self.conf.onSelection(project_id);
+			}
+		});
 	}
 };
 module.exports = ProjectList;

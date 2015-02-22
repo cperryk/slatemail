@@ -38,7 +38,12 @@ $(function init(){
 				}
 			});
 			message_view = new MessageView($('#message_viewer'));
-			project_list = new ProjectList($('#project_list'));
+			project_list = new ProjectList($('#project_list'), {
+				onSelection:function(project_id){
+					// selectProject(project_id);
+					openProjectView(project_id);
+				}
+			});
 			addEventListeners();
 			return true;
 		})
