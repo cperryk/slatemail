@@ -1,26 +1,35 @@
 var fs = require('fs');
 var $ = require('jquery');
+
+// SlateMail components
+var MailComposer = require('./MailComposer/MailComposer.js');
 var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
-var ProjectView = require('./modules/projectView.js');
+var Overlay = require('./modules/overlay.js');
 var ProjectList = require('./modules/projectList.js');
-console.log(ProjectList);
+var ProjectView = require('./modules/projectView.js');
 var Syncer = require('./modules/syncer.js');
-var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
+var ProjectSelector = require('./modules/ProjectSelector');
+
 var Q = require('q');
 var gui = require('nw.gui');
-var Overlay = require('./modules/overlay.js');
-var ProjectSelector = require('./modules/ProjectSelector');
 var indexedDB = window.indexedDB;
 
+var dbHandler = new dbHandler();
+require('jquery-ui');
+
+// Instances of components
 var tree_view;
 var message_list;
 var message_view;
 var project_list;
+
+// Default box
 var BOX = 'INBOX';
+
+// Other parameters
 var overlay_is_open = false;
-var dbHandler = new dbHandler();
 
 $(function init(){
 	dbHandler
@@ -40,7 +49,6 @@ $(function init(){
 			message_view = new MessageView($('#message_viewer'));
 			project_list = new ProjectList($('#project_list'), {
 				onSelection:function(project_id){
-					// selectProject(project_id);
 					openProjectView(project_id);
 				}
 			});
@@ -147,6 +155,29 @@ function addSelectedEmailListeners(){
 				});
 			},
 			115: function(){ // s
+
+				var overlay = new Overlay();
+				var input = $('<input type="text" id="datepicker">')
+					.appendTo(overlay.container)
+					.datepicker({
+						onSelect:function(date_text, obj){
+							var date = input.datepicker('getDate');
+							var selection = message_list.getSelection();
+							dbHandler.schedule(date, selection.mailbox, selection.uid)
+								.then(function(){
+									removeElement();
+								});
+								overlay.close();
+							// console.log(isValidDate(new Date(date_text)));
+						}
+					})
+					.focus();
+				setTimeout(function(){
+					input.val('');				
+				},1);
+				return;
+
+
 				var user_input = prompt('What date would you like to schedule this for?');
 				console.log(user_input);
 				if(!user_input){
