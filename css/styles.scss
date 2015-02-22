@@ -8,6 +8,7 @@ body{
 	}
 }
 #left_drawer{
+	font-size:0.8em;
 	position:fixed;
 	height:100%;
 	width:150px;
@@ -17,8 +18,15 @@ body{
 		height:100%;
 		border-right:1px solid #c7c7c7;
 		float:left;
-		width:149px;
+		padding:5px;
+		width:139px;
 		overflow: scroll;
+	}
+	h2{
+		margin:1em 0 0 0;
+		&:first-child{
+			margin-top:0;
+		}
 	}
 }
 #left_pane{
@@ -242,10 +250,13 @@ body{
 	}
 }
 .tree_view{
-	font-size:0.8em;
 	ul{
-		padding:0 0 0 10px;
+		padding:0;
+		margin:0;
 		list-style: none;
+	}
+	ul ul{
+		padding-left:10px;
 	}
 	.tree_view_item{
 		cursor:pointer;
@@ -295,6 +306,17 @@ body{
 		cursor:pointer;
 		&:hover{
 			color:black;
+		}
+	}
+}
+
+.project_list{
+	.project_item{
+		cursor:pointer;
+		margin:4px 0;
+		white-space: nowrap;		
+		&:hover{
+			text-decoration: underline;
 		}
 	}
 }

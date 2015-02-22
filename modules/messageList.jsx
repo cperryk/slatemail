@@ -177,7 +177,6 @@ MessageList.prototype = {
 				}
 			})
 			.then(function(){
-				// console.log('messages to print...');
 				// console.log(messages_to_print);
 				return self.reflectMessages();
 			})

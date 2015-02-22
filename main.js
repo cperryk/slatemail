@@ -95,7 +95,7 @@ function emailSelected(mailbox, uid){
 		.then(function(){
 			var thread_obj = my_thread_obj;
 			if(thread_obj.project_id !== undefined){
-				console.log(thread_obj);
+				console.log('SELECTED THREAD', thread_obj);
 				openProjectView(thread_obj.project_id, thread_obj.thread_id);
 				// ^ careful where you put this last line. If it runs the same time
 				// as you get the thread messages for the selected message,

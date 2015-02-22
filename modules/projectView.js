@@ -16,6 +16,14 @@ function ProjectView(project_name, initial_thread_id, conf){
 		.addClass('project_title')
 		.html(project_name)
 		.appendTo(this.container);
+	$('<button>')
+		.html('Delete project')
+		.appendTo(this.container)
+		.click(function(){
+			if(window.confirm("Are you sure you want to delete project "+project_name+'? This will not delete its messages.')){
+				dbHandler.deleteProject(project_name);			
+			}
+		});
 	this.attachments = [];
 	this.printThreads();
 }

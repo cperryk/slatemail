@@ -786,6 +786,7 @@ putInProject:function(box_name, uid, project_name){
 	return def.promise;
 },
 getProject:function(project_name){
+	// Resolves with the project object of project name. The project object contains the message IDs.
 	var def = Q.defer();
 	var tx = db.transaction('projects','readonly');
 	var store = tx.objectStore('projects');
@@ -1421,6 +1422,63 @@ setThreadMuteState:function(thread_id, state){
 		})
 		.catch(function(err){
 			console.log(err);
+		});
+	return def.promise;
+},
+deleteProject:function(project_name){
+	console.log('deleting project: '+project_name);
+	var self = this;
+	var def = Q.defer();
+	this.getProject(project_name)
+		.then(function(project_obj){
+			var thread_ids = project_obj.threads;
+			var promises = thread_ids.map(function(thread_id){
+				return self.clearProjectFromThread(thread_id);
+			})
+			return Q.all(promises);
+		})
+		.then(function(){
+			var def = Q.defer();
+			var tx = db.transaction('projects','readwrite')
+			var store = tx.objectStore('projects');
+			var req = store.delete(project_name);
+			req.onsuccess = function(){
+				def.resolve();
+			}
+			req.onerror = function(err){
+				console.log(err);
+				def.resolve();
+			}
+			return def.promise;
+		})
+		.fin(function(){
+			def.resolve();
+		})
+		.catch(function(err){
+			console.log(err);
+		});
+	return def.promise;
+},
+clearProjectFromThread:function(thread_id){
+	console.log('clearing project from thread: '+thread_id);
+	var def = Q.defer();
+	var self = this;
+	this.getThread(thread_id)
+		.then(function(thread_obj){
+			if(thread_obj.project_id){
+				delete thread_obj.project_id;
+			}
+			var tx = db.transaction('threads','readwrite')
+			var store = tx.objectStore('threads');
+			var put_request = store.put(thread_obj);
+			put_request.onsuccess = function(){
+				console.log('project removed from thread: '+thread_id);
+				def.resolve();
+			}
+			put_request.onerror = function(err){
+				console.log(err);
+				def.resolve();
+			}
 		});
 	return def.promise;
 }
