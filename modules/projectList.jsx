@@ -11,7 +11,6 @@ var ProjectListReact = React.createClass({
 		return {data:[]};
 	},
 	render: function(){
-		console.log('RENDER THAT SHIT');
 		console.log(this.props);
 		var project_item_nodes = this.props.data.map(function(project_name){
 				return (
