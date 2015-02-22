@@ -1,6 +1,4 @@
 var $ = require('jquery');
-var fs = require('fs');
-// var dbHandler = require('../modules/dbHandler.js');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');

@@ -3,6 +3,8 @@ var $ = require('jquery');
 var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var ProjectView = require('./modules/projectView.js');
+var ProjectList = require('./modules/projectList.js');
+console.log(ProjectList);
 var Syncer = require('./modules/syncer.js');
 var MailComposer = require('./MailComposer/MailComposer.js');
 var treeView = require('./modules/treeView.js');
@@ -15,6 +17,7 @@ var indexedDB = window.indexedDB;
 var tree_view;
 var message_list;
 var message_view;
+var project_list;
 var BOX = 'INBOX';
 var overlay_is_open = false;
 var dbHandler = new dbHandler();
@@ -29,12 +32,13 @@ $(function init(){
 					emailSelected(mailbox, uid);
 				}
 			});
-			tree_view = new treeView($('#tree_view .inner'), {
+			tree_view = new treeView($('#tree_view'), {
 				onSelection:function(box_path){
 					selectBox(box_path);
 				}
 			});
 			message_view = new MessageView($('#message_viewer'));
+			project_list = new ProjectList($('#project_list'));
 			addEventListeners();
 			return true;
 		})

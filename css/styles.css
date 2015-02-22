@@ -3,13 +3,13 @@ body {
   body.project_viewer_open #message_viewer {
     width: -webkit-calc(80% - 402px) !important; }
 
-#tree_view {
+#left_drawer {
   position: fixed;
   height: 100%;
   width: 150px;
   top: 0;
   left: 0; }
-  #tree_view .inner {
+  #left_drawer .inner {
     height: 100%;
     border-right: 1px solid #c7c7c7;
     float: left;
