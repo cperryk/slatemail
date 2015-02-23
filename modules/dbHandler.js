@@ -1465,6 +1465,10 @@ clearProjectFromThread:function(thread_id){
 	var self = this;
 	this.getThread(thread_id)
 		.then(function(thread_obj){
+			if(!thread_obj){
+				def.resolve();
+				return;
+			}
 			if(thread_obj.project_id){
 				delete thread_obj.project_id;
 			}

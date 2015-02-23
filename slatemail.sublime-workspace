@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"project_item",
+				"project_item_nodes"
+			],
+			[
+				"remove",
+				"removeElement"
+			],
+			[
+				"getThread",
+				"getThread"
+			],
+			[
+				"ensure",
+				"ensureLocalBoxes"
+			],
+			[
+				"getLoca",
+				"getMailFromLocalBox"
+			],
+			[
 				"message",
 				"message_list"
 			],
@@ -120,10 +140,6 @@
 				"getAllScheduleBoxes"
 			],
 			[
-				"remove",
-				"removeLocalMessage"
-			],
-			[
 				"sender",
 				"sender_address"
 			],
@@ -174,10 +190,6 @@
 			[
 				"open",
 				"connectAndOpen"
-			],
-			[
-				"ensure",
-				"ensureBox"
 			],
 			[
 				"imap",
@@ -502,44 +514,16 @@
 			[
 				"callback",
 				"callback_on_message"
-			],
-			[
-				"messag",
-				"message_data"
-			],
-			[
-				"search",
-				"searchAtUID"
-			],
-			[
-				"parse",
-				"parseHeader"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "modules/imapHandler.js",
+			"file": "modules/imaper.js",
 			"settings":
 			{
-				"buffer_size": 9515,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/syncer.js",
-			"settings":
-			{
-				"buffer_size": 10930,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "css/styles.scss",
-			"settings":
-			{
-				"buffer_size": 4883,
+				"buffer_size": 9365,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,32 +531,55 @@
 			"file": "modules/dbHandler.js",
 			"settings":
 			{
-				"buffer_size": 36168,
+				"buffer_size": 41603,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Avoiding a race condition\n\nPossible user actions:\n\n- Mark an email as complete (change its flags)\n- Delete an email\n- Move an email (aka delete and append to another mailbox)\n- Delete a mailbox\n- Add a mailbox\n\nThe expectation is that these actions must be reflected in the local client IMMEDIATELY.\n\nHowever, you must avoid a race condition that would temporarily undo these actions mid-sync.\n\nFor example, let's say the reader ",
+			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 429,
-				"line_ending": "Unix",
-				"name": "Avoiding a race condition"
-			}
-		},
-		{
-			"file": "modules/userActions.js",
-			"settings":
-			{
-				"buffer_size": 47,
+				"buffer_size": 8587,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "modules/messageList.jsx",
+			"file": "README.md",
 			"settings":
 			{
-				"buffer_size": 8282,
+				"buffer_size": 399,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "credentials/credentials.json",
+			"settings":
+			{
+				"buffer_size": 371,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "slatemail.sublime-project",
+			"settings":
+			{
+				"buffer_size": 73,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "{\n  \"user\": \"cperryk@gmail.com\",\n  \"password\": \"ha{leswE\",\n  \"host\": \"imap.gmail.com\",\n  \"port\": 993,\n  \"tls\": true\n}",
+			"settings":
+			{
+				"buffer_size": 117,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/kirkcp/.Trash/credentials2.json",
+			"settings":
+			{
+				"buffer_size": 372,
 				"line_ending": "Unix"
 			}
 		}
@@ -584,6 +591,38 @@
 		"selected_items":
 		[
 			[
+				"find",
+				"Finder: Open here"
+			],
+			[
+				"sort",
+				"Sort Lines"
+			],
+			[
+				"set syntax: jsx",
+				"Set Syntax: JSX"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"set syntax: react",
+				"Set Syntax: React JSX"
+			],
+			[
+				"syntax: jsx",
+				"Set Syntax: JSX"
+			],
+			[
+				"rena",
+				"File: Rename"
+			],
+			[
+				"rename",
+				"File: Rename"
+			],
+			[
 				"term",
 				"Open in terminal"
 			],
@@ -594,10 +633,6 @@
 			[
 				"instal",
 				"Package Control: Install Package"
-			],
-			[
-				"find",
-				"Finder: Open here"
 			],
 			[
 				"gr",
@@ -630,10 +665,6 @@
 			[
 				"bookkm",
 				"Bookmarks: Clear All"
-			],
-			[
-				"rename",
-				"File: Rename"
 			],
 			[
 				"wra",
@@ -864,10 +895,6 @@
 				"Set Syntax: YAML"
 			],
 			[
-				"lint",
-				"SublimeLinter: Lint This View"
-			],
-			[
 				"wrap",
 				"Word Wrap: Toggle"
 			],
@@ -1074,26 +1101,6 @@
 			[
 				"reii",
 				"Indentation: Reindent Lines"
-			],
-			[
-				"pret",
-				"Pretty JSON: Format (Pretty Print) JSON"
-			],
-			[
-				"preti",
-				"Pretty JSON: Format (Pretty Print) JSON"
-			],
-			[
-				"pretti",
-				"Pretty JSON: Format (Pretty Print) JSON"
-			],
-			[
-				"java",
-				"Javascript Beautify"
-			],
-			[
-				"word",
-				"Word Wrap: Toggle"
 			]
 		],
 		"width": 475.0
@@ -1121,11 +1128,56 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/kirkcp/Documents/node_play/slatemail",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer"
+		"/Users/kirkcp/Documents/node_play/slatemail"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Documents/node_play/slatemail/main.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/overlay.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/2366983/oscars1.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/test/opts_fs_sync.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectList.jsx",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectSelector.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/raceconditions.txt",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactPerf.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/css.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11903/scotus death simulator.doc",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/sr-Cyrl-BA.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-connection-idle-normal.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/776/ImAmerican.DealWithitSouthAmericans. (1).docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/index.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/camelizeStyleName.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactNativeComponent.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactElement.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/node_modules/envify/node_modules/jstransform/visitors/es6-arrow-function-visitors.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/remove.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactEventEmitterMixin.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/CompositionEventPlugin.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/complete_uids.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/CSSPropertyOperations.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/cx.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11847/Contraceptive and Abortion laws - US.xlsx",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/xhtmlstyle.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/2367407/oscar predictions-1MW.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactTextComponent.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/userActions.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/skins/moono/editor.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3561/AmazonPrimeCalculator.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/effects/animatedSelector.js",
@@ -1135,25 +1187,13 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11560/Code of Business Conduct sign off sheet.doc",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Archive_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/userActions.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/index.html",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/index.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/move.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/mapObject.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/Makefile",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getEventModifierState.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/49438/HorrorMovieMusicQuizCopy.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/mailboxView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getMarkupWrap.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getEventTarget.js",
@@ -1174,8 +1214,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/node_modules/inherits/inherits_browser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView.js",
 		"/Users/kirkcp/Desktop/test2.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/slatemail.sublime-project",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView2.js",
@@ -1183,8 +1221,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/INBOX_uids.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticDragEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer_older.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials2.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/littleSyncer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/q_test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials.json",
@@ -1192,16 +1228,12 @@
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldPrepHtml.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldPrepHtml",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectSelector.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/projectSelector.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/projectSelector.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/threadParser.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/node_modules/mkdirp/node_modules/minimist/test/parse_modified.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/testModule.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/mr-IN.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/tt-RU.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/.module-cache/e24fb5ba34bf718b9e20cd881c45182acd880b96.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/es-SV.js",
@@ -1214,12 +1246,10 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/testPage.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor3/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/cached.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/overlay.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/MobileSafariClickEventPlugin.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/cached.json",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/test.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer2.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/readable-stream/lib/_stream_transform.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/typeahead/typeahead.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
@@ -1229,31 +1259,7 @@
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/js.jsx.sublime-build",
 		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/cson.sublime-build",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/test/mailboxView2.js",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.css",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/jsx.sublime-build",
-		"/Users/kirkcp/Desktop/test.cson",
-		"/Users/kirkcp/Documents/interactives/scripts/compileJSXtoJS/compileToJS.js",
-		"/Users/kirkcp/Documents/interactives/scripts/compileToCSON/cson_to_json.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/mailboxView2.jsx",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/test/.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/test/mailboxView2.json",
-		"/Users/kirkcp/Documents/interactives/scripts/compileJSXtoJS/compileJSX.sh",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/test.cson",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/mailparser/node_modules/encoding/node_modules/iconv-lite/encodings/sbcs-data-generated.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/oldThreader.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Deleted Items_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11398/proposed_senate_attributes.csv",
-		"/Users/kirkcp/Documents/node_play/slatemail/.idea/dictionaries/kirkcp.xml",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/promises_test.js",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/SublimeOnSaveBuild/SublimeOnSaveBuild.sublime-settings",
-		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/SublimeOnSaveBuild.sublime-settings",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11845/20130131motw_immigration_populationLH.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/config.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/.idea/codeStyleSettings.xml",
-		"/Users/kirkcp/Documents/node_play/slatemail/.idea/.name",
-		"/Users/kirkcp/Documents/node_play/slatemail/stepplay.js"
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/test/mailboxView2.js"
 	],
 	"find":
 	{
@@ -1271,6 +1277,115 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"erasemessage",
+			"delete",
+			"clearprojectfromthread",
+			"overlay.close()",
+			"overlay",
+			"jquery",
+			"scheduled",
+			"overlay",
+			"project_viewer",
+			"projectview",
+			"clearProjectFromThread",
+			"openprojectview",
+			"ensureprojectstore",
+			"project",
+			"thread",
+			"listprojects",
+			"exec(",
+			"fs.",
+			"complete",
+			"'complete'",
+			"muted",
+			"savetoexistingthread",
+			"movetocomplete",
+			"savetoexistingthread",
+			"movetocomplete",
+			"movetocomplee",
+			"movetocomplete",
+			"markcomplete",
+			"request_update",
+			"data",
+			".objectstore",
+			"key",
+			"selected",
+			"getthread",
+			"reflectactivemailbox",
+			"selectmessage",
+			"projectview",
+			"ensurelocalboxes",
+			"ensurelocalbox",
+			"ensurelocalboxes",
+			"ensurelocalbox",
+			"markseenseries",
+			"markseen",
+			"markread",
+			"emailselected",
+			"markread",
+			"conf",
+			"openprojectview",
+			"openprojectivew",
+			"openprojectview",
+			"projectview",
+			"initial_thread",
+			"initial_thread_id",
+			"initial_thread",
+			"getthread",
+			"openprojectview",
+			"projectview",
+			"savedescriptors",
+			"savedescriptros",
+			"getlocaldescriptors",
+			"addobjectstore",
+			"getlocaldescriptors",
+			"savedescriptors",
+			"indexeddb",
+			"getlocaldescriptors",
+			"savedescriptors",
+			"removelocalmessage",
+			"console.log",
+			"removelocalmessage",
+			"message_obj",
+			"removelocalmessage",
+			"deleting local",
+			"console",
+			"dbhandler",
+			"self",
+			"dbhandler",
+			"dbHandler",
+			"getmessages",
+			"selectmessage",
+			"messagelist",
+			"eele",
+			"$(this)",
+			"removelocalmessage",
+			"openbox",
+			"dbhandler",
+			"DbHandler",
+			"messagelist",
+			"dbhandler",
+			"updateflags",
+			"dbhandler",
+			"mailparser",
+			"imapHandler",
+			"imap",
+			"imaper",
+			"exports",
+			"dbhandler",
+			"imapHandler",
+			"imaphandler",
+			"savedescriptors",
+			"savedescriptros",
+			"imaper",
+			"downloadnewmail",
+			"deletelocalmessages",
+			"getlocaldesc",
+			"imap",
+			"syncbox",
+			"savealldescriptors",
+			"imapHandler",
+			"deletelocalmessages",
 			"downloadnewmail",
 			"stop",
 			"imapSession",
@@ -1289,116 +1404,7 @@
 			"imaphandler",
 			"imapHandler",
 			"imaphandler",
-			"imapHandler",
-			"imaphandler",
-			"runsync",
-			"regularsync",
-			"message_list",
-			"box",
-			"message_list",
-			"syncer",
-			"console",
-			"console.log(",
-			"syncall",
-			"seterror",
-			"thread",
-			"local_descriptors",
-			"downloadnewmail",
-			"smtp",
-			"send",
-			"regularsync",
-			"onupgradeneeded",
-			"regularsync",
-			"savedescriptros",
-			"storepid",
-			"updatemailobject",
-			"getting mail",
-			"getting mail from",
-			"thread",
-			"threadmessage",
-			"remote_des",
-			"savedescriptors",
-			"reduce",
-			"getremotedescriptors",
-			"threading",
-			"threadmessages",
-			"getmessagesfrommailbox",
-			"async",
-			"\n",
-			"blank",
-			"6",
-			"5",
-			"4",
-			"A4",
-			"3",
-			"A3",
-			"addmessages",
-			"addmore",
-			"favicon",
-			"skip",
-			"getmessagesfrommailbox",
-			"index",
-			"message_list",
-			"getmailfrombox",
-			"index",
-			"getmessagesfrommailbox",
-			"savetoexistingthread",
-			"downloadnewmail",
-			"downloadmessage",
-			"downloadnewmail",
-			"successful",
-			"settimeout",
-			"downloadmessage",
-			"saving",
-			"foreach",
-			"syncall",
-			"30059",
-			"getmailobject",
-			"downloadmessage",
-			"getmessagewithuid",
-			"updateflags",
-			"dbhandler",
-			"downloadnewmail",
-			"dbhandler",
-			"syncbox",
-			"dbhandler",
-			"getmessageswithsearchcriteria",
-			"downloadmessage",
-			"from",
-			";\n",
-			"syncbox",
-			"savemail",
-			"downloadmessage",
-			"resolved_messages",
-			"downloadmessage",
-			"resolved",
-			"dbhandler",
-			"printbox",
-			"self",
-			"this",
-			"console",
-			"addeventlisteners",
-			"iframe",
-			"message_list",
-			"boxviewer",
-			"regularsync",
-			"syncall",
-			"render",
-			"prephtml",
-			"reveal",
-			"printbody",
-			"printattachmenticons",
-			"prepHTMLshort",
-			"function message",
-			"regularsync",
-			"print",
-			"emailselected",
-			"threadclick()",
-			"projectview",
-			"thread_id",
-			"message_list",
-			"printmessages",
-			"markcomplete"
+			"imapHandler"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1416,24 +1422,24 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "modules/imapHandler.js",
+					"file": "modules/imaper.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9515,
+						"buffer_size": 9365,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2595,
-								2598
+								161,
+								161
 							]
 						],
 						"settings":
@@ -1443,36 +1449,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1777.0,
+						"translation.y": 1.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "modules/syncer.js",
+					"file": "modules/dbHandler.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10930,
+						"buffer_size": 41603,
 						"regions":
 						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-								],
-								"scope": "bookmarks"
-							}
 						},
 						"selection":
 						[
 							[
-								510,
-								510
+								11491,
+								11491
 							]
 						],
 						"settings":
@@ -1481,58 +1478,28 @@
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "css/styles.scss",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4883,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4241,
-								4241
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/SCSS/SCSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4654.0,
+						"translation.x": -0.0,
+						"translation.y": 3695.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "modules/dbHandler.js",
+					"buffer": 2,
+					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 36168,
+						"buffer_size": 8587,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								23145,
-								23145
+								678,
+								678
 							]
 						],
 						"settings":
@@ -1541,34 +1508,92 @@
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
-						"translation.y": 16598.0,
+						"translation.x": -0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
+					"file": "README.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 429,
+						"buffer_size": 399,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								429,
-								429
+								399,
+								399
 							]
 						],
 						"settings":
 						{
-							"auto_name": "Avoiding a race condition",
 							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "credentials/credentials.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 371,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								371,
+								371
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "slatemail.sublime-project",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 73,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								73,
+								73
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1578,26 +1603,55 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "modules/userActions.js",
-					"semi_transient": true,
+					"buffer": 6,
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 47,
+						"buffer_size": 117,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								47,
-								47
+								117,
+								117
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/Users/kirkcp/.Trash/credentials2.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 372,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								211,
+								211
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1605,43 +1659,13 @@
 					},
 					"stack_index": 4,
 					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "modules/messageList.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8282,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1482,
-								1482
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JSX/JSX.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
 				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 34.0
+		"height": 29.0
 	},
 	"input":
 	{
@@ -1685,7 +1709,7 @@
 	"project": "slatemail.sublime-project",
 	"replace":
 	{
-		"height": 50.0
+		"height": 54.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1693,6 +1717,54 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"main.js",
+				"main.js"
+			],
+			[
+				"dbhandl",
+				"modules/dbHandler.js"
+			],
+			[
+				"main",
+				"main.html"
+			],
+			[
+				"syncer",
+				"modules/syncer.js"
+			],
+			[
+				"dbhandler",
+				"modules/dbHandler.js"
+			],
+			[
+				"overlay",
+				"modules/overlay.js"
+			],
+			[
+				"treev",
+				"modules/treeView.js"
+			],
+			[
+				"projectlist",
+				"modules/projectList.jsx"
+			],
+			[
+				"project",
+				"modules/projectSelector.js"
+			],
+			[
+				"messagelist.js",
+				"modules/messageList.jsx"
+			],
+			[
+				"projectsele",
+				"modules/projectSelector.js"
+			],
+			[
+				"projectview",
+				"modules/projectView.js"
+			],
 			[
 				"messagelist",
 				"modules/messageList.jsx"
@@ -1702,36 +1774,68 @@
 				"css/styles.scss"
 			],
 			[
-				"dbhand",
-				"modules/dbHandler.js"
+				"main.html",
+				"main.html"
 			],
 			[
-				"syncer",
-				"modules/syncer.js"
+				"idnex",
+				"node_modules/datejs/index.js"
 			],
 			[
-				"imaph",
-				"modules/imapHandler.js"
+				"imaper",
+				"modules/imaper.js"
 			],
 			[
-				"main",
-				"main.js"
-			],
-			[
-				"index.html",
-				"mailComposer/ckeditor/samples/index.html"
+				"treevi",
+				"modules/treeView.js"
 			],
 			[
 				"messageview",
 				"modules/messageView.js"
 			],
 			[
-				"mailcompser",
+				"projects",
+				"modules/projectSelector.js"
+			],
+			[
+				"projectv",
+				"modules/projectView.js"
+			],
+			[
+				"mailcomposer",
 				"mailComposer/mailComposer.js"
+			],
+			[
+				"dbhand",
+				"modules/dbHandler.js"
 			],
 			[
 				"treeview",
 				"modules/treeView.js"
+			],
+			[
+				"composer",
+				"mailComposer/mailComposer.html"
+			],
+			[
+				"index",
+				"mailComposer/ckeditor/samples/index.html"
+			],
+			[
+				"dbhan",
+				"modules/dbHandler.js"
+			],
+			[
+				"imaph",
+				"modules/imapHandler.js"
+			],
+			[
+				"index.html",
+				"mailComposer/ckeditor/samples/index.html"
+			],
+			[
+				"mailcompser",
+				"mailComposer/mailComposer.js"
 			],
 			[
 				"treevei",
@@ -1739,10 +1843,6 @@
 			],
 			[
 				"dbha",
-				"modules/dbHandler.js"
-			],
-			[
-				"dbhandl",
 				"modules/dbHandler.js"
 			],
 			[
@@ -1754,16 +1854,8 @@
 				"css/message_list.scss"
 			],
 			[
-				"main.js",
-				"main.js"
-			],
-			[
 				"syn",
 				"modules/syncer.js"
-			],
-			[
-				"dbhandler",
-				"modules/dbHandler.js"
 			],
 			[
 				"imap",
@@ -1774,24 +1866,12 @@
 				"credentials/credentials2.json"
 			],
 			[
-				"treev",
-				"modules/treeView.js"
-			],
-			[
 				"sync",
 				"modules/syncer.js"
 			],
 			[
 				"message_list.",
 				"css/message_list.scss"
-			],
-			[
-				"projectview",
-				"modules/projectView.js"
-			],
-			[
-				"project",
-				"modules/projectSelector.js"
 			],
 			[
 				"projectview.",
@@ -1804,10 +1884,6 @@
 			[
 				"projectselec",
 				"modules/projectSelector.js"
-			],
-			[
-				"main.html",
-				"main.html"
 			],
 			[
 				"dbhanld",
@@ -1838,20 +1914,8 @@
 				"package.json"
 			],
 			[
-				"dbhan",
-				"modules/dbHandler.js"
-			],
-			[
-				"mailcomposer",
-				"mailComposer/mailComposer.js"
-			],
-			[
 				"",
 				"main.js"
-			],
-			[
-				"index",
-				"index.html"
 			],
 			[
 				"mailcomopser.html",
@@ -1882,10 +1946,6 @@
 				"css/styles.scss"
 			],
 			[
-				"overlay",
-				"modules/overlay.js"
-			],
-			[
 				"projectsle",
 				"modules/projectSelector.js"
 			],
@@ -1895,10 +1955,6 @@
 			],
 			[
 				"messagelist.",
-				"modules/messageList.js"
-			],
-			[
-				"messagelist.js",
 				"modules/messageList.js"
 			],
 			[
@@ -2116,7 +2172,7 @@
 	"settings":
 	{
 	},
-	"show_minimap": true,
+	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,

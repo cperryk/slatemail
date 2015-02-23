@@ -5,7 +5,7 @@ function Overlay(conf){
 	this.shade = $('<div>')
 		.addClass('overlay')
 		.appendTo('body')
-		.fadeTo(500,1);
+		.fadeTo(100,1);
 	this.container = $('<div>')
 		.addClass('inner')
 		.appendTo(this.shade);

@@ -9,25 +9,16 @@ function Imaper(){
 
 Imaper.prototype = {
 	connect:function(){
-		// console.log('connecting');
-		if(this.imap){
-			// console.log(imap.state);
-		}
 		if(this.imap && this.imap.state && this.imap.state === 'authenticated'){
-			// console.log('already authenticated');
+			// already authenticated
 			return Q(true);
 		}
 		var def = Q.defer();
-		var conf = JSON.parse(fs.readFileSync('credentials/credentials2.json')).internal;
-		// console.log(conf);
-		// conf.debug = function(s){
-		//   console.log(s);
-		// };
+		var conf = JSON.parse(fs.readFileSync('credentials/credentials.json')).internal;
 		this.imap = new Imap(conf);
 		this.imap.connect();
 		this.imap
 			.once('ready',function(){
-				// console.log('ready');
 				def.resolve();
 			})
 			.once('error',function(err){
