@@ -1,6 +1,26 @@
 $selection_yellow: #feffaf;
+// @font-face{
+// 	font-family:'Oxygen';
+// 	src: url(./fonts/Oxygen/Oxygen-Regular.ttf);
+// }
+@font-face{
+	font-family:'Overlock';
+	src: url(./fonts/Overlock/Overlock-Regular.ttf);
+}
+@font-face{
+	font-family:'Raleway';
+	src: url(./fonts/Raleway/Raleway-Regular.ttf);
+}
+// @font-face{
+// 	font-family:'Open Sans';
+// 	src: url(./fonts/Open_Sans/OpenSans-Regular.ttf);
+// }
+// @font-face{
+// 	font-family:'Ubuntu';
+// 	src: url(./fonts/Ubuntu/Ubuntu-Regular.ttf);
+// }
 body{
-	font-family: 'Gotham';
+	font-family: 'Raleway';
 	&.project_viewer_open{
 		#message_viewer{
 			width:-webkit-calc(80% - 402px) !important;
@@ -218,6 +238,11 @@ body{
 	z-index:99;
 	display: none;
 	overflow: scroll;
+	.btn_delete_project{
+		margin-left:auto;
+		margin-right:auto;
+		text-align: center;
+	}
 	h4{
 		margin:0px;
 		font-size:0.8em;

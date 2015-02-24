@@ -1,3 +1,4 @@
+// A view into a single project. Allows the user to select threads and attachments from the project. The user may also delete the project.
 var $ = require('jquery');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
@@ -13,6 +14,7 @@ function ProjectView(container, conf){
 		.addClass('project_title')
 		.appendTo(this.container);
 	$('<button>')
+		.addClass('btn_delete_project')
 		.html('Delete project')
 		.appendTo(this.container)
 		.click(function(){
