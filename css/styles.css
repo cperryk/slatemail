@@ -205,6 +205,8 @@ body {
   z-index: 99;
   display: none;
   overflow: scroll; }
+  #project_viewer .button_wrapper {
+    text-align: center; }
   #project_viewer .btn_delete_project {
     margin-left: auto;
     margin-right: auto;
@@ -284,3 +286,10 @@ body {
   white-space: nowrap; }
   .project_list .project_item:hover {
     text-decoration: underline; }
+
+.scheduler {
+  width: 200px; }
+  .scheduler p {
+    margin: 0 0 0.5em 0; }
+  .scheduler input {
+    width: 100%; }

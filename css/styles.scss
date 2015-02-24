@@ -245,6 +245,9 @@ body{
 	z-index:99;
 	display: none;
 	overflow: scroll;
+	.button_wrapper{
+		text-align:center;
+	}
 	.btn_delete_project{
 		margin-left:auto;
 		margin-right:auto;
@@ -351,5 +354,15 @@ body{
 		&:hover{
 			text-decoration: underline;
 		}
+	}
+}
+
+.scheduler{
+	width:200px;
+	p{
+		margin:0 0 0.5em 0;
+	}
+	input{
+		width:100%;
 	}
 }

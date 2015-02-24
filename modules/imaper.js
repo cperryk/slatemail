@@ -21,6 +21,9 @@ Imaper.prototype = {
 		}
 		var def = Q.defer();
 		var conf = global.PREFERENCES.internal;
+		// conf.debug = function(err){
+		// 	console.log(err);
+		// };
 		self.imap = new Imap(conf);
 		self.imap.connect();
 		self.imap
@@ -28,8 +31,18 @@ Imaper.prototype = {
 				def.resolve();
 			})
 			.once('error',function(err){
-				console.log('imap error: '+err);
-				console.log(err);
+				if(err.source === "authentication"){
+					window.alert("There was a problem with your IMAP credentials. Check your preferences file.");
+				}
+				else{
+					console.log('The IMAP connection has failed. Retrying in 30 seconds');
+					setTimeout(function(){
+						return self.connect()
+							.then(function(){
+								def.resolve();
+							});
+					}, 30000);
+				}
 			})
 			.once('end', function() {
 				console.log('Connection ended');

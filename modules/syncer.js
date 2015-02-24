@@ -7,6 +7,7 @@ var syncing = false;
 var indexedDB = window.indexedDB;
 
 function Syncer(conf){
+	console.log('NEW SYNCER');
 	this.imaper = new Imaper();
 	this.dbHandler = new dbHandler();
 	this.conf = conf;
@@ -16,29 +17,29 @@ Syncer.prototype = {
 	start: function(){
 		// Starts the syncer, which syncs the mailboxes at regular intervals
 		var self = this;
+		this.stopped = false;
 		this.runSync();
-		// This poll was meant to keep the syncer running in the case of an IMAP error. However, it doesn't really work well!
-		// It needs to be rethought. Probably should just listen for an imap error.
-		this.interval = setInterval(function(){
-			self.runSync();
-		}, 15000);
 		return this;
 	},
 	stop: function(){
 		// Stops running the syncer
-		if(this.interval){
-			clearInterval(this.interval);
-		}
+		this.stopped = true;
 		return this;
 	},
 	runSync: function(){
 		var self = this;
+		if(self.stopped !== false){
+			return;
+		}
 		this.syncAll()
 			.then(function(results){
 				if(results !== false){
 					if(self.conf.syncComplete){
 						self.conf.syncComplete();
 					}
+					setTimeout(function(){
+						self.runSync();
+					}, 10000);
 				}
 			});
 	}
@@ -207,15 +208,12 @@ Syncer.prototype.syncBox = function(mailbox_name, remote_descriptors){
 	this.getLocalDescriptors(mailbox_name)
 		.then(function(local_descriptors){
 			return Q.all([
-				self.deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors), // delete any local messages that are no longer in remote messages
-				self.downloadNewMail(mailbox_name, local_descriptors, remote_descriptors), // download any remote messages that are not in local messages
-				self.updateFlags(mailbox_name, local_descriptors, remote_descriptors) // update local flags with remote flags where they differ
+				self.deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors),
+				self.downloadNewMail(mailbox_name, local_descriptors, remote_descriptors),
+				self.updateFlags(mailbox_name, local_descriptors, remote_descriptors)
 			]);
 		})
 		.then(function(outputs){
-			// an IMAP box might report a UID before the message is available to download.
-			// If any messages failed to download, remove it from the new local descriptors record before it's saved.
-			// Otherwise, the client will think it has an email that it doesn't and never download it.
 			downloaded_messages = outputs[1];
 			downloaded_messages.forEach(function(msg){
 				if(msg.downloaded === false){

@@ -158,10 +158,8 @@ MessageList.prototype = {
 			.then(function(){
 				if(box === 'INBOX'){
 					var def = Q.defer();
-					console.log('getting due mail');
 					self.dbHandler.getDueMail()
 						.then(function(due_mail){
-							console.log('due mail: ',due_mail);
 							due_mail.forEach(function(mail_obj){
 								if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
 									self.messages_to_print.push(mail_obj);

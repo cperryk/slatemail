@@ -11,6 +11,7 @@ var ProjectView = require('./modules/projectView.js');
 var Syncer = require('./modules/syncer.js');
 var treeView = require('./modules/treeView.js');
 var ProjectSelector = require('./modules/ProjectSelector');
+var Scheduler = require('./modules/scheduler.js');
 
 var Q = require('q');
 var gui = require('nw.gui');
@@ -177,7 +178,7 @@ function addSelectedEmailListeners(){
 							})
 							.then(function(){
 								project_list.render();
-							});
+						});
 						overlay.close();
 					}
 				});
@@ -185,24 +186,16 @@ function addSelectedEmailListeners(){
 			115: function(){ // s
 
 				var overlay = new Overlay();
-				var input = $('<input type="text" id="datepicker">')
-					.appendTo(overlay.container)
-					.datepicker({
-						onSelect:function(date_text, obj){
-							var date = input.datepicker('getDate');
-							var selection = message_list.getSelection();
-							my_dbHandler.schedule(date, selection.mailbox, selection.uid)
-								.then(function(){
-									removeElement();
-								});
-								overlay.close();
-							// console.log(isValidDate(new Date(date_text)));
-						}
-					})
-					.focus();
-				setTimeout(function(){
-					input.val('');				
-				},1);
+				new Scheduler(overlay.container, {
+					onSelection:function(selected_date){
+						var selected_email = message_list.getSelection();
+						my_dbHandler.schedule(selected_date, selected_email.mailbox, selected_email.uid)
+							.then(function(){
+								removeElement();
+							});
+						overlay.close();
+					}
+				});
 				return;
 
 				// var user_input = prompt('What date would you like to schedule this for?');

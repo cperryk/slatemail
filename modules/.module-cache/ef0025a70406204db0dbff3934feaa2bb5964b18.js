@@ -1,9 +1,45 @@
 // A view into a single project. Allows the user to select threads and attachments from the project. The user may also delete the project.
+global.document= window.document;
+global.navigator = window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
+var React = require('react');
+
+// React classes
+
+var ProjectViewReact = React.createClass({displayName: "ProjectViewReact",
+	getInitialState: function () {
+	    return {
+	        data:[]
+	    };
+	},
+	render: function(){
+		console.log(this.props);
+		var thread_nodes = this.props.data.threads.map(function(thread){
+			return (
+				React.createElement(ThreadItem, {key: thread_id, data: thread})
+			);
+		});
+		return (
+			React.createElement("div", {className: "project_view"}, 
+				React.createElement("h2", {className: "project_title"}, project_name), 
+				React.createElement("button", {className: "btn_delete_project"}, "Delete project"), 
+				React.createElement("h3", null, "Threads"), 
+				React.createElement("div", {className: "threads_container"}, 
+					thread_nodes
+				), 
+				React.createElement("h3", null, "Attachments"), 
+				React.createElement("div", {className: "attachments_container"}, 
+					attachment_nodes
+				)
+			)
+		);
+	}
+});
+
 
 function ProjectView(container, conf){
 	var self = this;
@@ -13,16 +49,13 @@ function ProjectView(container, conf){
 	$('<h2>')
 		.addClass('project_title')
 		.appendTo(this.container);
-	var button_wrapper = $('<p>')
-		.addClass('button_wrapper')
-		.appendTo(this.container);
 	$('<button>')
 		.addClass('btn_delete_project')
 		.html('Delete project')
-		.appendTo(button_wrapper)
+		.appendTo(this.container)
 		.click(function(){
-			if(window.confirm("Are you sure you want to delete project "+self.project_name+'? This will not delete its messages.')){
-				self.dbHandler.deleteProject(self.project_name)
+			if(window.confirm("Are you sure you want to delete project "+project_name+'? This will not delete its messages.')){
+				self.dbHandler.deleteProject(project_name)
 					.then(function(){
 						if(conf.onProjectDeletion){
 							conf.onProjectDeletion();
@@ -34,19 +67,11 @@ function ProjectView(container, conf){
 }
 ProjectView.prototype = {
 	printProject: function(project_id, initial_thread){
-		console.log(initial_thread, this.initial_thread_id);
 		if(project_id === this.project_name){
-			if(initial_thread !== this.initial_thread_id){
-				console.log('GO THREAD SWITCH');
-				this.container.find('.selected')
-					.removeClass('selected');
-				this.container.find("[data-thread='"+initial_thread+"']").addClass('selected');				
-				this.initial_thread_id = initial_thread;
-			}
 			return;
 		}
 		this.container.find('.thread_container').remove();
-		this.container.find('.attachments').remove();
+		this.container.find('.attachments_container').remove();
 		this.container.find('h2').html(project_id);
 		this.project_name = project_id;
 		this.initial_thread_id = initial_thread;

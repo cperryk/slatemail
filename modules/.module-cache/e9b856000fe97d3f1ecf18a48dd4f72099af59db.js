@@ -13,16 +13,16 @@ function ProjectView(container, conf){
 	$('<h2>')
 		.addClass('project_title')
 		.appendTo(this.container);
-	var button_wrapper = $('<p>')
+	$('<p>')
 		.addClass('button_wrapper')
 		.appendTo(this.container);
 	$('<button>')
 		.addClass('btn_delete_project')
 		.html('Delete project')
-		.appendTo(button_wrapper)
+		.appendTo(this.container)
 		.click(function(){
-			if(window.confirm("Are you sure you want to delete project "+self.project_name+'? This will not delete its messages.')){
-				self.dbHandler.deleteProject(self.project_name)
+			if(window.confirm("Are you sure you want to delete project "+project_name+'? This will not delete its messages.')){
+				self.dbHandler.deleteProject(project_name)
 					.then(function(){
 						if(conf.onProjectDeletion){
 							conf.onProjectDeletion();
@@ -34,19 +34,11 @@ function ProjectView(container, conf){
 }
 ProjectView.prototype = {
 	printProject: function(project_id, initial_thread){
-		console.log(initial_thread, this.initial_thread_id);
 		if(project_id === this.project_name){
-			if(initial_thread !== this.initial_thread_id){
-				console.log('GO THREAD SWITCH');
-				this.container.find('.selected')
-					.removeClass('selected');
-				this.container.find("[data-thread='"+initial_thread+"']").addClass('selected');				
-				this.initial_thread_id = initial_thread;
-			}
 			return;
 		}
 		this.container.find('.thread_container').remove();
-		this.container.find('.attachments').remove();
+		this.container.find('.attachments_container').remove();
 		this.container.find('h2').html(project_id);
 		this.project_name = project_id;
 		this.initial_thread_id = initial_thread;

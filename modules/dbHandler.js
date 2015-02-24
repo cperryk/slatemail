@@ -6,11 +6,12 @@ var indexedDB = window.indexedDB;
 
 // careful. //console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
-// to-do: build routine to ensure deleted mailboxes are deleted locally
-
 console.log('DBHANDLER IMPORTED');
 
-function dbHandler(){
+function dbHandler(imaper){
+	// if(imaper){
+	// 	this.imaper = imaper;
+	// }
 	this.imaper = new Imaper();
 }
 
@@ -394,21 +395,21 @@ updateFlags:function(box_name, uid, flags, callback){
 		return true;
 	}
 },
-eraseMessage:function(box_name, uid){
-	// Removes every trace of the message everywhere.
-	var def = Q.defer();
-	var self = this;
-	Q.all([
-		self.removeLocalMessage(box_name, uid),
-		// dbHandler.removePid(), // TO-DO
-		self.imaper.markDeleted(box_name, uid)
-	])
-	.then(function(){
-		self.imaper.expunge(box_name);
-		def.resolve();
-	});
-	return def.promise;
-},
+// eraseMessage:function(box_name, uid){
+// 	// Removes every trace of the message everywhere.
+// 	var def = Q.defer();
+// 	var self = this;
+// 	Q.all([
+// 		self.removeLocalMessage(box_name, uid),
+// 		// dbHandler.removePid(), // TO-DO
+// 		self.imaper.markDeleted(box_name, uid)
+// 	])
+// 	.then(function(){
+// 		self.imaper.expunge(box_name);
+// 		def.resolve();
+// 	});
+// 	return def.promise;
+// },
 removePID:function(pid){ // TO-DO
 	var def = Q.defer();
 	def.resolve();
