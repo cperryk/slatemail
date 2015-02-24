@@ -820,12 +820,13 @@ listProjects:function(){
 	return def.promise;
 },
 moveToComplete:function(box_name, uid){
+	// Move a single email to complete
 	console.log('Moving to complete: '+box_name+':'+uid);
 	var def = Q.defer();
 	var self = this;
 	console.log('uid is '+uid);
 	if(box_name!=='complete'){
-		self.imaper.move(box_name, 'complete', uid)
+		self.imaper.move(box_name, 'SlateMail/complete', uid)
 			.then(function(){
 				return self.removeLocalMessage(box_name, uid);
 			})
@@ -843,6 +844,7 @@ moveToComplete:function(box_name, uid){
 	return def.promise;
 },
 markComplete:function(box_name, uid){
+	// Mark an email and all of the emails in its thread as complete
 	console.log('marking complete: '+box_name+':'+uid);
 	var def = Q.defer();
 	var self = this;

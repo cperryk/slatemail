@@ -16,6 +16,7 @@ Syncer.prototype = {
 		// Starts the syncer, which syncs the mailboxes at regular intervals
 		var self = this;
 		this.runSync();
+		// This poll was meant to keep the syncer running in the case of an IMAP error. However, it doesn't work! It needs to be rethought.
 		this.interval = setInterval(function(){
 			self.runSync();
 		}, 5000);
@@ -71,14 +72,19 @@ Syncer.prototype.syncAll = function(){
 			return self.imaper.getBoxPaths();
 		})
 		.then(function(paths){
-			// console.log(paths);
+			// These were creating some problems for me so I've removed them from the syncing process for now.
 			paths.splice(paths.indexOf('Deleted Items'), 1);
 			paths.splice(paths.indexOf('Drafts'), 1);
-			// paths.splice(paths.indexOf('List'), 1);
 			box_paths = paths;
+			if(global.PREFERENCES.demo){
+				box_paths = box_paths.filter(function(i){
+					return i.indexOf('SlateMail') === 0 || i === 'INBOX';
+				});
+			}
 			// box_paths = ['INBOX'];
 		})
 		.then(function(){
+			console.log('BOX PATHS', box_paths);
 			console.log('deleting boxes');
 			var def = Q.defer();
 			self.dbHandler.getAllMailboxes()
@@ -358,7 +364,6 @@ Syncer.prototype.saveDescriptors = function(mailbox_name, msgs){
 
 Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, remote_descriptors){
 	console.log('downloading new mail');
-	resolved_messages = 0;
 	var self = this;
 	var def = Q.defer();
 	var to_get = [];
@@ -401,8 +406,6 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 	return def.promise;
 };
 
-var resolved_messages = 0;
-
 Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptors, index, l){
 	console.log('------------ downloading message '+mailbox_name+':'+uid+', index = '+index+' of '+l+'-------------------');
 	// console.log(remote_descriptors[uid]);
@@ -421,8 +424,7 @@ Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptor
 				mail_obj.uid = uid;
 				self.dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
 					.then(function(){
-						resolved_messages++;
-						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING. '+(index+1)+' of '+resolved_messages+' resolved');
+						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING.');
 						def.resolve({
 							uid:uid,
 							downloaded:true,

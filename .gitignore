@@ -1,5 +1,6 @@
 credentials
 attachments
 descriptors
+preferences
 *.sublime-project
 *.sublime-workspace

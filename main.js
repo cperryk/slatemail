@@ -28,20 +28,22 @@ var project_list;
 
 // Default box
 var BOX = 'INBOX';
+global.PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'));
 
 // Other parameters
 var overlay_is_open = false;
 
 (function init(){
-	my_dbHandler = new dbHandler();
 	getPassword()
-		.then(function(){
+		.then(function(password){
+			console.log('PASSWORD IS '+password);
+			global.PREFERENCES.internal.password = password;
+			my_dbHandler = new dbHandler();
 			return my_dbHandler.connect();
 		})
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){
-					console.log('selected');
 					emailSelected(mailbox, uid);
 				}
 			});
@@ -66,7 +68,7 @@ var overlay_is_open = false;
 			return message_list.printBox(BOX);
 		})
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -181,34 +183,33 @@ function addSelectedEmailListeners(){
 				},1);
 				return;
 
-
-				var user_input = prompt('What date would you like to schedule this for?');
-				console.log(user_input);
-				if(!user_input){
-					return;
-				}
-				var date = new Date(user_input);
-				if(!isValidDate(date)){
-					return;
-				}
-				var selection = message_list.getSelection();
-				my_dbHandler.schedule(date, selection.mailbox, selection.uid)
-					.then(function(){
-						removeElement();
-					});
-				function isValidDate(d){
-					if ( Object.prototype.toString.call(date) === "[object Date]" ) {
-						if ( isNaN( d.getTime() ) ) {  // d.valueOf() could also work
-							return false;
-					  	}
-					  	else {
-							return true;
-					  	}
-					}
-					else {
-						return false;
-					}
-				}
+				// var user_input = prompt('What date would you like to schedule this for?');
+				// console.log(user_input);
+				// if(!user_input){
+				// 	return;
+				// }
+				// var date = new Date(user_input);
+				// if(!isValidDate(date)){
+				// 	return;
+				// }
+				// var selection = message_list.getSelection();
+				// my_dbHandler.schedule(date, selection.mailbox, selection.uid)
+				// 	.then(function(){
+				// 		removeElement();
+				// 	});
+				// function isValidDate(d){
+				// 	if ( Object.prototype.toString.call(date) === "[object Date]" ) {
+				// 		if ( isNaN( d.getTime() ) ) {  // d.valueOf() could also work
+				// 			return false;
+				// 	  	}
+				// 	  	else {
+				// 			return true;
+				// 	  	}
+				// 	}
+				// 	else {
+				// 		return false;
+				// 	}
+				// }
 			},
 			98: function(){ // b
 				var selection = message_list.getSelection();
@@ -314,17 +315,23 @@ function markRead(mail_objs){
 			});
 	});
 }
-function getPassword(user, cb){
+
+function getPassword(){
 	var def = Q.defer();
-	var conf = JSON.parse(fs.readFileSync('credentials/credentials.json')).internal;
-	keychain.getPassword({account:conf.user, service:'SlateMail'}, function(err, pass){
+	var password;
+	keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){
 		if(!pass){
-			pass = window.prompt('What is your IMAP password?');
-			console.log('setting password');
-			keychain.setPassword({account:user, service:'SlateMail', password:pass});
+			password = window.prompt('What is your IMAP password?');
+			keychain.setPassword({account:global.PREFERENCES.internal.user, service:'SlateMail', password: password}, function(err){
+				if(err){
+					console.log(err);
+				}
+			});
 		}
-		global.user_pass = pass;
-		def.resolve();
+		else{
+			password = pass;
+		}
+		def.resolve(password);
 	});
 	return def.promise;
 }

@@ -4,6 +4,8 @@ var Q = require('q');
 var fs = require('fs');
 var keychain = require('keychain');
 
+var password;
+
 function Imaper(){
 	console.log('NEW IMAPER');
 	this.connect();
@@ -17,10 +19,7 @@ Imaper.prototype = {
 			return Q(true);
 		}
 		var def = Q.defer();
-		var conf = JSON.parse(fs.readFileSync('credentials/credentials.json')).internal;
-		conf.password = global.user_pass;
-		// conf.password = pass;
-		console.log(conf);
+		var conf = global.PREFERENCES.internal;
 		self.imap = new Imap(conf);
 		self.imap.connect();
 		self.imap

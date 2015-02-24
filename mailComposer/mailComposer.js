@@ -5,6 +5,13 @@ var stubTransport = require('nodemailer-stub-transport');
 var fs = require('fs-extra');
 var Imaper = require('../modules/imaper');
 var CKEDITOR;
+var Q = require('Q');
+var keychain = require('keychain');
+var password;
+
+var PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'));
+global.PREFERENCES = PREFERENCES;
+
 
 function MailComposer(container, conf){
 	this.conf = conf || {};
@@ -77,37 +84,58 @@ MailComposer.prototype = {
 		var to = this.container.find('.input_to').html();
 		var subject = this.container.find('.input_subject').html();
 		var body = this.CKEDITOR.instances.message_body.getData();
-		var credentials = fs.readJsonSync('credentials/credentials2.json').external;
+		var credentials = PREFERENCES.external;
 		var mail_options = {
 			from: credentials.auth.user,
 			to: to,
 			subject: subject,
 			html: body
 		};
-		console.log(mail_options.html);
 		if(this.conf && this.conf.in_reply_to){
 			mail_options.inReplyTo = this.conf.in_reply_to;
 		}
-		console.log(mail_options);
-		var transporter = nodemailer.createTransport(smtpTransport(credentials));
-		console.log(transporter);
-
-		transporter.sendMail(mail_options, function(error, info) {
-			if (error) {
-				console.log(error);
-			} else {
-				console.log('Message sent: ' + info.response);
-			}
-			var transporter2 = nodemailer.createTransport(stubTransport());
-			transporter2.sendMail(mail_options, function(error, info){
-				var imaper = new Imaper();
-				imaper.addMessageToBox('Sent Items', info.response.toString())
-		   		.then(function(){
-						window.close();
-		   		});
+		getPassword()
+			.then(function(password){
+				credentials.auth.pass = password;
+				var transporter = nodemailer.createTransport(smtpTransport(credentials));
+				transporter.sendMail(mail_options, function(error, info) {
+					if (error) {
+						console.log(error);
+					} else {
+						console.log('Message sent: ' + info.response);
+					}
+					var transporter2 = nodemailer.createTransport(stubTransport());
+					transporter2.sendMail(mail_options, function(error, info){
+						var imaper = new Imaper();
+						imaper.addMessageToBox('Sent Items', info.response.toString())
+				   		.then(function(){
+								window.close();
+				   		});
+					});
+				});
 			});
-		});
 	}
 };
+
+function getPassword(){
+	var def = Q.defer();
+	if(password){
+		def.resolve(password);
+	}
+	else{
+		keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){
+			if(!pass){
+				password = window.prompt('What is your IMAP password?');
+				keychain.setPassword({account:global.PREFERENCES.internal.user, service:'SlateMail', password: password}, function(err){
+					if(err){
+						console.log(err);
+					}
+				});
+			}
+			def.resolve(password);
+		});
+	}
+	return def.promise;
+}
 
 module.exports = MailComposer;

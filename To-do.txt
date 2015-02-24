@@ -1,0 +1,1 @@
+Optimize threading so that the threading process checks the email's current mailbox first, then the INBOX.
