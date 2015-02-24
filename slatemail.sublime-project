@@ -4,6 +4,10 @@
 		{
 			"follow_symlinks": true,
 			"path": "."
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/Users/kirkcp/Documents/node_play/slatemail_dist"
 		}
 	]
 }

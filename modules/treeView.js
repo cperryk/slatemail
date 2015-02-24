@@ -1,10 +1,11 @@
 var $ = require('jquery');
-var dbHandler = new window.dbHandler();
+// var dbHandler = new window.dbHandler();
 var Q = require('Q');
 // var dbHandler = require('../modules/dbHandler.js');
 
 function TreeView(container, conf){
 	var self = this;
+	this.dbHandler = new window.dbHandler();
 	this.container = container
 		.addClass('tree_view')
 		.on('click','li', function(e){
@@ -21,7 +22,7 @@ TreeView.prototype = {
 		console.log('TreeView - Print tree: '+tree);
 		var self = this;
 		var def = Q.defer();
-		dbHandler.getMailboxTree()
+		this.dbHandler.getMailboxTree()
 			.then(function(tree){
 				var html = self.getTreeHTML(tree);
 				self.container

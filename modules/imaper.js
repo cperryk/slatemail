@@ -2,22 +2,28 @@ var Imap = require('imap');
 var MailParser = require("mailparser").MailParser;
 var Q = require('q');
 var fs = require('fs');
+var keychain = require('keychain');
 
 function Imaper(){
+	console.log('NEW IMAPER');
 	this.connect();
 }
 
 Imaper.prototype = {
 	connect:function(){
+		var self = this;
 		if(this.imap && this.imap.state && this.imap.state === 'authenticated'){
 			// already authenticated
 			return Q(true);
 		}
 		var def = Q.defer();
 		var conf = JSON.parse(fs.readFileSync('credentials/credentials.json')).internal;
-		this.imap = new Imap(conf);
-		this.imap.connect();
-		this.imap
+		conf.password = global.user_pass;
+		// conf.password = pass;
+		console.log(conf);
+		self.imap = new Imap(conf);
+		self.imap.connect();
+		self.imap
 			.once('ready',function(){
 				def.resolve();
 			})

@@ -1434,21 +1434,21 @@ deleteProject:function(project_name){
 			var thread_ids = project_obj.threads;
 			var promises = thread_ids.map(function(thread_id){
 				return self.clearProjectFromThread(thread_id);
-			})
+			});
 			return Q.all(promises);
 		})
 		.then(function(){
 			var def = Q.defer();
-			var tx = db.transaction('projects','readwrite')
+			var tx = db.transaction('projects','readwrite');
 			var store = tx.objectStore('projects');
 			var req = store.delete(project_name);
 			req.onsuccess = function(){
 				def.resolve();
-			}
+			};
 			req.onerror = function(err){
 				console.log(err);
 				def.resolve();
-			}
+			};
 			return def.promise;
 		})
 		.fin(function(){
@@ -1472,17 +1472,17 @@ clearProjectFromThread:function(thread_id){
 			if(thread_obj.project_id){
 				delete thread_obj.project_id;
 			}
-			var tx = db.transaction('threads','readwrite')
+			var tx = db.transaction('threads','readwrite');
 			var store = tx.objectStore('threads');
 			var put_request = store.put(thread_obj);
 			put_request.onsuccess = function(){
 				console.log('project removed from thread: '+thread_id);
 				def.resolve();
-			}
+			};
 			put_request.onerror = function(err){
 				console.log(err);
 				def.resolve();
-			}
+			};
 		});
 	return def.promise;
 }

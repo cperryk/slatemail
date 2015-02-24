@@ -3,20 +3,20 @@ global.navigator = window.navigator;
 
 var $ = require('jquery');
 // var dbHandler = require('./dbHandler');
-var dbHandler = new window.dbHandler();
 var mustache = require('mustache');
 var Typeahead = require('typeahead');
 
 function ProjectSelector(target_container, conf){
 	var self = this;
 	this.conf = conf;
+	this.dbHandler = new window.dbHandler();
 	this.container = $('<div>')
 		.addClass('project_selector')
 		.appendTo(target_container);
 	var container = this.container;
-	dbHandler.connect()
+	this.dbHandler.connect()
 		.then(function(){
-			return dbHandler.listProjects();
+			return self.dbHandler.listProjects();
 		})
 		.then(function(projects){
 			var template =

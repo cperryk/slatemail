@@ -3,12 +3,13 @@ var Q = require('Q');
 var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
-var dbHandler = new window.dbHandler();
 
 function ProjectView(project_name, initial_thread_id, conf){
 	console.log('NEW PROJECT VIEW: '+project_name);
+	var self = this;
 	this.project_name = project_name;
 	this.initial_thread_id = initial_thread_id;
+	this.dbHandler = new window.dbHandler();
 	this.conf = conf;
 	this.container = $('#project_viewer')
 		.empty();
@@ -21,7 +22,7 @@ function ProjectView(project_name, initial_thread_id, conf){
 		.appendTo(this.container)
 		.click(function(){
 			if(window.confirm("Are you sure you want to delete project "+project_name+'? This will not delete its messages.')){
-				dbHandler.deleteProject(project_name)
+				self.dbHandler.deleteProject(project_name)
 					.then(function(){
 						if(conf.onProjectDeletion){
 							conf.onProjectDeletion();
@@ -42,9 +43,9 @@ ProjectView.prototype = {
 		$('<h3>')
 			.html('Threads')
 			.appendTo(this.thread_container);
-		dbHandler.getProject(this.project_name)
+		self.dbHandler.getProject(this.project_name)
 			.then(function(project_obj){
-				return dbHandler.getThreads(project_obj.threads);
+				return self.dbHandler.getThreads(project_obj.threads);
 			})
 			.then(function(thread_objs){
 				console.log('thread_objs',thread_objs);
@@ -79,7 +80,7 @@ ProjectView.prototype = {
 			complete:'graphics/icon_45161/icon_45161.png',
 			defer:'graphics/icon_1303/icon_1303.png'
 		};
-		dbHandler.getThreadMessages(thread_obj)
+		self.dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
 				var thread_action_status = (function(){
 					for(var i=0;i<thread_messages.length;i++){

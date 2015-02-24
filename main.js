@@ -15,8 +15,9 @@ var ProjectSelector = require('./modules/ProjectSelector');
 var Q = require('q');
 var gui = require('nw.gui');
 var indexedDB = window.indexedDB;
+var keychain = require('keychain');
 
-var dbHandler = new dbHandler();
+var my_dbHandler;
 require('jquery-ui');
 
 // Instances of components
@@ -31,9 +32,12 @@ var BOX = 'INBOX';
 // Other parameters
 var overlay_is_open = false;
 
-$(function init(){
-	dbHandler
-		.connect()
+(function init(){
+	my_dbHandler = new dbHandler();
+	getPassword()
+		.then(function(){
+			return my_dbHandler.connect();
+		})
 		.then(function(){
 			message_list = new MessageList($('#inbox'), {
 				onSelection:function(mailbox, uid){
@@ -67,7 +71,7 @@ $(function init(){
 		.catch(function(err){
 			console.log(err);
 		});
-});
+}());
 
 function addEventListeners(){
 	$(window).keydown(function(e){
@@ -89,12 +93,12 @@ function emailSelected(mailbox, uid){
 	console.log('');
 	console.log('---------------------------- EMAIL SELECTED -------------------------------');
 	var my_thread_obj;
-	dbHandler.connect()
+	_my_dbHandler.connect()
 		.then(function(){
-			return dbHandler.getMailFromLocalBox(mailbox,uid);
+			return my_dbHandler.getMailFromLocalBox(mailbox,uid);
 		})
 		.then(function(mail_obj){
-			return dbHandler.getThread(mail_obj.thread_id);
+			return my_dbHandler.getThread(mail_obj.thread_id);
 		})
 		.then(function(thread_obj){
 			my_thread_obj = thread_obj;
@@ -114,7 +118,7 @@ function emailSelected(mailbox, uid){
 			}
 		})
 		.then(function(){
-			return dbHandler.markSeenSeries(my_thread_obj.messages);
+			return my_dbHandler.markSeenSeries(my_thread_obj.messages);
 		})
 		.catch(function(error){
 			console.log(error);
@@ -127,7 +131,7 @@ function addSelectedEmailListeners(){
 		var key_functions = {
 			100: function(){ // d
 				var selection = message_list.getSelection();
-				dbHandler.markComplete(selection.mailbox, selection.uid);
+				my_dbHandler.markComplete(selection.mailbox, selection.uid);
 				removeElement();
 			},
 			112: function(){ // p
@@ -140,9 +144,9 @@ function addSelectedEmailListeners(){
 				var project_selector = new ProjectSelector(overlay.container, {
 					onSelection:function(project_id){
 						var selected_email = message_list.getSelection();
-						dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
+						my_dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
 							.then(function(){
-								return dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid);
+								return my_dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid);
 							})
 							.then(function(mail_obj){
 								openProjectView(project_id, mail_obj.thread_id);
@@ -163,7 +167,7 @@ function addSelectedEmailListeners(){
 						onSelect:function(date_text, obj){
 							var date = input.datepicker('getDate');
 							var selection = message_list.getSelection();
-							dbHandler.schedule(date, selection.mailbox, selection.uid)
+							my_dbHandler.schedule(date, selection.mailbox, selection.uid)
 								.then(function(){
 									removeElement();
 								});
@@ -188,7 +192,7 @@ function addSelectedEmailListeners(){
 					return;
 				}
 				var selection = message_list.getSelection();
-				dbHandler.schedule(date, selection.mailbox, selection.uid)
+				my_dbHandler.schedule(date, selection.mailbox, selection.uid)
 					.then(function(){
 						removeElement();
 					});
@@ -208,15 +212,15 @@ function addSelectedEmailListeners(){
 			},
 			98: function(){ // b
 				var selection = message_list.getSelection();
-				dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
+				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
 						var sender = mail_obj.from[0].address;
 						var block_sender = confirm("Do you want to block emails from "+sender+" and delete this thread?");
 						if(block_sender){
-							dbHandler.blockSender(sender);
+							my_dbHandler.blockSender(sender);
 							alert("Emails from " + sender + " will automatically be deleted");
 							var selection = message_list.getSelection();
-							dbHandler.markComplete(selection.mailbox, selection.uid);
+							my_dbHandler.markComplete(selection.mailbox, selection.uid);
 							removeElement();
 						}
 					});
@@ -224,23 +228,23 @@ function addSelectedEmailListeners(){
 			109: function(){ // m
 				var selection = message_list.getSelection();
 				var my_mail_obj;
-				dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
+				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
 						my_mail_obj = mail_obj;
-						return dbHandler.getThread(mail_obj.thread_id);
+						return my_dbHandler.getThread(mail_obj.thread_id);
 					})
 					.then(function(thread_obj){
 						if(thread_obj.muted === true){
 							if(confirm("This thread is muted. Do you want to unmute it?")){
-								return dbHandler.unmuteThread(my_mail_obj.thread_id);
+								return my_dbHandler.unmuteThread(my_mail_obj.thread_id);
 							}
 						}
 						else{
 							if(confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.")){
-								return dbHandler.muteThread(my_mail_obj.thread_id)
+								return my_dbHandler.muteThread(my_mail_obj.thread_id)
 									.then(function(){
 										removeElement();
-										return dbHandler.markComplete(selection.mailbox, selection.uid);
+										return my_dbHandler.markComplete(selection.mailbox, selection.uid);
 									});
 							}
 						}
@@ -282,7 +286,7 @@ function openProjectView(project_id, initial_thread_id){
 	new ProjectView(project_id, initial_thread_id, {
 		onSelection: function(thread_id){
 			message_list.selectMessageByThreadID(thread_id);
-			dbHandler.getThread(thread_id)
+			my_dbHandler.getThread(thread_id)
 				.then(function(thread_obj){
 					console.log('thread obj is ');
 					console.log(thread_obj);
@@ -304,9 +308,23 @@ function markRead(mail_objs){
 	console.log(mail_objs);
 	mail_objs.forEach(function(mail_obj){
 		console.log(mail_obj);
-		dbHandler.markSeen(mail_obj.mailbox, mail_obj.uid)
+		my_dbHandler.markSeen(mail_obj.mailbox, mail_obj.uid)
 			.catch(function(err){
 				console.log(err);
 			});
 	});
+}
+function getPassword(user, cb){
+	var def = Q.defer();
+	var conf = JSON.parse(fs.readFileSync('credentials/credentials.json')).internal;
+	keychain.getPassword({account:conf.user, service:'SlateMail'}, function(err, pass){
+		if(!pass){
+			pass = window.prompt('What is your IMAP password?');
+			console.log('setting password');
+			keychain.setPassword({account:user, service:'SlateMail', password:pass});
+		}
+		global.user_pass = pass;
+		def.resolve();
+	});
+	return def.promise;
 }
