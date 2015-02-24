@@ -1,26 +1,33 @@
 $selection_yellow: #feffaf;
-// @font-face{
-// 	font-family:'Oxygen';
-// 	src: url(./fonts/Oxygen/Oxygen-Regular.ttf);
-// }
 @font-face{
 	font-family:'Overlock';
 	src: url(./fonts/Overlock/Overlock-Regular.ttf);
 }
-@font-face{
-	font-family:'Raleway';
-	src: url(./fonts/Raleway/Raleway-Regular.ttf);
+
+@font-face {
+    font-family: "Lato";
+    src: url("./fonts/Lato/Lato-Regular.ttf");
 }
-// @font-face{
-// 	font-family:'Open Sans';
-// 	src: url(./fonts/Open_Sans/OpenSans-Regular.ttf);
-// }
-// @font-face{
-// 	font-family:'Ubuntu';
-// 	src: url(./fonts/Ubuntu/Ubuntu-Regular.ttf);
-// }
+@font-face {
+    font-family: "Lato";
+    src: url("./fonts/Lato/Lato-Bold.ttf");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "Lato";
+    src: url("./fonts/Lato/Lato-Italic.ttf");
+    font-style: italic;
+}
+@font-face {
+    font-family: "Lato";
+    src: url("./fonts/Lato/Lato-BlackItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
 body{
-	font-family: 'Raleway';
+	font-family: 'Lato';
+	font-style: normal;
 	&.project_viewer_open{
 		#message_viewer{
 			width:-webkit-calc(80% - 402px) !important;
