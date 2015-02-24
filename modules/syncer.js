@@ -6,9 +6,10 @@ var syncing = false;
 
 var indexedDB = window.indexedDB;
 
-function Syncer(){
+function Syncer(conf){
 	this.imaper = new Imaper();
 	this.dbHandler = new dbHandler();
+	this.conf = conf;
 	return this;
 }
 Syncer.prototype = {
@@ -16,10 +17,11 @@ Syncer.prototype = {
 		// Starts the syncer, which syncs the mailboxes at regular intervals
 		var self = this;
 		this.runSync();
-		// This poll was meant to keep the syncer running in the case of an IMAP error. However, it doesn't work! It needs to be rethought.
+		// This poll was meant to keep the syncer running in the case of an IMAP error. However, it doesn't really work well!
+		// It needs to be rethought. Probably should just listen for an imap error.
 		this.interval = setInterval(function(){
 			self.runSync();
-		}, 5000);
+		}, 15000);
 		return this;
 	},
 	stop: function(){
@@ -30,21 +32,15 @@ Syncer.prototype = {
 		return this;
 	},
 	runSync: function(){
-		console.log('attempting sync run');
 		var self = this;
 		this.syncAll()
 			.then(function(results){
 				if(results !== false){
-					if(self.syncComplete){
-						console.log('running syncComplete');
-						self.syncComplete();
+					if(self.conf.syncComplete){
+						self.conf.syncComplete();
 					}
 				}
 			});
-	},
-	onSyncComplete:function(fnc){
-		this.syncComplete = fnc;
-		return this;
 	}
 };
 

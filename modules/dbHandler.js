@@ -36,10 +36,8 @@ addObjectStore: function(store_name, store_conf){
 },
 deleteDB:function(){
 	console.log('delete request');
-	console.trace();
 	var def = Q.defer();
 	var req = indexedDB.deleteDatabase('slatemail');
-	console.log(req);
 	req.onsuccess = function () {
 		console.log("Deleted database successfully");
 		def.resolve();

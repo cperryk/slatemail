@@ -25,6 +25,7 @@ var tree_view;
 var message_list;
 var message_view;
 var project_list;
+var project_view;
 
 // Default box
 var BOX = 'INBOX';
@@ -34,6 +35,14 @@ global.PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'))
 var overlay_is_open = false;
 
 (function init(){
+	// reset
+	// getPassword()
+	// 	.then(function(){
+	// 		my_dbHandler = new dbHandler();
+	// 		my_dbHandler.deleteDB();
+	// 		return;
+	// 	});
+	// return;
 	getPassword()
 		.then(function(password){
 			console.log('PASSWORD IS '+password);
@@ -58,14 +67,27 @@ var overlay_is_open = false;
 					openProjectView(project_id);
 				}
 			});
+			project_view = new ProjectView($('#project_viewer'), {
+				onSelection: function(thread_id){
+					message_list.selectMessageByThreadID(thread_id);
+					my_dbHandler.getThread(thread_id)
+						.then(function(thread_obj){
+							console.log('thread obj is ');
+							console.log(thread_obj);
+							message_view.printThread(thread_obj);
+						});
+					},
+				onProjectDeletion: function(){
+					project_list.render();
+					closeProjectView();
+				}
+			});
+			selectBox('INBOX');
 			addEventListeners();
 			return true;
 		})
 		.then(function(){
 			return tree_view.printTree();
-		})
-		.then(function(){
-			return message_list.printBox(BOX);
 		})
 		.fin(function(){
 			// regularSync();
@@ -86,7 +108,7 @@ function addEventListeners(){
 function selectBox(box_name){
 	BOX = box_name;
 	message_view.clear();
-	$('#box_selector').html('&#171; '+box_name);
+	$('#box_selector').html(box_name);
 	tree_view.reflectActiveMailbox(box_name);
 	message_list.printBox(BOX);
 }
@@ -95,7 +117,7 @@ function emailSelected(mailbox, uid){
 	console.log('');
 	console.log('---------------------------- EMAIL SELECTED -------------------------------');
 	var my_thread_obj;
-	_my_dbHandler.connect()
+	my_dbHandler.connect()
 		.then(function(){
 			return my_dbHandler.getMailFromLocalBox(mailbox,uid);
 		})
@@ -273,32 +295,20 @@ function addSelectedEmailListeners(){
 
 function regularSync(){
 	console.log('**** REGULAR SYNC ******');
-	var syncer = new Syncer()
-		.start()
-		.onSyncComplete(function(){
+	var syncer = new Syncer({
+		onSyncComplete: function(){
 			message_list.printBox(BOX);
-		});
+			tree_view.printTree();
+		}
+	});
+	syncer.start();
 }
 
 function openProjectView(project_id, initial_thread_id){
 	console.log('initial_thread_id = '+initial_thread_id);
 	$('body').addClass('project_viewer_open');
 	$('#project_viewer').show();
-	new ProjectView(project_id, initial_thread_id, {
-		onSelection: function(thread_id){
-			message_list.selectMessageByThreadID(thread_id);
-			my_dbHandler.getThread(thread_id)
-				.then(function(thread_obj){
-					console.log('thread obj is ');
-					console.log(thread_obj);
-					message_view.printThread(thread_obj);
-				});
-			},
-		onProjectDeletion: function(){
-			project_list.render();
-			closeProjectView();
-		}
-	});
+	project_view.printProject(project_id, initial_thread_id);
 }
 function closeProjectView(){
 	$('#project_viewer').hide();

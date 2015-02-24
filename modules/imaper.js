@@ -1,3 +1,4 @@
+// A wrapper around node-imap abstracting away some common functions, imbued with promises.
 var Imap = require('imap');
 var MailParser = require("mailparser").MailParser;
 var Q = require('q');

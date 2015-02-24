@@ -4,18 +4,13 @@ var MessageView = require('../modules/messageView.js');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
 
-function ProjectView(project_name, initial_thread_id, conf){
-	console.log('NEW PROJECT VIEW: '+project_name);
+function ProjectView(container, conf){
 	var self = this;
-	this.project_name = project_name;
-	this.initial_thread_id = initial_thread_id;
+	this.container = container;
 	this.dbHandler = new window.dbHandler();
 	this.conf = conf;
-	this.container = $('#project_viewer')
-		.empty();
 	$('<h2>')
 		.addClass('project_title')
-		.html(project_name)
 		.appendTo(this.container);
 	$('<button>')
 		.html('Delete project')
@@ -31,9 +26,19 @@ function ProjectView(project_name, initial_thread_id, conf){
 			}
 		});
 	this.attachments = [];
-	this.printThreads();
 }
 ProjectView.prototype = {
+	printProject: function(project_id, initial_thread){
+		if(project_id === this.project_name){
+			return;
+		}
+		this.container.find('.thread_container').remove();
+		this.container.find('.attachments_container').remove();
+		this.container.find('h2').html(project_id);
+		this.project_name = project_id;
+		this.initial_thread_id = initial_thread;
+		this.printThreads();
+	},
 	printThreads:function(){
 		console.log('---- PRINTING THREADS -----');
 		var self = this;
@@ -73,6 +78,7 @@ ProjectView.prototype = {
 			});
 	},
 	printThread:function(thread_obj){
+		console.log('print thread ',thread_obj);
 		var self = this;
 		var def = Q.defer();
 		var ICONS = {
