@@ -1,6 +1,25 @@
+@font-face {
+  font-family: 'Overlock';
+  src: url(./fonts/Overlock/Overlock-Regular.ttf); }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Regular.ttf"); }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Bold.ttf");
+  font-weight: bold; }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Italic.ttf");
+  font-style: italic; }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-BlackItalic.ttf");
+  font-weight: bold;
+  font-style: italic; }
 body {
   margin: 0px;
-  font-family: 'Gotham';
+  font-family: 'Lato',verdana,sans-serif;
   line-height: 1.4; }
 
 .message_attachments {

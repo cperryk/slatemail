@@ -96,6 +96,7 @@ MailComposer.prototype = {
 		}
 		getPassword()
 			.then(function(password){
+				console.log(password);
 				credentials.auth.pass = password;
 				var transporter = nodemailer.createTransport(smtpTransport(credentials));
 				transporter.sendMail(mail_options, function(error, info) {
@@ -106,6 +107,7 @@ MailComposer.prototype = {
 					}
 					var transporter2 = nodemailer.createTransport(stubTransport());
 					transporter2.sendMail(mail_options, function(error, info){
+						global.PREFERENCES.internal.password = password;
 						var imaper = new Imaper();
 						imaper.addMessageToBox('Sent Items', info.response.toString())
 				   		.then(function(){
@@ -123,8 +125,9 @@ function getPassword(){
 		def.resolve(password);
 	}
 	else{
-		keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){
-			if(!pass){
+		console.log(global.PREFERENCES.internal.user);
+		keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, password){
+			if(!password){
 				password = window.prompt('What is your IMAP password?');
 				keychain.setPassword({account:global.PREFERENCES.internal.user, service:'SlateMail', password: password}, function(err){
 					if(err){

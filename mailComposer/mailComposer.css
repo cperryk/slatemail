@@ -1,5 +1,21 @@
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Regular.ttf"); }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Bold.ttf");
+  font-weight: bold; }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-Italic.ttf");
+  font-style: italic; }
+@font-face {
+  font-family: "Lato";
+  src: url("./fonts/Lato/Lato-BlackItalic.ttf");
+  font-weight: bold;
+  font-style: italic; }
 body {
-  font-family: 'Gotham',verdana;
+  font-family: 'Lato',verdana,sans-serif;
   margin: 0; }
 
 .headers {

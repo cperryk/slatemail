@@ -1,10 +1,11 @@
 var gui = global.gui;
 var $ = require('jquery');
 var fs = require('fs');
-console.log(global);
-console.log(global.gui);
-function PreferencesEditor(){
+var exec = require('child_process').exec;
+
+function PreferencesEditor(conf){
 	var self = this;
+	this.conf = conf;
 	this.win = gui.Window.open('./modules/preferencesEditor.html');
 	this.win.on('document-end', function() {
 		var doc = $(self.win.window.document);
@@ -32,15 +33,23 @@ function PreferencesEditor(){
 		});
 
 		// add listeners
-		doc.find('button')
-			.click(function(){
-				self.saveVals();
-			});
+		doc
+			.find('.btn_save')
+				.click(function(){
+					self.saveVals();
+				})
+				.end()
+			.find('.btn_edit')
+				.click(function(){
+					exec('open preferences/preferences.json');
+				})
+				.end();
 	});
 }
 PreferencesEditor.prototype = {
 	saveVals:function(){
 		var doc = this.doc;
+		var self = this;
 		var arr = doc.find('form').serializeArray();
 		var prefs = {internal:{}, external:{auth:{}}};
 		arr.forEach(function(input){
@@ -74,7 +83,12 @@ PreferencesEditor.prototype = {
 					break;
 			}
 		});
-		fs.writeFile('preferences/preferences.json', JSON.stringify(prefs));
+		fs.writeFile('preferences/preferences.json', JSON.stringify(prefs), function(err){
+			if(!err){
+				window.alert('Preferences saved!');
+				self.win.close();
+			}
+		});
 		console.log('OUT PREFS', prefs);
 	}
 };

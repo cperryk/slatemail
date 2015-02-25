@@ -41,7 +41,6 @@ global.PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'))
 var overlay_is_open = false;
 
 (function init(){
-	new PreferencesEditor();
 	// reset
 	// getPassword()
 	// 	.then(function(){
@@ -49,7 +48,12 @@ var overlay_is_open = false;
 	// 		my_dbHandler.deleteDB();
 	// 		return;
 	// 	});
-	// return;
+	// return;;
+	$(function(){
+		$('.btn_preferences').click(function(){
+			new PreferencesEditor();
+		});
+	});
 	
 	getPassword()
 		.then(function(password){

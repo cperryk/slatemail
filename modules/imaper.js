@@ -25,6 +25,7 @@ Imaper.prototype = {
 		// 	console.log(err);
 		// };
 		self.imap = new Imap(conf);
+		console.log(conf);
 		self.imap.connect();
 		self.imap
 			.once('ready',function(){
