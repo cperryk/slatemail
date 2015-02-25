@@ -818,90 +818,6 @@ listProjects:function(){
 	};
 	return def.promise;
 },
-moveToComplete:function(box_name, uid){
-	// Move a single email to complete
-	console.log('Moving to complete: '+box_name+':'+uid);
-	var def = Q.defer();
-	var self = this;
-	console.log('uid is '+uid);
-	if(box_name!=='complete'){
-		self.imaper.move(box_name, 'SlateMail/complete', uid)
-			.then(function(){
-				return self.removeLocalMessage(box_name, uid);
-			})
-			.fin(function(){
-				console.log('move complete successful');
-				def.resolve();
-			})
-			.catch(function(err){
-				console.log(err);
-			});
-	}
-	else{
-		def.resolve();
-	}
-	return def.promise;
-},
-markComplete:function(box_name, uid){
-	// Mark an email and all of the emails in its thread as complete
-	console.log('marking complete: '+box_name+':'+uid);
-	var def = Q.defer();
-	var self = this;
-	this.getMailFromLocalBox(box_name, uid)
-		.then(function(mail_obj){
-			return self.getThread(mail_obj.thread_id);
-		})
-		.then(function(thread){
-			var promises = [];
-			thread.messages.forEach(function(message_id){
-				promises.push(function(){
-					var box_name = message_id.split(':')[0];
-					var uid = parseInt(message_id.split(':')[1],10);
-					return self.moveToComplete(box_name, uid);
-				});
-			});
-			promises.reduce(Q.when, Q())
-				.then(function(){
-					console.log('markComplete resolved');
-					def.resolve();			
-				})
-				.catch(function(err){
-					console.log(err);
-				});
-		})
-		.catch(function(err){
-			console.log(err);
-		});
-	return def.promise;
-},
-schedule:function(date, box_name, uid){
-	console.log(box_name);
-	var def = Q.defer();
-	var self = this;
-	var date_box = 'SlateMail/scheduled/'+[date.getFullYear(), date.getMonth()+1, date.getDate()].join('-');
-	console.log(date_box);
-	self.imaper.ensureBox(date_box)
-		.then(function(){
-			return self.getMailFromLocalBox(box_name, uid);
-		})
-		.then(function(mail_obj){
-			return self.getThread(mail_obj.thread_id);
-		})
-		.then(function(thread){
-			thread.messages.forEach(function(message_id){
-				var box_name = message_id.split(':')[0];
-				var uid = message_id.split(':')[1];
-				self.imaper.move(box_name, date_box, uid);
-			});
-		})
-		.then(function(){
-			def.resolve();
-		})
-		.catch(function(err){
-			console.log(err);
-		});
-	return def.promise;
-},
 threadMessages:function(message_ids){
 	/* 
 		For all messages in array $message_ids (e.g. "INBOX:100"):
@@ -1342,57 +1258,25 @@ markSeen:function(box_name, uid){
 	console.log('mark seen: '+box_name+':'+uid);
 	uid = parseInt(uid,10);
 	var def = Q.defer();
-	var store_name = 'box_'+box_name;
 	var self = this;
-	var store = db.transaction(store_name,"readwrite").objectStore(store_name);
-	var get_request = store.get(uid);
-	get_request.onsuccess = function(){
-		var mail_obj = get_request.result;
-		if(mail_obj.flags.indexOf('\\Seen')===-1){
-			self.imaper.markSeen(box_name, uid)
-				.then(function(){
-					mail_obj.flags.push('\\Seen');
-					var store2 = db.transaction(store_name,"readwrite").objectStore(store_name);
-					var put_request = store2.put(mail_obj);
-					put_request.onsuccess = function(){
-						def.resolve();
-					};
-					put_request.onerror = function(err){
-						console.log(err);
-						def.resolve();
-					};
-				})
-				.catch(function(err){
+	this.dbHandler.getMailFromLocalBox(box_name, uid)
+		.then(function(mail_obj){
+			if(mail_obj.flags.indexOf('\\Seen')===-1){	
+				mail_obj.flags.push('\\Seen');
+				var store = db.transaction('box_'+box_name,"readwrite").objectStore('box_'+box_name);
+				var put_request = store.put(mail_obj);
+				put_request.onsuccess = function(){
+					def.resolve();
+				};
+				put_request.onerror = function(err){
 					console.log(err);
-				});
-		}
-		else{
-			def.resolve();
-		}
-	};
-	return def.promise;
-},
-markSeenSeries:function(mids){
-	console.log('mark seen series',mids);
-	var def = Q.defer();
-	var self = this;
-	if(typeof mids === 'string'){
-		this.markRead([mids]);
-	}
-	else{
-		var promises = [];
-		mids.forEach(function(mid){
-			var split = mid.split(':');
-			promises.push(self.markSeen(split[0], split[1]));
-		});
-		Q.all(promises)
-			.then(function(){
+					def.resolve();
+				};
+			}
+			else{
 				def.resolve();
-			})
-			.catch(function(err){
-				console.log(err);
-			});
-	}
+			}
+		});
 	return def.promise;
 },
 muteThread: function(thread_id){

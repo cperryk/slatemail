@@ -12,6 +12,7 @@ var Syncer = require('./modules/syncer.js');
 var treeView = require('./modules/treeView.js');
 var ProjectSelector = require('./modules/ProjectSelector');
 var Scheduler = require('./modules/scheduler.js');
+var UserCommand = require('./modules/userCommand.js');
 
 var Q = require('q');
 var gui = require('nw.gui');
@@ -27,6 +28,7 @@ var message_list;
 var message_view;
 var project_list;
 var project_view;
+var user_command;
 
 // Default box
 var BOX = 'INBOX';
@@ -83,6 +85,7 @@ var overlay_is_open = false;
 					closeProjectView();
 				}
 			});
+			user_command = new UserCommand();
 			selectBox('INBOX');
 			addEventListeners();
 			return true;
@@ -91,7 +94,7 @@ var overlay_is_open = false;
 			return tree_view.printTree();
 		})
 		.fin(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -143,7 +146,7 @@ function emailSelected(mailbox, uid){
 			}
 		})
 		.then(function(){
-			return my_dbHandler.markSeenSeries(my_thread_obj.messages);
+			return user_command.markSeenSeries(my_thread_obj.messages);
 		})
 		.catch(function(error){
 			console.log(error);
@@ -156,7 +159,7 @@ function addSelectedEmailListeners(){
 		var key_functions = {
 			100: function(){ // d
 				var selection = message_list.getSelection();
-				my_dbHandler.markComplete(selection.mailbox, selection.uid);
+				user_command.markComplete(selection.mailbox, selection.uid);
 				removeElement();
 			},
 			112: function(){ // p
@@ -189,7 +192,7 @@ function addSelectedEmailListeners(){
 				new Scheduler(overlay.container, {
 					onSelection:function(selected_date){
 						var selected_email = message_list.getSelection();
-						my_dbHandler.schedule(selected_date, selected_email.mailbox, selected_email.uid)
+						user_command.schedule(selected_date, selected_email.mailbox, selected_email.uid)
 							.then(function(){
 								removeElement();
 							});
@@ -197,34 +200,6 @@ function addSelectedEmailListeners(){
 					}
 				});
 				return;
-
-				// var user_input = prompt('What date would you like to schedule this for?');
-				// console.log(user_input);
-				// if(!user_input){
-				// 	return;
-				// }
-				// var date = new Date(user_input);
-				// if(!isValidDate(date)){
-				// 	return;
-				// }
-				// var selection = message_list.getSelection();
-				// my_dbHandler.schedule(date, selection.mailbox, selection.uid)
-				// 	.then(function(){
-				// 		removeElement();
-				// 	});
-				// function isValidDate(d){
-				// 	if ( Object.prototype.toString.call(date) === "[object Date]" ) {
-				// 		if ( isNaN( d.getTime() ) ) {  // d.valueOf() could also work
-				// 			return false;
-				// 	  	}
-				// 	  	else {
-				// 			return true;
-				// 	  	}
-				// 	}
-				// 	else {
-				// 		return false;
-				// 	}
-				// }
 			},
 			98: function(){ // b
 				var selection = message_list.getSelection();
@@ -236,7 +211,7 @@ function addSelectedEmailListeners(){
 							my_dbHandler.blockSender(sender);
 							alert("Emails from " + sender + " will automatically be deleted");
 							var selection = message_list.getSelection();
-							my_dbHandler.markComplete(selection.mailbox, selection.uid);
+							user_command.markComplete(selection.mailbox, selection.uid);
 							removeElement();
 						}
 					});
@@ -260,7 +235,7 @@ function addSelectedEmailListeners(){
 								return my_dbHandler.muteThread(my_mail_obj.thread_id)
 									.then(function(){
 										removeElement();
-										return my_dbHandler.markComplete(selection.mailbox, selection.uid);
+										return user_command.markComplete(selection.mailbox, selection.uid);
 									});
 							}
 						}
