@@ -37,9 +37,9 @@ Syncer.prototype = {
 					if(self.conf.syncComplete){
 						self.conf.syncComplete();
 					}
-					setTimeout(function(){
-						self.runSync();
-					}, 15000);
+					// setTimeout(function(){
+					// 	self.runSync();
+					// }, 15000);
 				}
 			});
 	}
@@ -74,7 +74,7 @@ Syncer.prototype.syncAll = function(){
 			paths.splice(paths.indexOf('Drafts'), 1);
 			if(global.PREFERENCES.demo){
 				box_paths = paths.filter(function(path){
-					return path.indexOf('SlateMail') === 0 || path === 'INBOX';
+					return path.indexOf('SlateMail') === 0 || path === 'INBOX' || path === 'Sent Items';
 				});
 			}
 		})
@@ -126,10 +126,17 @@ Syncer.prototype.syncAll = function(){
 			var results = [];
 			var def = Q.defer();
 			var promises = box_paths.map(function(box_path){
-				return self.syncBox(box_path, remote_descriptors[box_path])
-					.then(function(box_results){
-						results.push(box_results);
-					});
+				return function(){
+					var def = Q.defer();
+					self.syncBox(box_path, remote_descriptors[box_path])
+						.then(function(box_results){
+							results.push(box_results);
+						})
+						.fin(function(){
+							def.resolve();
+						});
+					return def.promise;
+				};
 			});
 			promises.reduce(Q.when, Q())
 				.then(function(){
@@ -138,6 +145,7 @@ Syncer.prototype.syncAll = function(){
 			return def.promise;
 		})
 		.then(function(results){
+			console.log(results);
 			console.log('downloading and deletion complete; threading now');
 			var def = Q.defer();
 			var promises = [];

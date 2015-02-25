@@ -96,8 +96,14 @@ UserCommand.prototype = {
 		var store_name = 'box_'+box_name;
 		var self = this;
 		this.dbHandler.markSeen(box_name, uid)
-			.then(function(){
-				return self.imaper.markSeen(box_name, uid);
+			.then(function(status_changed){
+				if(status_changed){
+					console.log('imap marking seen: '+box_name+':'+uid);
+					return self.imaper.markSeen(box_name, uid);
+				}
+				else{
+					return true;
+				}
 			})
 			.then(function(){
 				def.resolve();

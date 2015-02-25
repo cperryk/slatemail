@@ -1,8 +1,9 @@
 -- To-Do -- 
-- Optimize threading so that the threading process checks the email's current mailbox first, then the INBOX.
-- Automatically delete empty scheduled boxes
-- Use multiple IMAP connections to speed up syncing?
-- Stop mailComposer acting like a separate process
-- Make a smarter scheduler (allow the user to type in days, e.g. "tuesday")
-- Improve promise implementation in various old functions in dbHandler
-- Make folders collapsible
+[ ] Optimize threading so that the threading process checks the email's current mailbox first, then the INBOX.
+[ ] Automatically delete empty scheduled boxes
+[ ] Use multiple IMAP connections to speed up syncing?
+[ ] Stop mailComposer acting like a separate process
+[ ] Make a smarter scheduler (allow the user to type in days, e.g. "tuesday")
+[ ] Improve promise implementation in various old functions in dbHandler
+[x] Make folders collapsible
+[ ] Add a search function

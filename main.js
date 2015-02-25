@@ -101,6 +101,9 @@ var overlay_is_open = false;
 		.then(function(){
 			return tree_view.printTree();
 		})
+		// .then(function(){
+		// 	return my_dbHandler.deleteBoxes(['Sent Items']);
+		// })
 		.fin(function(){
 			regularSync();
 		})

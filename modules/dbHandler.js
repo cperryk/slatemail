@@ -1,14 +1,13 @@
-var fs = require('fs-extra');
+var fs = require('fs');
+// for some reason, setting fs to fs-extra isn't recognized later in the execution...?
+var fsx = require('fs-extra');
 var Q = require('q');
 var db;
 var indexedDB = window.indexedDB;
 
 // careful. //console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
-function dbHandler(){
-
-}
-
+function dbHandler(){}
 dbHandler.prototype = {
 addObjectStore: function(store_name, store_conf){
 	// Convenience function for creating an object store manually
@@ -619,12 +618,12 @@ saveAttachments:function(box_name, mail_object){
 		return def.promise;
 	}
 	var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';
-	fs.ensureDir(path, function(){
+	fsx.ensureDir(path, function(){
 		var attachments = mail_object.attachments;
 		var attachments_to_save = attachments.length;
 		var saved_attachments = 0;
 		attachments.forEach(function(attachment, index){
-			fs.writeFile(path+attachment.fileName, attachment.content, function(){
+			fsx.writeFile(path+attachment.fileName, attachment.content, function(){
 				delete mail_object.attachments[index].content;
 				saved_attachments ++;
 				if(saved_attachments === attachments_to_save){
@@ -1192,24 +1191,57 @@ getMailboxTree:function(){
 		return tree;
 	}
 },
-deleteBoxes:function(box_pathes){
+deleteBoxes:function(box_paths){
 	var def = Q.defer();
-	var version =  parseInt(db.version);
-	db.close();
-	var open_request = indexedDB.open('slatemail',version+1);
-	open_request.onupgradeneeded = function(event){
-		var db = event.target.result;
-		box_pathes.forEach(function(box_path){
-			console.log('DELETE '+box_path);
-			db.deleteObjectStore('box_'+box_path);
+	var promises = box_paths.map(function(box_path){
+		return deleteDescriptors(box_path);
+	});
+	Q.all(promises)
+		.then(function(){
+			return deleteObjectStores(box_paths);
+		})
+		.then(function(){
+			def.resolve();
 		});
-	};
-	open_request.onsuccess = function(){
-		def.resolve();
-	};
 	return def.promise;
+	function deleteDescriptors(box_name){
+		var def = Q.defer();
+		var store = db.transaction('descriptors',"readwrite").objectStore('descriptors');
+		var delete_request = store.delete(box_name);
+		delete_request.onsuccess = function(){
+			def.resolve();
+		};
+		delete_request.onerror = function(err){
+			console.log(error);
+			def.resolve();
+		};
+		return def.promise;
+	}
+	function deleteObjectStores(box_paths){
+		var def = Q.defer();
+		var version =  parseInt(db.version);
+		db.close();
+		var open_request = indexedDB.open('slatemail',version+1);
+		open_request.onupgradeneeded = function(event){
+			var db = event.target.result;
+			box_paths.forEach(function(box_path){
+				if(db.objectStoreNames.contains('box_'+box_path)){
+					console.log('DELETE '+box_path);
+					db.deleteObjectStore('box_'+box_path);
+				}
+			});
+			def.resolve();
+		};
+		open_request.onsuccess = function(){
+			def.resolve();
+		};
+		return def.promise;
+		
+	}
 },
 markSeen:function(box_name, uid){
+	// Marks a local email as "seen." Resolves if true if the operation was
+	// successful, false if it wasn't or if the local mail already was seen.
 	console.log('mark seen: '+box_name+':'+uid);
 	uid = parseInt(uid,10);
 	var def = Q.defer();
@@ -1221,15 +1253,15 @@ markSeen:function(box_name, uid){
 				var store = db.transaction('box_'+box_name,"readwrite").objectStore('box_'+box_name);
 				var put_request = store.put(mail_obj);
 				put_request.onsuccess = function(){
-					def.resolve();
+					def.resolve(true);
 				};
 				put_request.onerror = function(err){
 					console.log(err);
-					def.resolve();
+					def.resolve(false);
 				};
 			}
 			else{
-				def.resolve();
+				def.resolve(false);
 			}
 		});
 	return def.promise;
