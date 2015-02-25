@@ -85,12 +85,15 @@ MailComposer.prototype = {
 		console.log('creds', credentials);
 		var mail_options = {
 			from: credentials.auth.user,
-			to: this.container.find('.input_to').html(),
+			to: this.container.find('.input_to').text(),
 			subject: this.container.find('.input_subject').html(),
 			html: this.CKEDITOR.instances.message_body.getData()
 		};
 		if(this.conf && this.conf.in_reply_to){
 			mail_options.inReplyTo = this.conf.in_reply_to;
+		}
+		if(this.container.find('.input_cc').html()!==''){
+			mail_options.cc = this.container.find('.input_cc').text();
 		}
 		getPassword()
 			.then(function(password){
@@ -120,7 +123,7 @@ MailComposer.prototype = {
 					   		.then(function(){
 					   			self.container.find('.btn_send').html('Added!');
 					   			setTimeout(function(){
-										window.close();
+										// window.close();
 					   			},500);
 					   		});
 						});

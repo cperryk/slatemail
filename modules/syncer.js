@@ -37,9 +37,9 @@ Syncer.prototype = {
 					if(self.conf.onSyncComplete){
 						self.conf.onSyncComplete();
 					}
-					// setTimeout(function(){
-					// 	self.runSync();
-					// }, 15000);
+					setTimeout(function(){
+						self.runSync();
+					}, 15000);
 				}
 			});
 	}

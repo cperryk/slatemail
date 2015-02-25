@@ -5,5 +5,6 @@
 [ ] Stop mailComposer acting like a separate process
 [ ] Make a smarter scheduler (allow the user to type in days, e.g. "tuesday")
 [ ] Improve promise implementation in various old functions in dbHandler
+[ ] Add a way to remove a thread from a project
 [x] Make folders collapsible
 [ ] Add a search function
