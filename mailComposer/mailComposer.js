@@ -55,8 +55,20 @@ MailComposer.prototype = {
 				.html(conf.subject);
 		}
 		if(conf.cc){
+			// filter to prevent user from CCing his/her own email address
+			var filtered = conf.cc
+				.match(/(?:"[^"]*"|[^,])+/g) // splits by comma that is not inside quotes
+				.filter(function(item){
+					// console.log('-- check item --');
+					// console.log(item);
+					// console.log(global.PREFERENCES.internal.user);
+					// console.log(item.toLowerCase().indexOf(global.PREFERENCES.internal.user.toLowerCase()));
+					return (item.toLowerCase().indexOf(global.PREFERENCES.internal.user.toLowerCase()) === -1) &&
+						(item.trim().length>0);
+				})
+				.join(',');
 			this.container.find('.input_cc')
-				.html(conf.cc);
+				.html(filtered);
 		}
 		if(conf.to){
 			this.container.find('#message_body').focus();
@@ -82,19 +94,21 @@ MailComposer.prototype = {
 		this.container.find('.btn_send').html('Sending...');
 		var self = this;
 		var credentials = PREFERENCES.external;
-		console.log('creds', credentials);
-		var mail_options = {
-			from: credentials.auth.user,
-			to: this.container.find('.input_to').text(),
-			subject: this.container.find('.input_subject').html(),
-			html: this.CKEDITOR.instances.message_body.getData()
-		};
-		if(this.conf && this.conf.in_reply_to){
-			mail_options.inReplyTo = this.conf.in_reply_to;
-		}
-		if(this.container.find('.input_cc').html()!==''){
-			mail_options.cc = this.container.find('.input_cc').text();
-		}
+		var mail_options = (function(){
+			var out = {
+				from: credentials.auth.user,
+				to: self.container.find('.input_to').text(),
+				subject: self.container.find('.input_subject').html(),
+				html: self.CKEDITOR.instances.message_body.getData()
+			};
+			if(self.conf && self.conf.in_reply_to){
+				out.inReplyTo = self.conf.in_reply_to;
+			}
+			if(self.container.find('.input_cc').text()!==''){
+				out.cc = self.container.find('.input_cc').text();
+			}
+			return out;
+		}());
 		getPassword()
 			.then(function(password){
 				credentials.auth.pass = password;
@@ -123,7 +137,7 @@ MailComposer.prototype = {
 					   		.then(function(){
 					   			self.container.find('.btn_send').html('Added!');
 					   			setTimeout(function(){
-										// window.close();
+										window.close();
 					   			},500);
 					   		});
 						});
