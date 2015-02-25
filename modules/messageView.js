@@ -134,15 +134,6 @@ function Message(message_data, par){
 		.addClass('envelope')
 		.appendTo(par.messages_wrapper);
 
-	// $('<div>')
-	// 	.addClass('btn_reveal')
-	// 	.appendTo(this.container)
-	// 	.html('reveal')
-	// 	.click(function(){
-	// 		$(this).remove();
-	// 		self.reveal();
-	// 	});
-
 	this.printHeaders()
 		.printAttachmentIcons()
 		.printBody()
@@ -312,8 +303,10 @@ Message.prototype = {
 	addEventListeners:function(){
 		var self = this;
 		this.container.find('.headers')
-			.click(function(){
-				self.togglePrintState();
+			.click(function(e){
+				if($(e.target).hasClass('action_btn')===false){
+					self.togglePrintState();			
+				}
 			});
 		this.container.hover(function(){
 			self.printActionBtns();
