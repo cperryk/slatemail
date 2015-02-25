@@ -1,9 +1,33 @@
 {
   "name": "SlateMail",
-  "main": "main.html",
+  "main": "main.js",
   "window":{
-  	"toolbar":true,
-  	"frame":true,
-  	"icon":"appicon.png"
+    "toolbar":true,
+    "frame":true,
+    "icon":"appicon.png"
+  },
+  "dependencies": {
+    "datejs": "^1.0.0-rc1",
+    "favicon": "^0.0.2",
+    "fs-extra": "^0.11.0",
+    "graceful-fs": "^3.0.2",
+    "imap": "^0.8.13",
+    "jquery-ui": "^1.10.5",
+    "jquery": "^2.1.1",
+    "mailparser": "^0.4.4",
+    "mustache": "^0.8.2",
+    "nodemailer": "^1.2.1",
+    "nodemailer-smtp-transport": "^0.1.12",
+    "nodemailer-stub-transport": "^0.1.5",
+    "q": "^1.0.1",
+    "react": "^0.12.2",
+    "typeahead": "^0.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cperryk/slatemail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cperryk/slatemail/issues"
   }
 }
