@@ -39,7 +39,7 @@ Syncer.prototype = {
 					}
 					setTimeout(function(){
 						self.runSync();
-					}, 10000);
+					}, 15000);
 				}
 			});
 	}
@@ -72,48 +72,39 @@ Syncer.prototype.syncAll = function(){
 			// These were creating some problems for me so I've removed them from the syncing process for now.
 			paths.splice(paths.indexOf('Deleted Items'), 1);
 			paths.splice(paths.indexOf('Drafts'), 1);
-			box_paths = paths;
 			if(global.PREFERENCES.demo){
-				box_paths = box_paths.filter(function(i){
-					return i.indexOf('SlateMail') === 0 || i === 'INBOX';
+				box_paths = paths.filter(function(path){
+					return path.indexOf('SlateMail') === 0 || path === 'INBOX';
 				});
 			}
-			// box_paths = ['INBOX'];
 		})
 		.then(function(){
 			console.log('BOX PATHS', box_paths);
 			console.log('deleting boxes');
-			var def = Q.defer();
-			self.dbHandler.getAllMailboxes()
+			return self.dbHandler.getAllMailboxes()
 				.then(function(local_boxes){
-					var boxes_to_delete = [];
-					local_boxes.forEach(function(local_box){
-						if(box_paths.indexOf(local_box)===-1){
-							boxes_to_delete.push(local_box);
-						}
+					var boxes_to_delete = local_boxes.filter(function(local_box){
+						return box_paths.indexOf(local_box) === -1;
 					});
 					if(boxes_to_delete.length > 0){
-						self.dbHandler.deleteBoxes(boxes_to_delete)
+						return self.dbHandler.deleteBoxes(boxes_to_delete)
 							.then(function(){
 								def.resolve();
 							});
 					}
 					else{
 						console.log('no local boxes to delete');
-						def.resolve();
+						return true;
 					}
 				});
-			return def.promise;
 		})
 		.then(function(){
 			return self.dbHandler.ensureLocalBoxes(box_paths);
 		})
 		.then(function(){
-			var def = Q.defer();
-			var promises = [];
 			var box_results = {};
-			box_paths.forEach(function(box_path){
-				promises.push(function(){
+			var promises = box_paths.map(function(box_path){
+				return function(){
 					var def = Q.defer();
 					self.getRemoteDescriptors(box_path)
 						.then(function(results){
@@ -121,29 +112,24 @@ Syncer.prototype.syncAll = function(){
 							def.resolve();
 						});
 					return def.promise;
-				});
+				};
 			});
-			promises.reduce(Q.when, Q())
+			return promises.reduce(Q.when, Q())
 				.then(function(){
 					remote_descriptors = box_results;
-					def.resolve();
 				})
 				.catch(function(err){
 					console.log(err);
 				});
-			return def.promise;
 		})
 		.then(function(){
-			var promises = [];
 			var results = [];
 			var def = Q.defer();
-			box_paths.forEach(function(box_path){
-				promises.push(function(){
-					return self.syncBox(box_path, remote_descriptors[box_path])
-						.then(function(box_results){
-							results.push(box_results);
-						});
-				});
+			var promises = box_paths.map(function(box_path){
+				return self.syncBox(box_path, remote_descriptors[box_path])
+					.then(function(box_results){
+						results.push(box_results);
+					});
 			});
 			promises.reduce(Q.when, Q())
 				.then(function(){
@@ -336,7 +322,7 @@ Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors,
 };
 
 Syncer.prototype.saveDescriptors = function(mailbox_name, msgs){
-	console.log('saving descriptors');
+	// console.log('saving descriptors');
 	var def = Q.defer();
 	var request = indexedDB.open('slatemail');
 	request.onsuccess = function(){

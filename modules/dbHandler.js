@@ -827,19 +827,10 @@ threadMessages:function(message_ids){
 	*/
 	console.log('threading messages');
 	var self = this;
-	var def = Q.defer();
-	var chain = Q.fcall(function(){
-		return true;
+	var promises = message_ids.map(function(message_id){
+		return self.threadMessage(message_id);
 	});
-	message_ids.forEach(function(message_id){
-		chain = chain.then(function(){
-			return self.threadMessage(message_id);
-		});
-	});
-	chain.then(function(){
-		def.resolve();
-	});
-	return def.promise;
+	return promises.reduce(Q.when, Q());
 },
 threadMessage:function(mailbox, uid){
 	console.log('---- threading message: '+mailbox+':'+uid+' ----');
@@ -882,7 +873,9 @@ threadMessage:function(mailbox, uid){
 	return def.promise;
 
 	function findMatchingThread(mail_obj){
-		/* Takes an unthreaded mail_obj and attempts to match it to an existing thread based on its properties */
+		/* Takes an unthreaded $mail_obj and attempts to match it to 
+		an existing thread based on its properties. Resolves with a
+		thread_id, or false if no thread is found.*/
 		var def = Q.defer();
 
 		/* Determines the priority of each threading function. */
@@ -927,7 +920,6 @@ threadMessage:function(mailbox, uid){
 				function to ensure that messages that have already been threaded in the past
 				that have since moved mailboxes are attached to the same threads as before.
 			*/
-			// console.log('by pid');
 			var pid = mail_obj.pid;
 			var def = Q.defer();
 			var tx = db.transaction("pids","readonly");
@@ -939,7 +931,6 @@ threadMessage:function(mailbox, uid){
 					def.resolve(false);
 				}
 				else{
-					// console.log('\t\t thread id for '+mailbox_name+':'+mail_uid+' is '+result.thread);
 					def.resolve(result.thread);
 				}
 			};
@@ -955,13 +946,11 @@ threadMessage:function(mailbox, uid){
 		}
 		function traceSubject(mail_obj){
 			// console.log('by subject');
-			// return function(){
 			var def = Q.defer();
 			self.findFirstMailWithProperty('short_subject', [mail_obj.short_subject], function(mail_obj){
 				def.resolve(mail_obj.thread_id || false);
 			});
 			return def.promise;
-			// };
 		}
 
 		/* Helper functions */
@@ -1144,8 +1133,6 @@ getDueMail:function(){ // TO-DO
 						}
 					}
 				}
-				console.log('resolving with:');
-				console.log(arr);
 				def.resolve(arr);
 			})
 			.catch(function(err){

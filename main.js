@@ -104,7 +104,7 @@ var overlay_is_open = false;
 			return tree_view.printTree();
 		})
 		.fin(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
