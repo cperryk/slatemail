@@ -1,3 +1,9 @@
 credentials
 attachments
 descriptors
+.DS_Store
+*.swp
+node_modules/
+*.sublime-project
+*.sublime-workspace
+.module-cache
