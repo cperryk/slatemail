@@ -8,10 +8,11 @@ var CKEDITOR;
 var Q = require('Q');
 var keychain = require('keychain');
 var password;
+var notifier = require('node-notifier');
 
 var PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'));
 global.PREFERENCES = PREFERENCES;
-
+console.log(global.PREFERENCES);
 
 function MailComposer(container, conf){
 	this.conf = conf || {};
@@ -26,7 +27,7 @@ function MailComposer(container, conf){
 		this.container = container;
 		this.conf = JSON.parse(fs.readFileSync('mailComposer/cached.json', 'utf8'));
 		this.CKEDITOR = window.CKEDITOR;
-		console.log(this.conf);
+		console.log('NEW MAIL COMPOSER', this.conf);
 		this.preload();
 		this.addEventListeners();
 	}
@@ -57,7 +58,7 @@ MailComposer.prototype = {
 			this.container.find('.input_cc')
 				.html(conf.cc);
 		}
-		if(conf && conf.to){
+		if(conf.to){
 			console.log('focusing on message body');
 			this.container.find('#message_body').focus();
 		}
@@ -71,7 +72,6 @@ MailComposer.prototype = {
 					// If you don't do this, CKEDITOR will automatically get rid of the type attributes because it's probably invalid HTML.
 					// However, these are essential so Apple Mail will collapse the quoted emails.
 					var blockquote = self.container.find('blockquote');
-					console.log(blockquote);
 					blockquote
 						.attr('type','cite');
 				}
@@ -80,40 +80,52 @@ MailComposer.prototype = {
 	},
 	send:function(){
 		console.log('sending');
+		this.container.find('.btn_send').html('Sending...');
 		var self = this;
-		var to = this.container.find('.input_to').html();
-		var subject = this.container.find('.input_subject').html();
-		var body = this.CKEDITOR.instances.message_body.getData();
 		var credentials = PREFERENCES.external;
+		console.log('creds', credentials);
 		var mail_options = {
 			from: credentials.auth.user,
-			to: to,
-			subject: subject,
-			html: body
+			to: this.container.find('.input_to').html(),
+			subject: this.container.find('.input_subject').html(),
+			html: this.CKEDITOR.instances.message_body.getData()
 		};
 		if(this.conf && this.conf.in_reply_to){
 			mail_options.inReplyTo = this.conf.in_reply_to;
 		}
 		getPassword()
 			.then(function(password){
-				console.log(password);
 				credentials.auth.pass = password;
+				console.log('SMTP creds', credentials);
 				var transporter = nodemailer.createTransport(smtpTransport(credentials));
+				console.log('SMTP opts', mail_options);
 				transporter.sendMail(mail_options, function(error, info) {
-					if (error) {
-						console.log(error);
-					} else {
-						console.log('Message sent: ' + info.response);
+					if(error){
+						console.log(error, info);
+						window.alert(error);
+						return;
 					}
-					var transporter2 = nodemailer.createTransport(stubTransport());
-					transporter2.sendMail(mail_options, function(error, info){
-						global.PREFERENCES.internal.password = password;
-						var imaper = new Imaper();
-						imaper.addMessageToBox('Sent Items', info.response.toString())
-				   		.then(function(){
-								window.close();
-				   		});
-					});
+					else{
+						notifier.notify({
+		   				title:"Message Sent!",
+		   				message:"SlateMail successfully sent your email."
+		   			});
+						console.log('Message sent: ' + info.response);
+						self.container.find('.btn_send').html('Sent! Adding to your sent items...');
+						// Simulates a mail send so you can get the email and add it to your IMAP sent folder
+						var transporter2 = nodemailer.createTransport(stubTransport());
+						transporter2.sendMail(mail_options, function(error, info){
+							global.PREFERENCES.internal.password = password;
+							var imaper = new Imaper();
+							imaper.addMessageToBox('Sent Items', info.response.toString())
+					   		.then(function(){
+					   			self.container.find('.btn_send').html('Added!');
+					   			setTimeout(function(){
+										window.close();
+					   			},500);
+					   		});
+						});
+					}
 				});
 			});
 	}
@@ -125,7 +137,6 @@ function getPassword(){
 		def.resolve(password);
 	}
 	else{
-		console.log(global.PREFERENCES.internal.user);
 		keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, password){
 			if(!password){
 				password = window.prompt('What is your IMAP password?');
