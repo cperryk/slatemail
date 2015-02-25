@@ -2,7 +2,7 @@ var fs = require('fs');
 var $ = require('jquery');
 
 // SlateMail components
-var MailComposer = require('./MailComposer/MailComposer.js');
+var MailComposer = require('./mailComposer/mailComposer.js');
 var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var Overlay = require('./modules/overlay.js');
