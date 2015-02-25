@@ -1259,7 +1259,7 @@ markSeen:function(box_name, uid){
 	uid = parseInt(uid,10);
 	var def = Q.defer();
 	var self = this;
-	this.dbHandler.getMailFromLocalBox(box_name, uid)
+	this.getMailFromLocalBox(box_name, uid)
 		.then(function(mail_obj){
 			if(mail_obj.flags.indexOf('\\Seen')===-1){	
 				mail_obj.flags.push('\\Seen');
