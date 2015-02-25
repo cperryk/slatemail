@@ -34,8 +34,8 @@ Syncer.prototype = {
 		this.syncAll()
 			.then(function(results){
 				if(results !== false){
-					if(self.conf.syncComplete){
-						self.conf.syncComplete();
+					if(self.conf.onSyncComplete){
+						self.conf.onSyncComplete();
 					}
 					// setTimeout(function(){
 					// 	self.runSync();

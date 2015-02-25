@@ -2,6 +2,7 @@ var gui = global.gui;
 var $ = require('jquery');
 var fs = require('fs');
 var exec = require('child_process').exec;
+var dbHandler = window.dbHandler;
 
 function PreferencesEditor(conf){
 	var self = this;
@@ -43,7 +44,14 @@ function PreferencesEditor(conf){
 				.click(function(){
 					exec('open preferences/preferences.json');
 				})
-				.end();
+				.end()
+			.find('.btn_delete_database')
+				.click(function(){
+					if(window.confirm('This will delete all of your email, threads, and projects. Are you sure you want to do this?')){
+						var my_dbHandler = new dbHandler();
+						my_dbHandler.deleteEverything();
+					}
+				});
 	});
 }
 PreferencesEditor.prototype = {

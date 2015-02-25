@@ -46,6 +46,17 @@ deleteDB:function(){
 	};
 	return def.promise;
 },
+deleteEverything:function(){
+	console.log('deleting everything');
+	return Q.all([this.deleteDB(), this.deleteAllAttachments()]);
+},
+deleteAllAttachments:function(){
+	var def = Q.defer();
+	fsx.remove('attachments', function(){
+		def.resolve();
+	});
+	return def.promise;
+},
 connect:function(callback){
 	console.log('connecting local database');
 	var def = Q.defer();
@@ -1192,9 +1203,12 @@ getMailboxTree:function(){
 	}
 },
 deleteBoxes:function(box_paths){
+	console.log('delete boxes: '+box_paths);
 	var def = Q.defer();
 	var promises = box_paths.map(function(box_path){
-		return deleteDescriptors(box_path);
+		return function(){
+			deleteDescriptors(box_path);
+		};
 	});
 	Q.all(promises)
 		.then(function(){
