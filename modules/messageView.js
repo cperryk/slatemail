@@ -450,7 +450,11 @@ Message.prototype = {
 					.remove()
 					.end();
 			var text = stage.text().replace(/\s+/g," ");
-			return text.substring(0, Math.min(200, text.length));
+			var trimmed = text.substring(0, Math.min(200, text.length));
+			if(text.length > 200){
+				trimmed += '...';
+			}
+			return trimmed;
 		}());
 		this.injected_wrapper.html(html);
 		this.resizeFrame();
