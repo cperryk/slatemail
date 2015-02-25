@@ -1,0 +1,71 @@
+<html>
+	<head></head>
+	<title>Preferences Editor</title>
+	<body>
+		<h1>Preferences</h1>
+		<form>
+		<h2>General</h2>
+			<table>
+				<tr>
+					<td>Demo</td>
+					<td>
+						<select name="demo">
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+
+		<h2>IMAP</h2>
+			<table>
+				<tr>
+					<td>Username</td>
+					<td><input name="internal_username" type="text"></td>
+				</tr>
+				<tr>
+					<td>Host</td>
+					<td><input name="internal_host" type="text"></td>
+				</tr>
+				<tr>
+					<td>Port</td>
+					<td><input name="internal_port" type="text"></td>
+				</tr>
+				<tr>
+					<td>TLS</td>
+					<td>
+						<select name="internal_tls">
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		<h2>SMTP</h2>
+		<table>
+			<tr>
+				<td>Username</td>
+				<td><input name="external_username" type="text"/></td>
+			</tr>
+			<tr>
+				<td>Host</td>
+				<td><input name="external_host" type="text"/></td>
+			</tr>
+			<tr>
+				<td>Port</td>
+				<td><input name="external_port" type="text"/></td>
+			</tr>
+			<tr>
+				<td>Secure</td>
+				<td>
+					<select name="external_secure">
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		</form>
+		<button>Save</button>
+	</body>
+</html>

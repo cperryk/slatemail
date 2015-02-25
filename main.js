@@ -1,6 +1,9 @@
 var fs = require('fs');
 var $ = require('jquery');
 
+var gui = require('nw.gui');
+global.gui = gui;
+
 // SlateMail components
 var MailComposer = require('./MailComposer/MailComposer.js');
 var MessageList = require('./modules/messageList.js');
@@ -13,9 +16,9 @@ var treeView = require('./modules/treeView.js');
 var ProjectSelector = require('./modules/ProjectSelector');
 var Scheduler = require('./modules/scheduler.js');
 var UserCommand = require('./modules/userCommand.js');
+var PreferencesEditor = require('./modules/preferencesEditor.js');
 
 var Q = require('q');
-var gui = require('nw.gui');
 var indexedDB = window.indexedDB;
 var keychain = require('keychain');
 
@@ -38,6 +41,7 @@ global.PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'))
 var overlay_is_open = false;
 
 (function init(){
+	new PreferencesEditor();
 	// reset
 	// getPassword()
 	// 	.then(function(){
@@ -46,6 +50,7 @@ var overlay_is_open = false;
 	// 		return;
 	// 	});
 	// return;
+	
 	getPassword()
 		.then(function(password){
 			console.log('PASSWORD IS '+password);
@@ -94,7 +99,7 @@ var overlay_is_open = false;
 			return tree_view.printTree();
 		})
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

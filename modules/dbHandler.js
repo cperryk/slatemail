@@ -12,7 +12,7 @@ function dbHandler(imaper){
 	// if(imaper){
 	// 	this.imaper = imaper;
 	// }
-	this.imaper = new Imaper();
+	// this.imaper = new Imaper();
 }
 
 dbHandler.prototype = {
