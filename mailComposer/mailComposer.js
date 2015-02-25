@@ -59,7 +59,6 @@ MailComposer.prototype = {
 				.html(conf.cc);
 		}
 		if(conf.to){
-			console.log('focusing on message body');
 			this.container.find('#message_body').focus();
 		}
 		else{

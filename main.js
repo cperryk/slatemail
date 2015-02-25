@@ -85,8 +85,6 @@ var overlay_is_open = false;
 					message_list.selectMessageByThreadID(thread_id);
 					my_dbHandler.getThread(thread_id)
 						.then(function(thread_obj){
-							console.log('thread obj is ');
-							console.log(thread_obj);
 							message_view.printThread(thread_obj);
 						});
 					},

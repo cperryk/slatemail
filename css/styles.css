@@ -241,6 +241,22 @@ body {
   list-style: none; }
 .tree_view ul ul {
   padding-left: 10px; }
+.tree_view .folder_icon {
+  width: 15px;
+  height: 12px;
+  margin-right: 2px;
+  display: inline-block; }
+.tree_view li {
+  -webkit-user-select: none;
+  user-select: none; }
+  .tree_view li > .folder_icon {
+    background: url("../graphics/folder-plain.png"); }
+.tree_view li.has_children > .folder_icon {
+  background: url("../graphics/folder-minus.png"); }
+.tree_view li.collapsed li {
+  display: none; }
+.tree_view li.collapsed > .folder_icon {
+  background: url("../graphics/folder-plus.png"); }
 .tree_view .tree_view_item {
   cursor: pointer;
   margin: 4px 0;
@@ -249,8 +265,6 @@ body {
   text-decoration: underline; }
 .tree_view .selected > span {
   font-weight: bold; }
-.tree_view .folder_icon {
-  margin-right: 2px; }
 
 .overlay {
   background-color: rgba(0, 0, 0, 0.5);

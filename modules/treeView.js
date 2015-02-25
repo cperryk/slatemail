@@ -8,13 +8,16 @@ function TreeView(container, conf){
 	this.dbHandler = new window.dbHandler();
 	this.container = container
 		.addClass('tree_view')
-		.on('click','li', function(e){
+		.on('click','.folder_label', function(e){
 			e.stopPropagation();
-			var box_path = self.getBoxPath($(this));
+			var box_path = self.getBoxPath($(this).parent());
 			if(conf.onSelection){
 				conf.onSelection(box_path);
 				// self.reflectActiveMailbox(box_path);
 			}
+		})
+		.on('click','.folder_icon', function(e){
+			$(this).parent().toggleClass('collapsed');
 		});
 }
 TreeView.prototype = {
@@ -30,6 +33,9 @@ TreeView.prototype = {
 					.find('.tree_view_item').each(function(){
 						var box_path = self.getBoxPath($(this));
 						$(this).attr('data-box-path', box_path);
+						if($(this).children('ul').children('.tree_view_item').length > 0){
+							$(this).addClass('has_children');
+						}
 					});
 				self.reflectActiveMailbox('INBOX');
 				def.resolve();
@@ -49,8 +55,8 @@ TreeView.prototype = {
 			for(var i in subtree){
 				if(subtree.hasOwnProperty(i)){
 					s += '<li class="tree_view_item" data-box="'+i+'">'+
-					'<img class="folder_icon" src="graphics/folder_icon.png"/>'+
-					'<span>'+i+'</span>';
+					'<div class="folder_icon"></div>'+
+					'<span class="folder_label">'+i+'</span>';
 					printSubTree(subtree[i]);
 					s += '</li>';
 				}

@@ -294,6 +294,31 @@ body{
 	ul ul{
 		padding-left:10px;
 	}
+	.folder_icon{
+		width:15px;
+		height:12px;
+		margin-right:2px;
+		display: inline-block;
+	}
+	li{
+		-webkit-user-select:none;user-select:none;
+		> .folder_icon{
+			background:url('../graphics/folder-plain.png');
+		}
+	}
+	li.has_children{
+		> .folder_icon{
+			background:url('../graphics/folder-minus.png');
+		}
+	}
+	li.collapsed{
+		li {
+			display: none;
+		}
+		> .folder_icon{
+			background:url('../graphics/folder-plus.png');
+		}
+	}
 	.tree_view_item{
 		cursor:pointer;
 		margin:4px 0;
@@ -306,9 +331,6 @@ body{
 		> span{
 			font-weight:bold;
 		}
-	}
-	.folder_icon{
-		margin-right:2px;
 	}
 }
 

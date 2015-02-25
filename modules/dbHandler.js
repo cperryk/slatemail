@@ -1,4 +1,3 @@
-var Imaper = require("./modules/imaper.js");
 var fs = require('fs-extra');
 var Q = require('q');
 var db;
@@ -6,13 +5,8 @@ var indexedDB = window.indexedDB;
 
 // careful. //console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
-console.log('DBHANDLER IMPORTED');
+function dbHandler(){
 
-function dbHandler(imaper){
-	// if(imaper){
-	// 	this.imaper = imaper;
-	// }
-	// this.imaper = new Imaper();
 }
 
 dbHandler.prototype = {
@@ -616,14 +610,6 @@ getThreadMessages:function(thread_obj){
 			return 1;
 		}
 	}
-	function sortbyuid(a,b){
-		if(a.uid > b.uid){
-			return -1;
-		}
-		else{
-			return 1;
-		}
-	}
 	return def.promise;
 },
 saveAttachments:function(box_name, mail_object){
@@ -632,8 +618,8 @@ saveAttachments:function(box_name, mail_object){
 		def.resolve(mail_object);
 		return def.promise;
 	}
-	createFolders(function(){
-		var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';
+	var path = 'attachments/'+box_name+'/'+mail_object.uid+'/';
+	fs.ensureDir(path, function(){
 		var attachments = mail_object.attachments;
 		var attachments_to_save = attachments.length;
 		var saved_attachments = 0;
@@ -648,24 +634,6 @@ saveAttachments:function(box_name, mail_object){
 		});
 	});
 	return def.promise;
-	function createFolders(callback){
-		createDirectoryIfNotExists('attachments', function(){
-			createDirectoryIfNotExists('attachments/'+box_name, function(){
-				createDirectoryIfNotExists('attachments/'+box_name+'/'+mail_object.uid,callback);
-			});
-		});
-	}
-	function createDirectoryIfNotExists(path, callback){
-		fs.exists(path,function(exists){
-			if(!exists){
-				// //console.log('creating directory: '+path);
-				fs.mkdir(path, callback);
-			}
-			else{
-				callback();
-			}
-		});
-	}
 },
 ensureProject:function(project_name){
 	//console.log('ensuring project: '+project_name);
