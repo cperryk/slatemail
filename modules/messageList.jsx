@@ -316,6 +316,16 @@ MessageList.prototype = {
 			ele.addClass('selected');
 			this.selected_email = ele;
 		}
+	},
+	removeSelected:function(){
+		var ele = this.selected_email;
+		var par = ele.parent();
+		ele.slideUp(function(){
+			ele.remove();
+			if(par.find('.message').length === 0){
+				par.slideUp();
+			}
+		});
 	}
 };
 

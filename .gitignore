@@ -2,5 +2,6 @@ credentials
 attachments
 descriptors
 preferences
+modules/.module-cache
 *.sublime-project
 *.sublime-workspace

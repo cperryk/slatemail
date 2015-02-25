@@ -1,5 +1,6 @@
 var fs = require('fs');
 var $ = require('jquery');
+require('nw.gui').Window.get().showDevTools();
 
 var gui = require('nw.gui');
 global.gui = gui;
@@ -169,7 +170,7 @@ function addSelectedEmailListeners(){
 			100: function(){ // d
 				var selection = message_list.getSelection();
 				user_command.markComplete(selection.mailbox, selection.uid);
-				removeElement();
+				message_list.removeSelected();
 			},
 			112: function(){ // p
 				$(window).unbind('keypress.selected_email');
@@ -203,7 +204,7 @@ function addSelectedEmailListeners(){
 						var selected_email = message_list.getSelection();
 						user_command.schedule(selected_date, selected_email.mailbox, selected_email.uid)
 							.then(function(){
-								removeElement();
+								message_list.removeSelected();
 							});
 						overlay.close();
 					}
@@ -221,7 +222,7 @@ function addSelectedEmailListeners(){
 							alert("Emails from " + sender + " will automatically be deleted");
 							var selection = message_list.getSelection();
 							user_command.markComplete(selection.mailbox, selection.uid);
-							removeElement();
+							message_list.removeSelected();
 						}
 					});
 			},
@@ -243,7 +244,7 @@ function addSelectedEmailListeners(){
 							if(confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.")){
 								return my_dbHandler.muteThread(my_mail_obj.thread_id)
 									.then(function(){
-										removeElement();
+										message_list.removeSelected();
 										return user_command.markComplete(selection.mailbox, selection.uid);
 									});
 							}
@@ -256,16 +257,6 @@ function addSelectedEmailListeners(){
 		};
 		if(key_functions[key_code]){
 			key_functions[key_code]();
-		}
-		function removeElement(){
-			var ele = message_list.selected_email;
-			var par = ele.parent();
-			ele.slideUp(function(){
-				ele.remove();
-				if(par.find('.message').length === 0){
-					par.slideUp();
-				}
-			});
 		}
 	});
 }
