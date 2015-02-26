@@ -343,7 +343,7 @@ getMailFromBoxWithProperty:function(mailbox_name, property, value){
 	return def.promise;
 },
 getMailFromLocalBox:function(mailbox_name, uid){
-	console.log('getting mail from local box '+mailbox_name+':'+uid);
+	// console.log('getting mail from local box '+mailbox_name+':'+uid);
 	uid = parseInt(uid, 10);
 	var def = Q.defer();
 	var tx = db.transaction("box_"+mailbox_name,"readonly");
@@ -558,11 +558,9 @@ getThreads:function(thread_ids){
 	console.log('GETTING THREADS IN DBHANDLER, thread_ids...');
 	console.log(thread_ids);
 	var def = Q.defer();
-	var thread_objs = [];
-	var promises = [];
 	var self = this;
-	thread_ids.forEach(function(thread_id){
-		promises.push(self.getThread(thread_id));
+	var promises = thread_ids.map(function(thread_id){
+		return self.getThread(thread_id);
 	});
 	Q.all(promises)
 		.then(function(out){
@@ -1253,31 +1251,33 @@ deleteBoxes:function(box_paths){
 		
 	}
 },
-markSeen:function(box_name, uid){
+updateMessage:function(mail_obj){
+	var def = Q.defer();
+	var store = db.transaction('box_'+mail_obj.mailbox, 'readwrite').objectStore('box_'+mail_obj.mailbox);
+	var put_request = store.put(mail_obj);
+	put_request.onsuccess = function(){
+		def.resolve();
+	};
+	put_request.onerror = function(err){
+		def.resolve();
+	};
+	return def.promise;
+},
+markSeen:function(mail_obj){
 	// Marks a local email as "seen." Resolves if true if the operation was
 	// successful, false if it wasn't or if the local mail already was seen.
-	console.log('mark seen: '+box_name+':'+uid);
-	uid = parseInt(uid,10);
-	var def = Q.defer();
 	var self = this;
-	this.getMailFromLocalBox(box_name, uid)
-		.then(function(mail_obj){
-			if(mail_obj.flags.indexOf('\\Seen')===-1){	
-				mail_obj.flags.push('\\Seen');
-				var store = db.transaction('box_'+box_name,"readwrite").objectStore('box_'+box_name);
-				var put_request = store.put(mail_obj);
-				put_request.onsuccess = function(){
-					def.resolve(true);
-				};
-				put_request.onerror = function(err){
-					console.log(err);
-					def.resolve(false);
-				};
-			}
-			else{
-				def.resolve(false);
-			}
-		});
+	var def = Q.defer();
+	if(mail_obj.flags.indexOf('\\Seen')===-1){	
+		mail_obj.flags.push('\\Seen');
+		self.updateMessage(mail_obj)
+			.then(function(){
+				def.resolve(true);
+			});
+	}
+	else{
+		def.resolve(false); 
+	}
 	return def.promise;
 },
 muteThread: function(thread_id){

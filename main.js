@@ -74,7 +74,11 @@ var overlay_is_open = false;
 					selectBox(box_path);
 				}
 			});
-			message_view = new MessageView($('#message_viewer'));
+			message_view = new MessageView($('#message_viewer'), {
+				onMessages:function(mail_objs){
+					user_command.markSeen(mail_objs);
+				}
+			});
 			project_list = new ProjectList($('#project_list'), {
 				onSelection:function(project_id){
 					openProjectView(project_id);
@@ -105,7 +109,7 @@ var overlay_is_open = false;
 		// 	return my_dbHandler.deleteBoxes(['Sent Items']);
 		// })
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -155,9 +159,6 @@ function emailSelected(mailbox, uid){
 			else{
 				closeProjectView();
 			}
-		})
-		.then(function(){
-			return user_command.markSeenSeries(my_thread_obj.messages);
 		})
 		.catch(function(error){
 			console.log(error);
@@ -282,17 +283,6 @@ function openProjectView(project_id, initial_thread_id){
 function closeProjectView(){
 	$('#project_viewer').hide();
 	$('body').removeClass('project_viewer_open');
-}
-
-function markRead(mail_objs){
-	console.log(mail_objs);
-	mail_objs.forEach(function(mail_obj){
-		console.log(mail_obj);
-		my_dbHandler.markSeen(mail_obj.mailbox, mail_obj.uid)
-			.catch(function(err){
-				console.log(err);
-			});
-	});
 }
 
 function getPassword(){

@@ -8,3 +8,6 @@
 [ ] Add a way to remove a thread from a project
 [x] Make folders collapsible
 [ ] Add a search function
+[ ] Seems to be a problem in which the whole SlateMail database gets wiped if the user quits during the syncing process, possibly during the flags update.
+[ ] Find a way to sync project data?
+[ ] Make more efficient way to mark printed thread messages seen (so they do not need to retrieved again)

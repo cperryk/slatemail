@@ -89,51 +89,28 @@ UserCommand.prototype = {
 			});
 		return def.promise;
 	},
-	markSeen:function(box_name, uid){
-		console.log('mark seen: '+box_name+':'+uid);
-		uid = parseInt(uid,10);
-		var def = Q.defer();
-		var store_name = 'box_'+box_name;
-		var self = this;
-		this.dbHandler.markSeen(box_name, uid)
-			.then(function(status_changed){
-				if(status_changed){
-					console.log('imap marking seen: '+box_name+':'+uid);
-					return self.imaper.markSeen(box_name, uid);
-				}
-				else{
-					return true;
-				}
-			})
-			.then(function(){
-				def.resolve();
-			})
-			.catch(function(err){
-				console.log(err);
-			});
-		return def.promise;
-	},
-	markSeenSeries:function(mids){
-		console.log('mark seen series',mids);
+	markSeen:function(mail_objs){
 		var def = Q.defer();
 		var self = this;
-		if(typeof mids === 'string'){
-			this.markSeenSeries([mids]);
-		}
-		else{
-			var promises = mids.map(function(mid){
-				var split = mid.split(':');
-				return self.markSeen(split[0], split[1]);
-			});
-			Q.all(promises)
+		var unseen = mail_objs.filter(function(mail_obj){
+			return mail_obj.flags.indexOf('\\Seen')===-1;
+		});
+		console.log('unseen: ',unseen);
+		var promises = unseen.map(function(mail_obj){
+			return self.dbHandler.markSeen(mail_obj)
 				.then(function(){
-					def.resolve();
+					console.log('imaper marking seen', mail_obj);
+					self.imaper.markSeen(mail_obj.mailbox, mail_obj.uid);
 				})
 				.catch(function(err){
 					console.log(err);
 				});
-		}
+		});
+		Q.all(promises)
+			.then(function(){
+				def.resolve();
+			});
 		return def.promise;
-	}
+	},
 };
 module.exports = UserCommand;

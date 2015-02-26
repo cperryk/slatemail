@@ -15,6 +15,7 @@
       font-weight: bold;
       font-size: 16px;
       line-height: 16px;
+      white-space: nowrap;
       margin-bottom: 0.2em; }
     .message_list .message .subject {
       font-size: 0.8em;

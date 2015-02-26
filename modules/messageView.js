@@ -11,8 +11,9 @@ var mustache = require('mustache');
 var Q = require('Q');
 require('datejs');
 
-function MessageView(container){
+function MessageView(container, conf){
 	this.dbHandler = new DbHandler();
+	this.conf = conf;
 	this.container = container
 		.empty()
 		.addClass('message_view');
@@ -43,7 +44,11 @@ MessageView.prototype = {
 		var def = Q.defer();
 		this.dbHandler.getThreadMessages(thread_obj)
 			.then(function(thread_messages){
-				console.log(thread_messages);
+				console.log('got thread_messages', self.conf);
+				if(self.conf && self.conf.onMessages){
+					console.log('running onMessages');
+					self.conf.onMessages(thread_messages);
+				}
 				self.messages = thread_messages;
 				self.printTop(thread_messages);
 				self.printMessages(thread_messages);
@@ -442,10 +447,22 @@ Message.prototype = {
 		var self = this;
 		var html = (function(){
 			var message_data = self.message_data;
-			var html = message_data.html || message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
-			html = html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '');
+			var html = message_data.html ? 
+				message_data.html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '') :
+				message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
 			var stage = $('<div>')
 				.html(html)
+				.find('div')
+					.each(function(){
+						if($(this).css('border-top-style') === 'solid'){
+							$(this)
+								.nextAll()
+									.remove()
+									.end()
+								.remove();
+						}
+					})
+					.end()
 				.find('style')
 					.remove()
 					.end();
