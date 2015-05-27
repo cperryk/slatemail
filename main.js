@@ -18,10 +18,11 @@ var ProjectSelector = require('./modules/ProjectSelector');
 var Scheduler = require('./modules/scheduler.js');
 var UserCommand = require('./modules/userCommand.js');
 var PreferencesEditor = require('./modules/preferencesEditor.js');
+var getPassword = require('./modules/getPassword.js');
+
 
 var Q = require('q');
 var indexedDB = window.indexedDB;
-var keychain = require('keychain');
 
 var my_dbHandler;
 require('jquery-ui');
@@ -101,9 +102,6 @@ var overlay_is_open = false;
 		.then(function(){
 			return tree_view.printTree();
 		})
-		// .then(function(){
-		// 	return my_dbHandler.deleteBoxes(['Sent Items']);
-		// })
 		.fin(function(){
 			// regularSync();
 		})
@@ -128,8 +126,6 @@ function selectBox(box_name){
 	message_list.printBox(BOX);
 }
 function emailSelected(mailbox, uid){
-	console.log('');
-	console.log('');
 	console.log('---------------------------- EMAIL SELECTED -------------------------------');
 	var my_thread_obj;
 	my_dbHandler.connect()
@@ -146,11 +142,7 @@ function emailSelected(mailbox, uid){
 		.then(function(){
 			var thread_obj = my_thread_obj;
 			if(thread_obj.project_id !== undefined){
-				console.log('SELECTED THREAD', thread_obj);
 				openProjectView(thread_obj.project_id, thread_obj.thread_id);
-				// ^ careful where you put this last line. If it runs the same time
-				// as you get the thread messages for the selected message,
-				// things will break.
 			}
 			else{
 				closeProjectView();
@@ -279,24 +271,4 @@ function openProjectView(project_id, initial_thread_id){
 function closeProjectView(){
 	$('#project_viewer').hide();
 	$('body').removeClass('project_viewer_open');
-}
-
-function getPassword(){
-	var def = Q.defer();
-	var password;
-	keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){
-		if(!pass){
-			password = window.prompt('What is your IMAP password?');
-			keychain.setPassword({account:global.PREFERENCES.internal.user, service:'SlateMail', password: password}, function(err){
-				if(err){
-					console.log(err);
-				}
-			});
-		}
-		else{
-			password = pass;
-		}
-		def.resolve(password);
-	});
-	return def.promise;
 }

@@ -6,9 +6,9 @@ var fs = require('fs-extra');
 var Imaper = require('../modules/imaper');
 var CKEDITOR;
 var Q = require('Q');
-var keychain = require('keychain');
 var password;
 var notifier = require('node-notifier');
+var getPassword = require('../modules/getPassword.js');
 
 var PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'));
 global.PREFERENCES = PREFERENCES;
@@ -164,26 +164,5 @@ MailComposer.prototype = {
 			});
 	}
 };
-
-function getPassword(){
-	var def = Q.defer();
-	if(password){
-		def.resolve(password);
-	}
-	else{
-		keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, password){
-			if(!password){
-				password = window.prompt('What is your IMAP password?');
-				keychain.setPassword({account:global.PREFERENCES.internal.user, service:'SlateMail', password: password}, function(err){
-					if(err){
-						console.log(err);
-					}
-				});
-			}
-			def.resolve(password);
-		});
-	}
-	return def.promise;
-}
 
 module.exports = MailComposer;
