@@ -55,7 +55,7 @@ var overlay_is_open = false;
 			new PreferencesEditor();
 		});
 	});
-	
+
 	getPassword()
 		.then(function(password){
 			console.log('PASSWORD IS '+password);
@@ -109,7 +109,7 @@ var overlay_is_open = false;
 		// 	return my_dbHandler.deleteBoxes(['Sent Items']);
 		// })
 		.fin(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

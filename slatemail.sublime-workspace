@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"exe",
+				"executablePath"
+			],
+			[
+				"updateM",
+				"updateMailObject"
+			],
+			[
+				"user",
+				"user_command"
+			],
+			[
 				"deleete",
 				"deleteDescriptors"
 			],
@@ -502,76 +514,16 @@
 			[
 				"played",
 				"played_notes"
-			],
-			[
-				"NOTE_",
-				"NOTE_SEQUENCE"
-			],
-			[
-				"query",
-				"query_string"
-			],
-			[
-				"END",
-				"END_YEAR"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "modules/dbHandler.js",
+			"file": "modules/projectSelector.js",
 			"settings":
 			{
-				"buffer_size": 39147,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/preferencesEditor.html",
-			"settings":
-			{
-				"buffer_size": 1532,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "To-do.txt",
-			"settings":
-			{
-				"buffer_size": 532,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/preferencesEditor.js",
-			"settings":
-			{
-				"buffer_size": 2734,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/userCommand.js",
-			"settings":
-			{
-				"buffer_size": 3562,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 8969,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "modules/messageList.jsx",
-			"settings":
-			{
-				"buffer_size": 8973,
+				"buffer_size": 2723,
 				"line_ending": "Unix"
 			}
 		},
@@ -579,34 +531,38 @@
 			"file": "modules/syncer.js",
 			"settings":
 			{
-				"buffer_size": 11301,
+				"buffer_size": 11296,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "mailComposer/mailComposer.js",
-			"settings":
-			{
-				"buffer_size": 4680,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Thank you to everyone for reading and sharing! Thanks especially to Julia, John, and Dan, not only for giving the writing a lot of care and attention, but for letting me pursue this insane idea in the first place, and also to Dan Check for the crucial feedback during editing. Thank you to Juliana for jumpstarting my modeling career and to the rest of the Art team for making the piece look more beautiful than I'd ever imagine a big piece about email could be. Thanks also to Jennifer Lai for somehow making me sound coherent in the audio pieces.​",
-			"settings":
-			{
-				"buffer_size": 549,
-				"line_ending": "Unix",
-				"name": "Thank you to everyone for reading and sharing! Tha"
 			}
 		}
 	],
 	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
 	"command_palette":
 	{
 		"height": 400.0,
+		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"color",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"colros",
+				"ColorSchemeSelector: Select Color Scheme"
+			],
+			[
+				"install",
+				"Colorsublime: Install Theme"
+			],
+			[
+				"find",
+				"Finder: Open here"
+			],
 			[
 				"no",
 				"Snippet: noHighlight"
@@ -618,10 +574,6 @@
 			[
 				"form",
 				"Format: Javascript"
-			],
-			[
-				"find",
-				"Finder: Open here"
 			],
 			[
 				"wra",
@@ -678,10 +630,6 @@
 			[
 				"gr",
 				"Grunt"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"nog",
@@ -802,10 +750,6 @@
 			[
 				"pad",
 				"Snippet: pad"
-			],
-			[
-				"color",
-				"ColorSchemeSelector: Select Color Scheme"
 			],
 			[
 				"colors",
@@ -1114,10 +1058,6 @@
 			[
 				"cofee compi",
 				"Coffee: Compile File"
-			],
-			[
-				"compile",
-				"Coffee: Compile File"
 			]
 		],
 		"width": 475.0
@@ -1146,57 +1086,69 @@
 	"expanded_folders":
 	[
 		"/Users/kirkcp/Documents/node_play/slatemail",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules",
 		"/Users/kirkcp/Documents/node_play/slatemail/preferences"
 	],
 	"file_history":
 	[
+		"/Users/kirkcp/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/keychain/keychain.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/main.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/.module-cache/a06438ddbb3589f777ea5e5c9830861e74c13a95.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3561/AmazonPrimeCalculator.docx",
+		"/Users/kirkcp/Documents/node_play/slatemail/keychain_error_test.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/keychain_error.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/preferences/preferences.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/userCommand.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/To-do.txt",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/mailparser/node_modules/encoding/node_modules/iconv-lite/package.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/mailparser/node_modules/encoding/node_modules/iconv-lite/Changelog.md",
+		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/_copy.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/plugins/a11yhelp/dialogs/lang/_translationstatus.txt",
+		"/Users/kirkcp/Documents/node_play/slatemail/graphics/mail.ai",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectSelector.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
+		"/Users/kirkcp/Documents/node_play/slatemail/preferences/preferences.json",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
+		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/preferencesEditor.html",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/preferencesEditor.js",
+		"/Users/kirkcp/Documents/node_play/slatemail/modules/treeView.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/README.md",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactElement.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11309/UnitedSteaks_Slate6.ai",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/complete/127774/undefined",
-		"/Users/kirkcp/Documents/node_play/slatemail/To-do.txt",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.scss",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery-ui/tooltip.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.html",
-		"/Users/kirkcp/Documents/node_play/slatemail/main.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/userActions.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/test.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/.gitignore",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/dbHandler.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/imaper.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/syncer.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/node_modules/hyperquest/node_modules/through/readme.markdown",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/combined-stream/node_modules/delayed-stream/test/integration/test-handle-source-errors.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3733/GameofThronesChart.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/test/test-parse-header.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.jsx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/manipulation.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/4633/getIP.php",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/nodemailer/Gruntfile.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/samples/index.html",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/node_modules/hoek/test/modules/ignore.txt",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageList.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/styles.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/SyntheticTouchEvent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/css/message.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/css/message_list.scss",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/messageView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/preferencesEditor.html",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/preferencesEditor.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectSelector.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/threader.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3856/GameofThronesGraveyard.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail_dist/README.txt",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/userCommand.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/projectList.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/mailComposer.css",
 		"/Users/kirkcp/Documents/node_play/slatemail/modules/scheduler.js",
@@ -1233,7 +1185,6 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/tt-RU.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/783/MOTWActualEuropeanDiscoveries.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/credentials/credentials.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/graphics/mail.ai",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sports Separation/359/MakeAll4.py",
 		"/Users/kirkcp/Documents/node_play/slatemail_dist/slatemail.app/Contents/Resources/app.nw/node_modules/imap/node_modules/utf7/test/utf7-imap.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/imap/node_modules/utf7/test/utf7-imap.js",
@@ -1262,22 +1213,12 @@
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/INBOX/2367407/oscar predictions-1MW.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactTextComponent.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/mailComposer/ckeditor/skins/moono/editor.css",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3561/AmazonPrimeCalculator.docx",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/jquery/src/effects/animatedSelector.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactRootIndex.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/ReactOwner.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/datejs/src/i18n/az-Cyrl-AZ.js",
 		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/11560/Code of Business Conduct sign off sheet.doc",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/descriptors/Archive_uids.json",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/isNode.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/fs-extra/lib/move.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/mapObject.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/favicon/node_modules/request/node_modules/hawk/Makefile",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getEventModifierState.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/49438/HorrorMovieMusicQuizCopy.docx",
-		"/Users/kirkcp/Documents/node_play/slatemail/modules/old/mailboxView.js",
-		"/Users/kirkcp/Documents/node_play/slatemail/node_modules/react/lib/getMarkupWrap.js"
+		"/Users/kirkcp/Documents/node_play/slatemail/attachments/Sent Items/3328/QZ-FiveRingCircus-140219-MedalCountRedlines.docx"
 	],
 	"find":
 	{
@@ -1296,6 +1237,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"substringmatcher",
+			"q.all(",
+			"threadmessage",
+			"when",
+			"mail composer",
+			"attachments",
+			"markread",
+			"thread_obj",
+			"getThreads",
+			"deletedb",
+			"getting mail",
+			"this",
+			"mail_options",
 			".cc",
 			"dbhandler",
 			"delete",
@@ -1410,20 +1364,7 @@
 			"overlay",
 			"project_viewer",
 			"projectview",
-			"clearProjectFromThread",
-			"openprojectview",
-			"ensureprojectstore",
-			"project",
-			"thread",
-			"listprojects",
-			"exec(",
-			"fs.",
-			"complete",
-			"'complete'",
-			"muted",
-			"savetoexistingthread",
-			"movetocomplete",
-			"savetoexistingthread"
+			"clearProjectFromThread"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1441,318 +1382,62 @@
 	"groups":
 	[
 		{
-			"selected": 9,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "modules/dbHandler.js",
+					"file": "modules/projectSelector.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 39147,
-						"regions":
-						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										18310,
-										18310
-									],
-									[
-										35336,
-										35336
-									]
-								],
-								"scope": "bookmarks"
-							}
-						},
-						"selection":
-						[
-							[
-								1509,
-								1509
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 469.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "modules/preferencesEditor.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1532,
+						"buffer_size": 2723,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								130,
-								130
+								676,
+								676
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/JavaScript Ultimate/JavaScript (DOM).tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "To-do.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 532,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								477,
-								477
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "modules/preferencesEditor.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2734,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1456,
-								1456
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 371.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "modules/userCommand.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3562,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2549,
-								2549
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1452.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8969,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7782,
-								7782
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4711.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "modules/messageList.jsx",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8973,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3635,
-								3635
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JSX/JSX.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2794.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "modules/syncer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11301,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								856,
-								856
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 211.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "mailComposer/mailComposer.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4680,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3269,
-								3269
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1888.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"semi_transient": false,
+					"buffer": 1,
+					"file": "modules/syncer.js",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 549,
+						"buffer_size": 11296,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								549
+								411,
+								411
 							]
 						],
 						"settings":
 						{
-							"auto_name": "Thank you to everyone for reading and sharing! Tha",
 							"color_scheme": "Packages/User/Color Highlighter/themes/Seti (SL).tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/JavaScript Ultimate/JavaScript (DOM).tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 0.0,
+						"translation.x": -0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -1760,16 +1445,11 @@
 					"type": "text"
 				}
 			]
-		},
-		{
-			"sheets":
-			[
-			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 27.0
+		"height": 29.0
 	},
 	"input":
 	{
@@ -1784,18 +1464,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.880445386868,
 			1.0
 		],
 		"rows":
@@ -1817,36 +1490,78 @@
 	{
 		"height": 140.0
 	},
+	"pinned_build_system": "",
 	"project": "slatemail.sublime-project",
 	"replace":
 	{
-		"height": 50.0
+		"height": 54.0
 	},
 	"save_all_on_build": true,
 	"select_file":
 	{
 		"height": 0.0,
+		"last_filter": "",
 		"selected_items":
 		[
 			[
-				"mailcompos",
+				"proejctselector",
+				"modules/projectSelector.js"
+			],
+			[
+				"dbhand",
+				"modules/dbHandler.js"
+			],
+			[
+				"pack",
+				"package.json"
+			],
+			[
+				"main",
+				"main.html"
+			],
+			[
+				"keychain",
+				"node_modules/keychain/keychain.js"
+			],
+			[
+				"main.html",
+				"main.html"
+			],
+			[
+				"keychai",
+				"keychain_error.html"
+			],
+			[
+				"main.",
+				"main.html"
+			],
+			[
+				"mailcomposer",
+				"mailComposer/mailComposer.html"
+			],
+			[
+				"main.j",
+				"main.js"
+			],
+			[
+				"mailcompser.html",
+				"mailComposer/mailComposer.html"
+			],
+			[
+				"mailc",
 				"mailComposer/mailComposer.js"
 			],
 			[
-				"todo",
-				"To-do.txt"
+				"projectview",
+				"modules/projectView.js"
+			],
+			[
+				"messageview",
+				"modules/messageView.js"
 			],
 			[
 				"messagelist",
 				"modules/messageList.jsx"
-			],
-			[
-				"preferen",
-				"modules/preferencesEditor.js"
-			],
-			[
-				"preferne",
-				"modules/preferencesEditor.html"
 			],
 			[
 				"usercom",
@@ -1857,8 +1572,32 @@
 				"modules/dbHandler.js"
 			],
 			[
+				"message_list",
+				"css/message_list.scss"
+			],
+			[
 				"styles",
 				"css/styles.scss"
+			],
+			[
+				"preferen",
+				"preferences/preferences.json"
+			],
+			[
+				"mailcomp",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"mailcompos",
+				"mailComposer/mailComposer.js"
+			],
+			[
+				"todo",
+				"To-do.txt"
+			],
+			[
+				"preferne",
+				"modules/preferencesEditor.html"
 			],
 			[
 				"tree",
@@ -1867,10 +1606,6 @@
 			[
 				"tood",
 				"To-do.txt"
-			],
-			[
-				"mailcomposer",
-				"mailComposer/mailComposer.html"
 			],
 			[
 				"mailcomps",
@@ -1882,10 +1617,6 @@
 			],
 			[
 				"main.js",
-				"main.js"
-			],
-			[
-				"main",
 				"main.js"
 			],
 			[
@@ -1909,14 +1640,6 @@
 				"css/message.scss"
 			],
 			[
-				"mailcomp",
-				"mailComposer/mailComposer.js"
-			],
-			[
-				"projectview",
-				"modules/projectView.js"
-			],
-			[
 				"imaper",
 				"modules/imaper.js"
 			],
@@ -1927,10 +1650,6 @@
 			[
 				"preference",
 				"preferences/preferences.json"
-			],
-			[
-				"messageview",
-				"modules/messageView.js"
 			],
 			[
 				"mailcompser",
@@ -1965,10 +1684,6 @@
 				"slatemail/css/styles.css"
 			],
 			[
-				"main.html",
-				"slatemail/main.html"
-			],
-			[
 				"imap",
 				"slatemail/modules/imaper.js"
 			],
@@ -1979,10 +1694,6 @@
 			[
 				"mailcompsoer",
 				"slatemail/mailComposer/mailComposer.js"
-			],
-			[
-				"dbhand",
-				"slatemail/modules/dbHandler.js"
 			],
 			[
 				"treeview",
@@ -2113,10 +1824,6 @@
 				"modules/testModule.js"
 			],
 			[
-				"pack",
-				"package.json"
-			],
-			[
 				"packag",
 				"package.json"
 			],
@@ -2143,10 +1850,6 @@
 			[
 				"imapha",
 				"modules/imapHandler.js"
-			],
-			[
-				"message_list",
-				"css/message_list.css"
 			],
 			[
 				"projectsle",
@@ -2245,10 +1948,6 @@
 				"mailComposer/ckeditor/messageView.js"
 			],
 			[
-				"mailc",
-				"mailComposer/mailComposer.js"
-			],
-			[
 				"test",
 				"mailComposer/test.html"
 			],
@@ -2306,6 +2005,7 @@
 	"select_project":
 	{
 		"height": 500.0,
+		"last_filter": "",
 		"selected_items":
 		[
 			[
@@ -2353,11 +2053,12 @@
 	},
 	"select_symbol":
 	{
-		"height": 375.0,
+		"height": 400.0,
+		"last_filter": "",
 		"selected_items":
 		[
 		],
-		"width": 453.0
+		"width": 400.0
 	},
 	"selected_group": 0,
 	"settings":

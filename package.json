@@ -2,7 +2,7 @@
   "name": "SlateMail",
   "main": "main.html",
   "window":{
-  	"toolbar":false,
+  	"toolbar":true,
   	"frame":true,
   	"icon":"appicon.png"
   }

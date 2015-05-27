@@ -2,6 +2,7 @@ var dbHandler = window.dbHandler;
 var Imaper = require('../modules/imaper.js');
 var Q = require('Q');
 var fs = require('fs-extra');
+var throat = require('throat');
 var syncing = false;
 
 var indexedDB = window.indexedDB;
@@ -201,6 +202,9 @@ Syncer.prototype.syncBox = function(mailbox_name, remote_descriptors){
 	var self = this;
 	this.getLocalDescriptors(mailbox_name)
 		.then(function(local_descriptors){
+			// if(mailbox_name==='INBOX'){
+			// 	local_descriptors = [];
+			// }
 			return Q.all([
 				self.deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors),
 				self.downloadNewMail(mailbox_name, local_descriptors, remote_descriptors),
@@ -355,18 +359,17 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 	var self = this;
 	var def = Q.defer();
 	var to_get = [];
-	var promises = [];
+	// var promises = [];
 	for(var uid in remote_descriptors){
 		if(uid in local_descriptors === false){
 			to_get.push(uid);
 		}
 	}
-	
-	console.log('total messages to get: '+promises.length);
+
 
 	var results = [];
-	to_get.forEach(function(uid, index){
-		promises.push(function(){
+	var promises = to_get.map(function(uid, index){
+		return function(){
 			return self.dbHandler.getMailFromLocalBox(mailbox_name, uid)
 				.then(function(mail_obj){
 					if(mail_obj === false){
@@ -384,8 +387,10 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 						});
 					}
 				});
-		});
+		};
 	});
+
+	console.log('total messages to get: '+promises.length);
 
 	promises.reduce(Q.when, Q())
 		.then(function(){

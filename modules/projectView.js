@@ -30,7 +30,6 @@ function ProjectView(container, conf){
 					});
 			}
 		});
-	this.attachments = [];
 }
 ProjectView.prototype = {
 	printProject: function(project_id, initial_thread){
@@ -45,6 +44,7 @@ ProjectView.prototype = {
 			}
 			return;
 		}
+		this.attachments = [];
 		this.container.find('.thread_container').remove();
 		this.container.find('.attachments').remove();
 		this.container.find('h2').html(project_id);

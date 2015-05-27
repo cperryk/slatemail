@@ -37,6 +37,7 @@ Imaper.prototype = {
 				}
 				else{
 					console.log('The IMAP connection has failed. Retrying in 30 seconds');
+					console.log(err);
 					setTimeout(function(){
 						return self.connect()
 							.then(function(){

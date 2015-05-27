@@ -1,13 +1,22 @@
 -- To-Do -- 
-[ ] Optimize threading so that the threading process checks the email's current mailbox first, then the INBOX.
+
+* Bugs *
+[ ] Seems to be a problem in which the whole SlateMail database gets wiped if the user quits during the syncing process, possibly during the flags update.
+[ ] Keychain access sometimes fails
+
+* Features *
 [ ] Automatically delete empty scheduled boxes
-[ ] Use multiple IMAP connections to speed up syncing?
-[ ] Stop mailComposer acting like a separate process
 [ ] Make a smarter scheduler (allow the user to type in days, e.g. "tuesday")
-[ ] Improve promise implementation in various old functions in dbHandler
 [ ] Add a way to remove a thread from a project
 [x] Make folders collapsible
 [ ] Add a search function
-[ ] Seems to be a problem in which the whole SlateMail database gets wiped if the user quits during the syncing process, possibly during the flags update.
 [ ] Find a way to sync project data?
-[ ] Make more efficient way to mark printed thread messages seen (so they do not need to retrieved again)
+[ ] Drafts
+
+* Optimizations *
+[ ] Optimize threading so that the threading process checks the email's current mailbox first, then the INBOX.
+[ ] Use multiple IMAP connections to speed up syncing?
+[ ] Stop mailComposer acting like a separate process
+[ ] Improve promise implementation in various old functions in dbHandler
+[x] Make more efficient way to mark printed thread messages seen (so they do not need to retrieved again)
+[ ] Store subject in thread_obj so all thread messages need not be retrieved in a projectView, only threads

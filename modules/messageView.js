@@ -354,11 +354,13 @@ Message.prototype = {
 	},
 	reply:function(){
 		var conf = this.getReplyConf();
+		console.log('making new mail composer', conf);
 		new MailComposer(null, conf);
 	},
 	replyAll:function(){
 		var self = this;
 		var conf = this.getReplyConf();
+		console.log('replied all', conf);
 		conf.cc = (function(){
 			var message_data = self.message_data;
 			var s = '';
