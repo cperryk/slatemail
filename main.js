@@ -64,39 +64,35 @@ var overlay_is_open = false;
 			return my_dbHandler.connect();
 		})
 		.then(function(){
-			message_list = new MessageList($('#inbox'), {
-				onSelection:function(mailbox, uid){
-					emailSelected(mailbox, uid);
-				}
-			});
-			tree_view = new treeView($('#tree_view'), {
-				onSelection:function(box_path){
-					selectBox(box_path);
-				}
-			});
-			message_view = new MessageView($('#message_viewer'), {
-				onMessages:function(mail_objs){
-					user_command.markSeen(mail_objs);
-				}
-			});
-			project_list = new ProjectList($('#project_list'), {
-				onSelection:function(project_id){
-					openProjectView(project_id);
-				}
-			});
-			project_view = new ProjectView($('#project_viewer'), {
-				onSelection: function(thread_id){
+			message_list = new MessageList($('#inbox'))
+				.on('selection', function(e){
+					emailSelected(e.mailbox, e.uid);
+				});
+			tree_view = new treeView($('#tree_view'))
+				.on('selection', function(e){
+					selectBox(e.box_path);
+				});
+			message_view = new MessageView($('#message_viewer'))
+				.on('messages', function(e){
+					user_command.markSeen(e.messages);
+				});
+			project_list = new ProjectList($('#project_list'))
+				.on('selection', function(e){
+					openProjectView(e.project_id);
+				});
+			project_view = new ProjectView($('#project_viewer'))
+				.on('selection', function(e){
+					var thread_id = e.thread_id;
 					message_list.selectMessageByThreadID(thread_id);
 					my_dbHandler.getThread(thread_id)
 						.then(function(thread_obj){
 							message_view.printThread(thread_obj);
 						});
-					},
-				onProjectDeletion: function(){
+				})
+				.on('project_deletion', function(e){
 					project_list.render();
 					closeProjectView();
-				}
-			});
+				});
 			user_command = new UserCommand();
 			selectBox('INBOX');
 			addEventListeners();
@@ -109,7 +105,7 @@ var overlay_is_open = false;
 		// 	return my_dbHandler.deleteBoxes(['Sent Items']);
 		// })
 		.fin(function(){
-			regularSync();
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

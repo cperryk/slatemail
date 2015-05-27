@@ -9,79 +9,83 @@ var exec = require('child_process').exec;
 var DbHandler = window.dbHandler;
 var mustache = require('mustache');
 var Q = require('Q');
+
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
 require('datejs');
 
 function MessageView(container, conf){
 	this.dbHandler = new DbHandler();
 	this.conf = conf;
-	this.container = container
+	this.$c = container
 		.empty()
 		.addClass('message_view');
-	this.top_wrapper = $('<div>')
+	this.$top_wrapper = $('<div>')
 		.addClass('top')
 		.appendTo(container);
-	this.messages_wrapper = $('<div>')
+	this.$messages_wrapper = $('<div>')
 		.addClass('messages')
 		.appendTo(container);
 }
 
-MessageView.prototype = {
-	clear:function(){
-		console.log('clearing');
-		this.container
-			.removeClass('with_top');
-		this.messages_wrapper.empty();
-		this.top_wrapper
-			.empty()
-			.hide();
-		return this;
-	},
-	printThread:function(thread_obj){
-		console.log('printing thread');
-		// Prints thread therad_id. Resolves with the thread object
-		this.clear();
-		var self = this;
-		var def = Q.defer();
-		this.dbHandler.getThreadMessages(thread_obj)
-			.then(function(thread_messages){
-				console.log('got thread_messages', self.conf);
-				if(self.conf && self.conf.onMessages){
-					console.log('running onMessages');
-					self.conf.onMessages(thread_messages);
-				}
-				self.messages = thread_messages;
-				self.printTop(thread_messages);
-				self.printMessages(thread_messages);
-			})
-			.catch(function(err){
-				console.log(err);
-			})
-			.fin(function(){
-				def.resolve(thread_obj);
+util.inherits(MessageView, EventEmitter);
+
+MessageView.prototype.clear = function(){
+	console.log('clearing');
+	this.$c
+		.removeClass('with_top');
+	this.$messages_wrapper.empty();
+	this.$top_wrapper
+		.empty()
+		.hide();
+	return this;
+};
+MessageView.prototype.printThread = function(thread_obj){
+	console.log('printing thread');
+	// Prints thread therad_id. Resolves with the thread object
+	this.clear();
+	var self = this;
+	var def = Q.defer();
+	this.dbHandler.getThreadMessages(thread_obj)
+		.then(function(thread_messages){
+			console.log('got thread_messages', self.conf);
+			self.emit('thread_messages', {
+				messages: thread_messages
 			});
-		return def.promise;
-	},
-	printMessages: function(mail_objs){
-		console.log('printing messages');
-		console.log(mail_objs);
-		var self = this;
-		mail_objs.sort(function(a,b){
-			if(a.date > b.date){
-				return -1;
-			}
-			else{
-				return 1;
-			}
+			self.messages = thread_messages;
+			self.printTop(thread_messages);
+			self.printMessages(thread_messages);
+		})
+		.catch(function(err){
+			console.log(err);
+		})
+		.fin(function(){
+			def.resolve(thread_obj);
 		});
-		mail_objs.forEach(function(mail_obj, index){
-			var my_message = new Message(mail_obj, self);
-			if(index===0){
-				my_message.printFull();
-			}
-		});
-		return this;
-	},
-	printTop: function(mail_objs){
+	return def.promise;
+};
+MessageView.prototype.printMessages = function(mail_objs){
+	console.log('printing messages');
+	console.log(mail_objs);
+	var self = this;
+	mail_objs.sort(function(a,b){
+		if(a.date > b.date){
+			return -1;
+		}
+		else{
+			return 1;
+		}
+	});
+	mail_objs.forEach(function(mail_obj, index){
+		var my_message = new Message(mail_obj, self);
+		if(index===0){
+			my_message.printFull();
+		}
+	});
+	return this;
+};
+MessageView.prototype.printTop = function(mail_objs){
 		var subject = mail_objs[0].subject;
 		if(subject==='<no subject>'){
 			subject = '(no subject)';
@@ -100,7 +104,7 @@ MessageView.prototype = {
 		$('<div>')
 			.addClass('thread_subject')
 			.html(subject)
-			.appendTo(this.top_wrapper);
+			.appendTo(this.$top_wrapper);
 
 		var wrapper = $('<div>')
 			.addClass('thread_info');
@@ -113,21 +117,20 @@ MessageView.prototype = {
 				.html(attachments_count+' Attachment'+(attachments_count>1?'s':''))
 				.appendTo(wrapper);
 		}
-		wrapper.appendTo(this.top_wrapper);
-		this.top_wrapper
+		wrapper.appendTo(this.$top_wrapper);
+		this.$top_wrapper
 			.show();
-		this.container.addClass('with_top');
+		this.$c.addClass('with_top');
 		return this;
-	},
-	addEventListeners:function(){
-		var self = this;
-		$(window).keypress(function(e){
-			if(e.keyCode === 114 && e.metaKey){
-				self.reply();
-			}
-		});
-		return this;
-	}
+};
+MessageView.prototype.addEventListeners = function(){
+	var self = this;
+	$(window).keypress(function(e){
+		if(e.keyCode === 114 && e.metaKey){
+			self.reply();
+		}
+	});
+	return this;
 };
 
 function Message(message_data, par){
@@ -135,9 +138,9 @@ function Message(message_data, par){
 	var self = this;
 	this.message_data = message_data;
 	this.par = par;
-	this.container = $('<div>')
+	this.$c = $('<div>')
 		.addClass('envelope')
-		.appendTo(par.messages_wrapper);
+		.appendTo(par.$messages_wrapper);
 
 	this.printHeaders()
 		.printAttachmentIcons()
@@ -147,7 +150,7 @@ function Message(message_data, par){
 Message.prototype = {
 	printHeaders:function(){
 		var message_data = this.message_data;
-		var container = this.container;
+		var container = this.$c;
 
 		var d1 = new Date().getTime();
 
@@ -170,7 +173,7 @@ Message.prototype = {
 		var message_data = this.message_data;
 		this.iframe_wrapper = $('<div>')
 			.addClass('iframe_wrapper')
-			.appendTo(this.container);
+			.appendTo(this.$c);
 		this.iframe = $('<iframe>')
 			.attr('frameborder',0)
 			.attr('scrolling','no')
@@ -202,7 +205,7 @@ Message.prototype = {
 					exec(command);
 				});
 		});
-		wrapper.appendTo(this.container);
+		wrapper.appendTo(this.$c);
 		return this;
 	},
 	getToString: function(message_data, cc){
@@ -258,14 +261,14 @@ Message.prototype = {
 		if(this.par.selected_message){
 			this.par.selected_message.deselect();
 		}
-		this.container.addClass('selected');
+		this.$c.addClass('selected');
 		this.par.selected_message = this;
 	},
 	deselect:function(){
 		if(this.par.selected_message){
 			delete this.par.selected_message;
 		}
-		this.container.removeClass('selected');
+		this.$c.removeClass('selected');
 	},
 	printActionBtns:function(){
 		var self = this;
@@ -307,13 +310,13 @@ Message.prototype = {
 	},
 	addEventListeners:function(){
 		var self = this;
-		this.container.find('.headers')
+		this.$c.find('.headers')
 			.click(function(e){
 				if($(e.target).hasClass('action_btn')===false){
-					self.togglePrintState();			
+					self.togglePrintState();
 				}
 			});
-		this.container.hover(function(){
+		this.$c.hover(function(){
 			self.printActionBtns();
 		}, function(){
 			self.removeActionBtns();
@@ -449,7 +452,7 @@ Message.prototype = {
 		var self = this;
 		var html = (function(){
 			var message_data = self.message_data;
-			var html = message_data.html ? 
+			var html = message_data.html ?
 				message_data.html.replace(/<img\s[^>]*?src\s*=\s*['\"]([^'\"]*?)['\"][^>]*?>/g, '') :
 				message_data.text.replace(/(?:\r\n|\r|\n)/g, ' ');
 			var stage = $('<div>')
