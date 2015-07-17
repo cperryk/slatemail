@@ -163,7 +163,7 @@ MessageList.prototype.printBox = function(box){
 		.then(function(){
 			if(box === 'INBOX'){
 				var def = Q.defer();
-				self.dbHandler.getDueMail()
+				self.dbHandler.getDueMailAsync()
 					.then(function(due_mail){
 						due_mail.forEach(function(mail_obj){
 							if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
@@ -203,7 +203,7 @@ MessageList.prototype.addMessages = function(offset){
 		var self = this;
 		var def = Q.defer();
 		var d1 = new Date().getTime();
-		this.dbHandler.getMessagesFromMailbox(this.box, function(mail_obj){
+		this.dbHandler.getMessagesFromMailboxAsync(this.box, function(mail_obj){
 			// console.log(self.printed_threads);
 			// console.log(mail_obj);
 			if(mail_obj.thread_id === undefined){

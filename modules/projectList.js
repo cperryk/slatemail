@@ -49,7 +49,7 @@ util.inherits(ProjectList, EventEmitter);
 
 ProjectList.prototype.render = function(){
 	var self = this;
-	this.dbHandler.listProjects()
+	this.dbHandler.listProjectsAsync()
 		.then(function(project_names){
 			console.log(project_names);
 			console.log("GO PROJECT LIST REACT");

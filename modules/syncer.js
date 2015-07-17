@@ -82,13 +82,13 @@ Syncer.prototype.syncAll = function(){
 		.then(function(){
 			console.log('BOX PATHS', box_paths);
 			console.log('deleting boxes');
-			return self.dbHandler.getAllMailboxes()
+			return self.dbHandler.getAllMailboxesAsync()
 				.then(function(local_boxes){
 					var boxes_to_delete = local_boxes.filter(function(local_box){
 						return box_paths.indexOf(local_box) === -1;
 					});
 					if(boxes_to_delete.length > 0){
-						return self.dbHandler.deleteBoxes(boxes_to_delete)
+						return self.dbHandler.deleteBoxesAsync(boxes_to_delete)
 							.then(function(){
 								def.resolve();
 							});
@@ -100,7 +100,7 @@ Syncer.prototype.syncAll = function(){
 				});
 		})
 		.then(function(){
-			return self.dbHandler.ensureLocalBoxes(box_paths);
+			return self.dbHandler.ensureLocalBoxesAsync(box_paths);
 		})
 		.then(function(){
 			var box_results = {};
@@ -154,10 +154,10 @@ Syncer.prototype.syncAll = function(){
 				mailbox.new_messages.forEach(function(msg){
 					if(msg.downloaded === true){
 						promises.push(function(){
-							return self.dbHandler.threadMessage(mailbox.mailbox, msg.uid);
+							return self.dbHandler.threadMessageAsync(mailbox.mailbox, msg.uid);
 						});
 					}
-				});			
+				});
 			});
 			promises.reduce(Q.when, Q())
 				.then(function(){
@@ -249,7 +249,7 @@ Syncer.prototype.updateFlags = function(mailbox_name, local_descriptors, remote_
 	}
 	var promises = [];
 	to_update.forEach(function(update){
-		promises.push(self.dbHandler.updateFlags(mailbox_name, update.uid, update.flags));
+		promises.push(self.dbHandler.updateFlagsAsync(mailbox_name, update.uid, update.flags));
 	});
 	Q.all(promises)
 		.then(function(){
@@ -279,7 +279,7 @@ Syncer.prototype.getRemoteDescriptors = function(mailbox_name){
 			msgs.forEach(function(msg){
 				out[msg.uid] = msg.flags;
 			});
-			def.resolve(out);			
+			def.resolve(out);
 		})
 		.catch(function(err){
 			console.log(err);
@@ -320,7 +320,7 @@ Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors,
 		}
 	}
 	messages_to_delete.forEach(function(uid){
-		promises.push(self.dbHandler.removeLocalMessage(mailbox_name, uid));
+		promises.push(self.dbHandler.removeLocalMessageAsync(mailbox_name, uid));
 	});
 	Q.all(promises)
 		.then(function(){
@@ -370,7 +370,7 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 	var results = [];
 	var promises = to_get.map(function(uid, index){
 		return function(){
-			return self.dbHandler.getMailFromLocalBox(mailbox_name, uid)
+			return self.dbHandler.getMailFromLocalBoxAsync(mailbox_name, uid)
 				.then(function(mail_obj){
 					if(mail_obj === false){
 						return self.downloadMessage(mailbox_name, uid, remote_descriptors, index, promises.length)
@@ -415,7 +415,7 @@ Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptor
 				// mail_obj.date = mail_obj.date.toString();
 				mail_obj.flags = remote_descriptors[uid];
 				mail_obj.uid = uid;
-				self.dbHandler.saveMailToLocalBox(mailbox_name, mail_obj)
+				self.dbHandler.saveMailToLocalBoxAsync(mailbox_name, mail_obj)
 					.then(function(){
 						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING.');
 						def.resolve({

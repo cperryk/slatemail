@@ -5,7 +5,8 @@ require('nw.gui').Window.get().showDevTools();
 var gui = require('nw.gui');
 global.gui = gui;
 
-var Q = require('q');
+// var Q = require('q');
+var Promise = require('bluebird');
 var indexedDB = window.indexedDB;
 
 
@@ -68,7 +69,9 @@ var overlay_is_open = false;
 			console.log('PASSWORD IS '+password);
 			global.PREFERENCES.internal.password = password;
 			my_dbHandler = new dbHandler();
-			return my_dbHandler.connect();
+			console.log('my dbhandler!');
+			console.log(my_dbHandler);
+			return my_dbHandler.connectAsync();
 		})
 		.then(function(){
 			message_list = new MessageList($('#inbox'))
@@ -91,7 +94,7 @@ var overlay_is_open = false;
 				.on('selection', function(e){
 					var thread_id = e.thread_id;
 					message_list.selectMessageByThreadID(thread_id);
-					my_dbHandler.getThread(thread_id)
+					my_dbHandler.getThreadAsync(thread_id)
 						.then(function(thread_obj){
 							message_view.printThread(thread_obj);
 						});
@@ -134,12 +137,12 @@ function selectBox(box_name){
 function emailSelected(mailbox, uid){
 	console.log('---------------------------- EMAIL SELECTED -------------------------------');
 	var my_thread_obj;
-	my_dbHandler.connect()
+	my_dbHandler.connectAsync()
 		.then(function(){
-			return my_dbHandler.getMailFromLocalBox(mailbox,uid);
+			return my_dbHandler.getMailFromLocalBoxAsync(mailbox,uid);
 		})
 		.then(function(mail_obj){
-			return my_dbHandler.getThread(mail_obj.thread_id);
+			return my_dbHandler.getThreadAsync(mail_obj.thread_id);
 		})
 		.then(function(thread_obj){
 			my_thread_obj = thread_obj;
@@ -176,9 +179,9 @@ function addSelectedEmailListeners(){
 					.on('selection', function(e){
 						var project_id = e.project_id;
 						var selected_email = message_list.getSelection();
-						my_dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
+						my_dbHandler.putInProjectAsync(selected_email.mailbox, selected_email.uid, project_id)
 							.then(function(){
-								return my_dbHandler.getMailFromLocalBox(selected_email.mailbox, selected_email.uid);
+								return my_dbHandler.getMailFromLocalBoxAsync(selected_email.mailbox, selected_email.uid);
 							})
 							.then(function(mail_obj){
 								openProjectView(project_id, mail_obj.thread_id);
@@ -206,7 +209,7 @@ function addSelectedEmailListeners(){
 			},
 			98: function(){ // b - blocks the sender
 				var selection = message_list.getSelection();
-				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
+				my_dbHandler.getMailFromLocalBoxAsync(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
 						var sender = mail_obj.from[0].address;
 						var block_sender = confirm("Do you want to block emails from "+sender+" and delete this thread?");
@@ -222,20 +225,20 @@ function addSelectedEmailListeners(){
 			109: function(){ // m - mutes the thread
 				var selection = message_list.getSelection();
 				var my_mail_obj;
-				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
+				my_dbHandler.getMailFromLocalBoxAsync(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
 						my_mail_obj = mail_obj;
-						return my_dbHandler.getThread(mail_obj.thread_id);
+						return my_dbHandler.getThreadAsync(mail_obj.thread_id);
 					})
 					.then(function(thread_obj){
 						if(thread_obj.muted === true){
 							if(confirm("This thread is muted. Do you want to unmute it?")){
-								return my_dbHandler.unmuteThread(my_mail_obj.thread_id);
+								return my_dbHandler.unmuteThreadAsync(my_mail_obj.thread_id);
 							}
 						}
 						else{
 							if(confirm("Do you want to mute this thread? It and all messages in it henceforward will be marked complete automatically.")){
-								return my_dbHandler.muteThread(my_mail_obj.thread_id)
+								return my_dbHandler.muteThreadAsync(my_mail_obj.thread_id)
 									.then(function(){
 										message_list.removeSelected();
 										return user_command.markComplete(selection.mailbox, selection.uid);
@@ -262,7 +265,7 @@ function regularSync(){
 			tree_view.printTree();
 		}
 	});
-	syncer.start();
+	// syncer.start();
 }
 
 function openProjectView(project_id, initial_thread_id){

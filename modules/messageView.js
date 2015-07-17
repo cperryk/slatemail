@@ -47,7 +47,7 @@ MessageView.prototype.printThread = function(thread_obj){
 	this.clear();
 	var self = this;
 	var def = Q.defer();
-	this.dbHandler.getThreadMessages(thread_obj)
+	this.dbHandler.getThreadMessagesAsync(thread_obj)
 		.then(function(thread_messages){
 			console.log('got thread_messages', self.conf);
 			self.emit('thread_messages', {
@@ -60,7 +60,7 @@ MessageView.prototype.printThread = function(thread_obj){
 		.catch(function(err){
 			console.log(err);
 		})
-		.fin(function(){
+		.finally(function(){
 			def.resolve(thread_obj);
 		});
 	return def.promise;
