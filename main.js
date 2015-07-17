@@ -5,27 +5,33 @@ require('nw.gui').Window.get().showDevTools();
 var gui = require('nw.gui');
 global.gui = gui;
 
-// SlateMail components
+var Q = require('q');
+var indexedDB = window.indexedDB;
+
+
+// SlateMail component classes
 var MailComposer = require('./MailComposer/MailComposer.js');
 var MessageList = require('./modules/messageList.js');
 var MessageView = require('./modules/messageView.js');
 var Overlay = require('./modules/overlay.js');
-var ProjectList = require('./modules/projectList.js');
-var ProjectView = require('./modules/projectView.js');
-var Syncer = require('./modules/syncer.js');
-var treeView = require('./modules/treeView.js');
-var ProjectSelector = require('./modules/ProjectSelector');
-var Scheduler = require('./modules/scheduler.js');
-var UserCommand = require('./modules/userCommand.js');
 var PreferencesEditor = require('./modules/preferencesEditor.js');
+var ProjectList = require('./modules/projectList.js');
+var ProjectSelector = require('./modules/ProjectSelector');
+var ProjectView = require('./modules/projectView.js');
+var Scheduler = require('./modules/scheduler.js');
+var Syncer = require('./modules/syncer.js');
+var TreeView = require('./modules/treeView.js');
+var UserCommand = require('./modules/userCommand.js');
+
+// utility functions
 var getPassword = require('./modules/getPassword.js');
 
-
-var Q = require('q');
-var indexedDB = window.indexedDB;
-
-var my_dbHandler;
+// injections
 require('jquery-ui');
+
+// global vars
+var my_dbHandler;
+
 
 // Instances of components
 var tree_view;
@@ -69,7 +75,7 @@ var overlay_is_open = false;
 				.on('selection', function(e){
 					emailSelected(e.mailbox, e.uid);
 				});
-			tree_view = new treeView($('#tree_view'))
+			tree_view = new TreeView($('#tree_view'))
 				.on('selection', function(e){
 					selectBox(e.box_path);
 				});
@@ -103,7 +109,7 @@ var overlay_is_open = false;
 			return tree_view.printTree();
 		})
 		.fin(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
@@ -157,20 +163,18 @@ function addSelectedEmailListeners(){
 	$(window).unbind('keypress.selected_email').on('keypress.selected_email',function(e){
 		var key_code = e.keyCode;
 		var key_functions = {
-			100: function(){ // d
+			100: function(){ // d - marks an email as done
 				var selection = message_list.getSelection();
 				user_command.markComplete(selection.mailbox, selection.uid);
 				message_list.removeSelected();
 			},
-			112: function(){ // p
+			112: function(){ // p - opens project selector to group thread into project
 				$(window).unbind('keypress.selected_email');
-				var overlay = new Overlay({
-					onClose:function(){
-						addSelectedEmailListeners();
-					}
-				});
-				var project_selector = new ProjectSelector(overlay.container, {
-					onSelection:function(project_id){
+				var overlay = new Overlay()
+					.on('close', addSelectedEmailListeners);
+				var project_selector = new ProjectSelector(overlay.getContainer())
+					.on('selection', function(e){
+						var project_id = e.project_id;
 						var selected_email = message_list.getSelection();
 						my_dbHandler.putInProject(selected_email.mailbox, selected_email.uid, project_id)
 							.then(function(){
@@ -183,25 +187,24 @@ function addSelectedEmailListeners(){
 								project_list.render();
 						});
 						overlay.close();
-					}
 				});
 			},
-			115: function(){ // s
+			115: function(){ // s - opens scheduler to bounce email back to inbox at date
 
 				var overlay = new Overlay();
-				new Scheduler(overlay.container, {
-					onSelection:function(selected_date){
+				new Scheduler(overlay.container)
+					.on('selection', function(e){
+						var selected_date = e.selected_date;
 						var selected_email = message_list.getSelection();
 						user_command.schedule(selected_date, selected_email.mailbox, selected_email.uid)
 							.then(function(){
 								message_list.removeSelected();
 							});
 						overlay.close();
-					}
-				});
+					});
 				return;
 			},
-			98: function(){ // b
+			98: function(){ // b - blocks the sender
 				var selection = message_list.getSelection();
 				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)
 					.then(function(mail_obj){
@@ -216,7 +219,7 @@ function addSelectedEmailListeners(){
 						}
 					});
 			},
-			109: function(){ // m
+			109: function(){ // m - mutes the thread
 				var selection = message_list.getSelection();
 				var my_mail_obj;
 				my_dbHandler.getMailFromLocalBox(selection.mailbox, selection.uid)

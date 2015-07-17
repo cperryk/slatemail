@@ -1,6 +1,6 @@
 var Q = require('Q');
 var keychain = require('keychain');
-function getPassword(){
+function getPassword(attempt){
 	var def = Q.defer();
 	var password;
 	keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){

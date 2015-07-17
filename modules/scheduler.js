@@ -1,8 +1,13 @@
 global.document = window.document;
 global.navigator = window.navigator;
+
 var $ = require('jquery');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
 
 function Scheduler(container, conf){
+	var self = this;
 	console.log(container[0]);
 	var template = '<div class="scheduler">'+
 		'<p>What day would like this email to pop back up in your inbox?</p>'+
@@ -15,9 +20,7 @@ function Scheduler(container, conf){
 		.datepicker({
 			onSelect:function(date_text, obj){
 				var date = input.datepicker('getDate');
-				if(conf.onSelection){
-					conf.onSelection(date);
-				}
+				self.emit('selection', {data: date});
 			}
 		})
 		.focus();
@@ -25,4 +28,7 @@ function Scheduler(container, conf){
 		input.val('');
 	},1);
 }
+
+util.inherits(Scheduler, EventEmitter);
+
 module.exports = Scheduler;

@@ -5,6 +5,9 @@ var $ = require('jquery');
 var mustache = require('mustache');
 var Typeahead = require('typeahead');
 
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
 function ProjectSelector(target_container, conf){
 	var self = this;
 	this.conf = conf;
@@ -59,29 +62,28 @@ function ProjectSelector(target_container, conf){
 			console.log(err);
 		});
 }
-ProjectSelector.prototype = {
-	selectProject: function(project_id){
-		if(!(typeof project_id === 'string' && project_id !== '')){
-			return;
-		}
-		console.log(project_id+' selected');
-		$(window).unbind('keydown.projectSelector');
-		if(this.conf && this.conf.onSelection){
-			this.conf.onSelection(project_id);
-		}
+
+util.inherits(ProjectSelector, EventEmitter);
+
+ProjectSelector.prototype.selectProject = function(project_id){
+	if(!(typeof project_id === 'string' && project_id !== '')){
+		return;
 	}
+	console.log(project_id+' selected');
+	$(window).unbind('keydown.projectSelector');
+	this.emit('selection', {project_id: project_id});
 };
 
 var substringMatcher = function(strs) {
   return function findMatches(q, cb) {
     var matches, substrRegex;
- 
+
     // an array that will be populated with substring matches
     matches = [];
- 
+
     // regex used to determine if a string contains the substring `q`
     substrRegex = new RegExp(q, 'i');
- 
+
     // iterate through the pool of strings and for any string that
     // contains the substring `q`, add it to the `matches` array
     $.each(strs, function(i, str) {
@@ -91,7 +93,7 @@ var substringMatcher = function(strs) {
         matches.push({ value: str });
       }
     });
- 
+
     cb(matches);
   };
 };
