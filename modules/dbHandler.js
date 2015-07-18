@@ -1,19 +1,14 @@
 var fs = require('fs');
 // for some reason, setting fs to fs-extra isn't recognized later in the execution...?
 var fsx = require('fs-extra');
-var Q = require('q');
 var db;
 var indexedDB = window.indexedDB;
-var Promise = require('bluebird');
+var promisifyAll = require('es6-promisify-all');
+// var Promise = require('bluebird');
 
 // careful. //console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
-Promise.promisifyAll(fsx);
-
-console.log(indexedDB.prototype);
-// Promise.promisifyAll(indexedDB.prototype);
-
-console.log(indexedDB.prototype);
+promisifyAll(fsx);
 
 function dbHandler(){}
 
@@ -328,18 +323,14 @@ getMailFromBoxWithProperty:function(mailbox_name, property, value, cb){
 },
 getMailFromLocalBox:function(mailbox_name, uid, cb){
 	// console.log('getting mail from local box '+mailbox_name+':'+uid);
+	console.time('getMailFromLocalBox '+mailbox_name+':'+uid);
 	uid = parseInt(uid, 10);
 	var tx = db.transaction("box_"+mailbox_name,"readonly");
 	var store = tx.objectStore("box_"+mailbox_name);
 	var request = store.get(uid);
 	request.onsuccess = function(){
-		var matching = request.result;
-		if(matching!==undefined){
-			if(cb) cb(null, request.result);
-		}
-		else{
-			if(cb) cb(null, false);
-		}
+		console.timeEnd('getMailFromLocalBox '+mailbox_name+':'+uid);
+		if(cb) cb(null, request.result || false);
 	};
 	request.onerror = function(err){
 		console.log('error getting mail from local box '+mailbox_name+':'+uid);
@@ -394,9 +385,7 @@ updateFlags:function(box_name, uid, flags, cb){
 // 	return def.promise;
 // },
 removePID:function(pid){ // TO-DO
-	var def = Q.defer();
-	def.resolve();
-	return def.promise;
+	// return def.promise;
 },
 removeLocalMessage:function(box_name, uid, cb){
 	// Removes a message from the local store and removes it from its thread.
@@ -559,25 +548,35 @@ getThread:function(thread_id, cb){
 getThreadMessages:function(thread_obj, cb){
 	// console.log('getting thread messages');
 	var message_umis = thread_obj.messages;
-	var messages_to_get = message_umis.length;
-	var mail_objs = [];
-	var messages_checked = 0;
 	var self = this;
-	message_umis.forEach(function(umi, index){
+	console.time('getThreadMessages');
+	console.log('Total messages to get', message_umis.length);
+	var promises = message_umis.map(function(umi, index){
 		umi = umi.split(':');
 		var mailbox_name = umi[0];
 		var uid = parseInt(umi[1],10);
-		self.getMailFromLocalBoxAsync(mailbox_name, uid)
-			.then(function(mail_obj){
-				if(mail_obj!==false){
-					mail_objs.push(mail_obj);
-				}
-				messages_checked ++;
-				if(messages_checked === messages_to_get){
-					mail_objs.sort(sortByDate);
-					if(cb) cb(null, mail_objs);
-				}
-			});
+		// return new Promise(function(resolve, reject){
+		// 	console.time('Running promise '+umi);
+		// 	self.getMailFromLocalBox(mailbox_name, uid, function(err, result){
+		// 		console.timeEnd('Running promise '+umi);
+		// 		// console.log(result);
+		// 		resolve(result);
+		// 	});
+		// });
+		return self.getMailFromLocalBoxAsync(mailbox_name, uid);
+	});
+	console.time('test1');
+	Promise.all(promises)
+		.then(function(results){
+			promises.sort(sortByDate);
+			console.timeEnd('test1');
+			console.log(results);
+			console.timeEnd('getThreadMessages');
+			cb(null, results);
+		})
+		.catch(function(err){
+			console.log(err);
+			cb(err);
 		});
 	function sortByDate(a,b){
 		if(a.date > b.date){
@@ -946,36 +945,37 @@ threadMessage:function(mailbox, uid){
 		};
 	}
 
-	function saveToExistingThread(mailbox_name, mail_uid, thread_id, cb){
+	function saveToExistingThread(mailbox_name, mail_uid, thread_id){
 		console.log('\t\tsaving '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
-		var def = Q.defer();
-		var tx = db.transaction("threads","readwrite");
-		var store = tx.objectStore("threads");
-		var get_request = store.get(thread_id);
-		get_request.onsuccess = function(){
-			var thread_obj = get_request.result;
-			if(thread_obj.messages.indexOf(mailbox_name+':'+mail_uid)>-1){
-				updateMailObject(mailbox_name, mail_uid, thread_id)
-					.then(function(){
-						cb(null, {thread_id: thread_id});
-					});
-			}
-			else{
-				thread_obj.messages.push(mailbox_name+':'+mail_uid);
-				var update_request = store.put(thread_obj);
-				update_request.onsuccess = function(){
-					cb(null, {thread_id: thread_id, muted: thread_obj.muted});
-				};
-				update_request.onerror = function(err){
-					console.log('FAILED: saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
-					console.log(err);
-					cb(err);
-				};
-			}
-		};
-		get_request.onerror = function(){
-			console.log('FAILED');
-		};
+		return Promise(function(resolve, reject){
+			var tx = db.transaction("threads","readwrite");
+			var store = tx.objectStore("threads");
+			var get_request = store.get(thread_id);
+			get_request.onsuccess = function(){
+				var thread_obj = get_request.result;
+				if(thread_obj.messages.indexOf(mailbox_name+':'+mail_uid)>-1){
+					updateMailObject(mailbox_name, mail_uid, thread_id)
+						.then(function(){
+							resolve({thread_id: thread_id});
+						});
+				}
+				else{
+					thread_obj.messages.push(mailbox_name+':'+mail_uid);
+					var update_request = store.put(thread_obj);
+					update_request.onsuccess = function(){
+						resolve({thread_id: thread_id, muted: thread_obj.muted});
+					};
+					update_request.onerror = function(err){
+						console.log('FAILED: saved message '+mailbox_name+':'+mail_uid+' to existing thread '+thread_id);
+						console.log(err);
+						reject(err);
+					};
+				}
+			};
+			get_request.onerror = function(){
+				console.log('FAILED');
+			};
+		});
 	}
 	function updateMailObject(box_name, uid, thread_id, cb){
 		/* Adds $thread_id to a message's local mail object */
@@ -1015,7 +1015,6 @@ blockSender: function(sender_address, cb){
 	return def.promise;
 },
 isSenderBlocked: function(sender_address, cb){
-	var def = Q.defer();
 	var tx = db.transaction('blocked', 'readonly');
 	var store = tx.objectStore('blocked');
 	var get_request = store.get(sender_address);
@@ -1120,7 +1119,6 @@ getMailboxTree:function(cb){
 		.catch(function(err){
 			console.log(err);
 		});
-	return def.promise;
 
 	function arrToTree(paths){
 		// Takes an array of paths and turns it into a tree.
@@ -1304,8 +1302,4 @@ clearProjectFromThread:function(thread_id, cb){
 
 };
 
-
-Promise.promisifyAll(dbHandler.prototype);
-
-console.log('promisified!');
-console.log(dbHandler.prototype);
+promisifyAll(dbHandler.prototype);

@@ -5,10 +5,7 @@ require('nw.gui').Window.get().showDevTools();
 var gui = require('nw.gui');
 global.gui = gui;
 
-// var Q = require('q');
-var Promise = require('bluebird');
 var indexedDB = window.indexedDB;
-
 
 // SlateMail component classes
 var MailComposer = require('./MailComposer/MailComposer.js');
@@ -50,7 +47,8 @@ global.PREFERENCES = JSON.parse(fs.readFileSync('preferences/preferences.json'))
 var overlay_is_open = false;
 
 (function init(){
-	// reset
+	//
+	// UNCOMMENT TO RESET EVERYTHING
 	// getPassword()
 	// 	.then(function(){
 	// 		my_dbHandler = new dbHandler();
@@ -58,6 +56,17 @@ var overlay_is_open = false;
 	// 		return;
 	// 	});
 	// return;;
+	//
+
+	// PROMISE TEST
+	// var db = new dbHandler();
+	// db
+	// 	.connectAsync()
+	// 		.then(function(){
+	// 			return db.getThreadMessagesAsync({thread_id: 1, messages:['INBOX:2355016','INBOX:2366018']});
+	// 		});
+	// return;
+
 	$(function(){
 		$('.btn_preferences').click(function(){
 			new PreferencesEditor();
