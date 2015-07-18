@@ -4,6 +4,7 @@
   "window":{
   	"toolbar":true,
   	"frame":true,
-  	"icon":"appicon.png"
+  	"icon":"appicon.png",
+    "js-flags": "--harmony --harmony_classes"
   }
 }

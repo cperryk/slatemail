@@ -10,6 +10,7 @@ var indexedDB = window.indexedDB;
 function Syncer(conf){
 	console.log('NEW SYNCER');
 	this.imaper = new Imaper();
+	console.log(dbHandler);
 	this.dbHandler = new dbHandler();
 	this.conf = conf;
 	return this;
