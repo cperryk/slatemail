@@ -9,14 +9,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // jshint ignore: end
 
 var fs = require('fs');
-// for some reason, setting fs to fs-extra isn't recognized later in the execution...?
-var fsx = require('fs-extra');
+var fsx = require('fs-extra'); // for some reason, setting fs to fs-extra isn't recognized later in the execution...?
 var db;
 var indexedDB = window.indexedDB;
 var promisifyAll = require('es6-promisify-all');
-// var Promise = require('bluebird');
 
-// careful. //console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
+// Warning: console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
 promisifyAll(fsx);
 
@@ -54,9 +52,8 @@ var dbHandler = (function () {
 				console.log('Deleted database successfully');
 				if (cb) cb();
 			};
-			req.onerror = function (err) {
-				console.log('Couldn\'t delete database');
-				if (cb) cb(err);
+			req.onerror = function () {
+				if (cb) cb(req.error);
 			};
 			req.onblocked = function () {
 				if (cb) cb('Couldn\'t delete database due to operation being blocked', null);
@@ -116,8 +113,7 @@ var dbHandler = (function () {
 					console.log('db closed');
 				};
 				db.onerorr = function (event) {
-					console.log('db error');
-					console.log(event);
+					return cb(event, null);
 				};
 				cb(null, null);
 			};
@@ -153,15 +149,9 @@ var dbHandler = (function () {
 				return this.ensureLocalBoxes([boxes]);
 			}
 			// If local store for $mailbox_name does not exist, create it.
-			var boxes_to_make = (function () {
-				var out = [];
-				boxes.forEach(function (box) {
-					if (db.objectStoreNames.contains('box_' + box) === false) {
-						out.push(box);
-					}
-				});
-				return out;
-			})();
+			var boxes_to_make = boxes.filter(function (box) {
+				return db.objectStoreNames.contains('box_' + box) === false;
+			});
 			console.log('boxes to make: ', boxes_to_make);
 			if (boxes_to_make.length === 0) {
 				if (cb) cb();
@@ -1046,33 +1036,42 @@ var dbHandler = (function () {
 			})['catch'](cb);
 		}
 	}, {
+		key: 'getAllMessagesFromMailbox',
+		value: function getAllMessagesFromMailbox(box, cb) {
+			console.log('get all mail from mailbox: ' + box);
+			var arr = [];
+			this.getMessagesFromMailbox(box, function (mail_obj) {
+				arr.push(mail_obj);
+			}, null, null, function () {
+				console.log(arr);
+				cb(null, arr);
+			});
+		}
+	}, {
 		key: 'getDueMail',
 		value: function getDueMail(cb) {
-			// TO-DO
+			var _this6 = this;
+
 			console.log('GET DUE MAIL');
 			// Collects all mail that is past due from the scheduled local boxes.
 			// Resolves with an array of mail objects sorted descended by date.
 			var self = this;
-			getAllScheduleBoxesAsync().then(function getMailObjects(stores) {
-				return new Promise(function (resolve, reject) {
-					var msgs = [];
-					var promises = [];
-					stores.forEach(function (store) {
-						var mailbox_name = store.substring(4, store.length);
-						promises.push(self.getMessagesFromMailbox(mailbox_name, function (mail_obj) {
-							msgs.push(mail_obj);
-						}));
-					});
-					Promise.all(promises).then(function () {
-						resolve(msgs);
-					});
+			this.getAllMailboxesAsync().then(function (boxes) {
+				var filtered = boxes.filter(function (box) {
+					return box.indexOf('SlateMail/scheduled/') === 0;
 				});
-			}).then(function (msgs) {
+				var promises = filtered.map(function (box) {
+					return _this6.getAllMessagesFromMailboxAsync(box);
+				});
+				return Promise.all(promises);
+			}).then(function (results) {
+				var msgs = [];
+				msgs = msgs.concat.apply(msgs, results); // flattens results
 				msgs.sort(function (a, b) {
 					return a.date > b.date ? -1 : 1;
 				});
 				cb(null, msgs);
-			});
+			})['catch'](cb);
 		}
 	}, {
 		key: 'getAllStores',
@@ -1087,8 +1086,10 @@ var dbHandler = (function () {
 		key: 'getAllMailboxes',
 		value: function getAllMailboxes(cb) {
 			// Resolves with all local mailboxes (no box_ prefix) in an array.
+			console.log('get all mailboxes');
 			this.getAllStoresAsync().then(function (stores) {
 				var out = [];
+				// stores is a DOMStringList, you can't use .filter on it
 				for (var i = 0; i < stores.length; i++) {
 					var store = stores[i];
 					if (store.substring(0, 4) === 'box_') {
@@ -1096,7 +1097,7 @@ var dbHandler = (function () {
 					}
 				}
 				cb(null, out);
-			});
+			})['catch'](cb);
 		}
 	}, {
 		key: 'getMailboxTree',

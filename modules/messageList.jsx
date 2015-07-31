@@ -165,6 +165,7 @@ MessageList.prototype.printBox = function(box){
 				var def = Q.defer();
 				self.dbHandler.getDueMailAsync()
 					.then(function(due_mail){
+						console.log('DUE MAIL', due_mail);
 						due_mail.forEach(function(mail_obj){
 							if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
 								self.messages_to_print.push(mail_obj);
@@ -180,7 +181,7 @@ MessageList.prototype.printBox = function(box){
 			}
 		})
 		.then(function(){
-			// console.log(messages_to_print);
+			console.log('reflecting messages');
 			return self.reflectMessages();
 		})
 		.fin(function(){
@@ -204,6 +205,7 @@ MessageList.prototype.addMessages = function(offset){
 		var def = Q.defer();
 		var d1 = new Date().getTime();
 		this.dbHandler.getMessagesFromMailboxAsync(this.box, function(mail_obj){
+
 			// console.log(self.printed_threads);
 			// console.log(mail_obj);
 			if(mail_obj.thread_id === undefined){
@@ -215,14 +217,15 @@ MessageList.prototype.addMessages = function(offset){
 			}
 			return true;
 		}, 150, offset)
-			.then(function(){
-				var d2 = new Date().getTime();
-				console.log('fetch time: '+(d2-d1));
-				def.resolve();
-			});
+		.then(function(){
+			var d2 = new Date().getTime();
+			console.log('fetch time: '+(d2-d1));
+			def.resolve();
+		});
 		return def.promise;
 	};
 MessageList.prototype.reflectMessages = function(){
+	console.log('reflecting messages');
 	var self = this;
 	var messages = this.messages_to_print;
 	var groups = (function(){

@@ -24,7 +24,7 @@ TreeView.prototype.printTree = function(tree){
 	console.log('TreeView - Print tree: '+tree);
 	var self = this;
 	var def = Q.defer();
-	this.dbHandler.getMailboxTree()
+	this.dbHandler.getMailboxTreeAsync()
 		.then(function(tree){
 			var html = self.getTreeHTML(tree);
 			self.container

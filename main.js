@@ -155,7 +155,7 @@ function emailSelected(mailbox, uid){
 		})
 		.then(function(thread_obj){
 			my_thread_obj = thread_obj;
-			return message_view.printThread(thread_obj);
+			return message_view.printThreadAsync(thread_obj);
 		})
 		.then(function(){
 			var thread_obj = my_thread_obj;
