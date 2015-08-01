@@ -1,7 +1,8 @@
 global.document= window.document;
 global.navigator = window.navigator;
 var $ = require('jquery');
-var Q = require('Q');
+var promisifyAll = require('es6-promisify-all');
+
 var favicon = require('favicon');
 var React = require('react');
 var DbHandler = window.dbHandler;
@@ -109,103 +110,95 @@ var Message = React.createClass({
 	}
 });
 
-function MessageList(container, conf){
-	var self = this;
-	this.conf = conf;
-	this.dbHandler = window.dbHandler;
-	this.$c = container;
-	this.$c
-		.on('click', '.message', function(){
-			self.selectMessage($(this));
-		})
-		.on('click', '.message_group_title', function(){
-			if($(this).hasClass('collapsed')){
-				$(this)
-					.removeClass('collapsed')
-					.siblings()
-						.show()
-						.end()
-					.find('.triangle')
-						.html('&#9660;')
-						.end();
-			}
-			else{
-				$(this)
-					.addClass('collapsed')
-					.siblings()
-						.hide()
-						.end()
-					.find('.triangle')
-						.html('&#9654;')
-						.end();
-				}
-		})
-		.on('click','.btn_print_more', function(){
-			self.printMore();
-		});
-}
-
-util.inherits(MessageList, EventEmitter);
-
-MessageList.prototype.render = function(groups){
-	React.render(<BoxViewer data={groups}/>, this.$c[0]);
-};
-MessageList.prototype.printBox = function(box){
-	console.log('-------------- printing mail --------------');
-	var self = this;
-	var def = Q.defer();
-	this.limitx = 0;
-	this.printed_threads = [];
-	this.offset = 0;
-	this.messages_to_print = [];
-	this.box = box;
-	this.addMessages(0)
-		.then(()=>{
-			if(box === 'INBOX'){
-				return self.dbHandler.mailboxes.getDueMailAsync()
-					.then(function(due_mail){
-						console.log('GOT DUE MAIL: ', due_mail);
-						due_mail.forEach((mail_obj)=>{
-							if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
-								self.messages_to_print.push(mail_obj);
-								self.printed_threads.push(mail_obj.thread_id);
-							}
-						});
-					});
-			}
-			else{
-				return true;
-			}
-		})
-		.then(function(){
-			console.log('reflecting messages');
-			return self.reflectMessages();
-		})
-		.fin(function(){
-			def.resolve();
-		})
-		.catch(function(err){
-			console.log(err);
-		});
-		return def.promise;
-};
-MessageList.prototype.printMore = function(){
-	var self = this;
-	this.offset += 150;
-	this.addMessages(this.offset)
-		.then(function(){
-			self.reflectMessages();
-		});
-};
-MessageList.prototype.addMessages = function(offset){
+class MessageList extends EventEmitter{
+	constructor(container, conf){
+		super();
 		var self = this;
-		var def = Q.defer();
+		this.conf = conf;
+		this.dbHandler = window.dbHandler;
+		this.$c = container;
+		this.$c
+			.on('click', '.message', function(){
+				self.selectMessage($(this));
+			})
+			.on('click', '.message_group_title', function(){
+				if($(this).hasClass('collapsed')){
+					$(this)
+						.removeClass('collapsed')
+						.siblings()
+							.show()
+							.end()
+						.find('.triangle')
+							.html('&#9660;')
+							.end();
+				}
+				else{
+					$(this)
+						.addClass('collapsed')
+						.siblings()
+							.hide()
+							.end()
+						.find('.triangle')
+							.html('&#9654;')
+							.end();
+					}
+			})
+			.on('click','.btn_print_more', function(){
+				self.printMore();
+			});
+	}
+	render(groups){
+		React.render(<BoxViewer data={groups}/>, this.$c[0]);
+	}
+	printBox(box, cb){
+		console.log('-------------- printing mail --------------');
+		var self = this;
+		this.limitx = 0;
+		this.printed_threads = [];
+		this.offset = 0;
+		this.messages_to_print = [];
+		this.box = box;
+		this.addMessagesAsync(0)
+			.then(()=>{
+				if(box === 'INBOX'){
+					return self.dbHandler.mailboxes.getDueMailAsync()
+						.then(function(due_mail){
+							console.log('GOT DUE MAIL: ', due_mail);
+							due_mail.forEach((mail_obj)=>{
+								if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
+									self.messages_to_print.push(mail_obj);
+									self.printed_threads.push(mail_obj.thread_id);
+								}
+							});
+						});
+				}
+				else{
+					return true;
+				}
+			})
+			.then(function(){
+				console.log('reflecting messages');
+				return self.reflectMessages();
+			})
+			.fin(function(){
+				cb();
+			})
+			.catch(function(err){
+				cb(err);
+			});
+	}
+	printMore(){
+		var self = this;
+		this.offset += 150;
+		this.addMessagesAsync(this.offset)
+			.then(function(){
+				self.reflectMessages();
+			});
+	}
+	addMessages(offset, cb){
+		var self = this;
 		var d1 = new Date().getTime();
-		console.log(this.dbHandler);
 		this.dbHandler.mailboxes.select(this.box).getMessagesAsync((mail_obj)=>{
-
-			console.log(mail_obj);
-
 			if(mail_obj.thread_id === undefined){
 				return;
 			}
@@ -218,122 +211,122 @@ MessageList.prototype.addMessages = function(offset){
 		.then(function(){
 			var d2 = new Date().getTime();
 			console.log('fetch time: '+(d2-d1));
-			def.resolve();
+			cb();
 		})
 		.catch(function(err){
 			console.log(err);
 		})
-		return def.promise;
 	};
-MessageList.prototype.reflectMessages = function(){
-	console.log('reflecting messages');
-	var self = this;
-	var messages = this.messages_to_print;
-	var groups = (function(){
-		var out = [];
-		var groups_added = {};
-		var group_index = -1;
-		messages.forEach(function(mail_obj){
-			var group_id = (function(){
-				if(mail_obj.mailbox.substring(0, 'SlateMail/scheduled/'.length) === 'SlateMail/scheduled/'){
-					return 'Past Due';
-				}
-				return self.getDateString(mail_obj.date);
-			}());
-			if(!(group_id in groups_added)){
-				out.push({
-					id: group_id,
-					messages: []
+	reflectMessages(){
+			console.log('reflecting messages');
+			var self = this;
+			var messages = this.messages_to_print;
+			var groups = (function(){
+				var out = [];
+				var groups_added = {};
+				var group_index = -1;
+				messages.forEach(function(mail_obj){
+					var group_id = (function(){
+						if(mail_obj.mailbox.substring(0, 'SlateMail/scheduled/'.length) === 'SlateMail/scheduled/'){
+							return 'Past Due';
+						}
+						return self.getDateString(mail_obj.date);
+					}());
+					if(!(group_id in groups_added)){
+						out.push({
+							id: group_id,
+							messages: []
+						});
+						groups_added[group_id] = true;
+						group_index++;
+					}
+					out[group_index].messages.push(mail_obj);
 				});
-				groups_added[group_id] = true;
-				group_index++;
-			}
-			out[group_index].messages.push(mail_obj);
-		});
-		// Puts Past Due group in front
-		out.sort(function(a,b){
-			if(a.id === b.id){
-				return 0;
-			}
-			if(a.id === 'Past Due'){
-				return -1;
-			}
-			if(b.id === 'Past Due'){
-				return 1;
-			}
-			return 0;
-			// return a.id === 'Past Due' ? -1 : 1;
-		});
-		return out;
-	}());
-	var d1 = new Date().getTime();
-	console.log('MESSAGE GROUPS: ',groups);
-	this.render(groups);
-	var d2 = new Date().getTime();
-	console.log('render time: '+(d2-d1));
-};
-MessageList.prototype.getSelection =  function(){
-	return {mailbox: this.selected_email.data('mailbox'), uid: this.selected_email.data('uid')};
-};
-MessageList.prototype.getDateString = function(date){
-	var today = new Date();
-	var days_diff = Math.abs(Math.round(daysDiff(today, date)));
-	var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-	if(days_diff===0){
-		return 'today';
+				// Puts Past Due group in front
+				out.sort(function(a,b){
+					if(a.id === b.id){
+						return 0;
+					}
+					if(a.id === 'Past Due'){
+						return -1;
+					}
+					if(b.id === 'Past Due'){
+						return 1;
+					}
+					return 0;
+					// return a.id === 'Past Due' ? -1 : 1;
+				});
+				return out;
+			}());
+			var d1 = new Date().getTime();
+			console.log('MESSAGE GROUPS: ',groups);
+			this.render(groups);
+			var d2 = new Date().getTime();
 	}
-	if(days_diff===1){
-		return 'yestersday';
+	getSelection(){
+		return {mailbox: this.selected_email.data('mailbox'), uid: this.selected_email.data('uid')};
 	}
-	if(days_diff>=2 && days_diff < 7){
-		return days_of_week[date.getDay()];
-	}
-	if(days_diff >= 7 && days_diff < 14){
-		return 'One week ago';
-	}
-	if(days_diff >= 14){
-		return 'Two weeks ago +';
-	}
-	if(days_diff >= 30){
-		return 'One month ago';
-	}
-	if(days_diff >= 60){
-		return 'Two months ago';
-	}
-	if(days_diff >= 90){
-		return 'Three months ago';
-	}
-	if(days_diff >= 360){
-		return 'One year ago';
-	}
-	return false;
-
-	function daysDiff(first, second) {
-		return (second-first)/(1000*60*60*24);
-	}
-	return false;
-};
-MessageList.prototype.selectMessageByThreadID = function(thread_id){
-	this.selectMessage(this.$c.find('#'+thread_id));
-};
-MessageList.prototype.selectMessage = function(ele){
-	ele = $(ele);
-	ele.removeClass('unread');
-	this.$c.find('.selected').removeClass('selected');
-	ele.addClass('selected');
-	this.selected_email = ele;
-	this.emit('selection', {mailbox: ele.data('mailbox'), uid: ele.data('uid')});
-};
-MessageList.prototype.removeSelected = function(){
-	var ele = this.selected_email;
-	var par = ele.parent();
-	ele.slideUp(function(){
-		ele.remove();
-		if(par.find('.message').length === 0){
-			par.slideUp();
+	getDateString(date){
+		var today = new Date();
+		var days_diff = Math.abs(Math.round(daysDiff(today, date)));
+		var days_of_week = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+		if(days_diff===0){
+			return 'today';
 		}
-	});
-};
+		if(days_diff===1){
+			return 'yestersday';
+		}
+		if(days_diff>=2 && days_diff < 7){
+			return days_of_week[date.getDay()];
+		}
+		if(days_diff >= 7 && days_diff < 14){
+			return 'One week ago';
+		}
+		if(days_diff >= 14){
+			return 'Two weeks ago +';
+		}
+		if(days_diff >= 30){
+			return 'One month ago';
+		}
+		if(days_diff >= 60){
+			return 'Two months ago';
+		}
+		if(days_diff >= 90){
+			return 'Three months ago';
+		}
+		if(days_diff >= 360){
+			return 'One year ago';
+		}
+		return false;
+
+		function daysDiff(first, second) {
+			return (second-first)/(1000*60*60*24);
+		}
+		return false;
+	}
+	selectMessageByThreadID(thread_id){
+		this.selectMessage(this.$c.find('#'+thread_id));
+	}
+	selectMessage(ele){
+		ele = $(ele);
+		ele.removeClass('unread');
+		this.$c.find('.selected').removeClass('selected');
+		ele.addClass('selected');
+		this.selected_email = ele;
+		this.emit('selection', {mailbox: ele.data('mailbox'), uid: ele.data('uid')});
+	}
+	removeSelected(){
+		var ele = this.selected_email;
+		var par = ele.parent();
+		ele.slideUp(function(){
+			ele.remove();
+			if(par.find('.message').length === 0){
+				par.slideUp();
+			}
+		});
+	}
+}
+
 
 function getPreviewText(mail_object){
 	/**
@@ -373,5 +366,8 @@ function parseName(from_header){
 	return '';
 }
 
+promisifyAll(MessageList.prototype);
+
+// util.inherits(MessageList, EventEmitter);
 
 module.exports = MessageList;

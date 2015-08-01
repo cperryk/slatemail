@@ -73,11 +73,14 @@ var overlay_is_open = false;
 		})
 		.then(function(){
 			console.log('now print');
-			message_list = new MessageList($('#inbox'))
-				.on('selection', function(e){
+			message_list = new MessageList($('#inbox'));
+			console.log(message_list);
+			console.log(message_list.printBox);
+			message_list.on('selection', function(e){
 					emailSelected(e.mailbox, e.uid);
 				});
-			message_list.printBox('INBOX');
+			console.log(message_list);
+			message_list.printBoxAsync('INBOX');
 			// tree_view = new TreeView($('#tree_view'))
 			// 	.on('selection', function(e){
 			// 		selectBox(e.box_path);
