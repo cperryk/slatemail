@@ -15,7 +15,7 @@ class Thread{
 		var put_request = store.put(thread_obj);
 		put_request.onsuccess = function(){
 			console.log('success');
-			if(cb) cb(null, true);
+			if(cb) cb();
 		};
 		put_request.onerror = function(err){
 			console.log(err);
@@ -29,8 +29,6 @@ class Thread{
 		var get_request = objectStore.get(this.id);
 		get_request.onsuccess = function(event){
 			var matching = get_request.result;
-			// console.log('THREAD '+thread_id+' LOCATED, result is...');
-			// console.log(matching);
 			if(cb) cb(null, matching);
 		};
 		get_request.onerror = function(err){
@@ -50,7 +48,7 @@ class Thread{
         cb(err);
       });
 	}
-	muteThread(thread_id, cb){
+	muteThread(cb){
 		console.log('muting thread ' + this.id);
 		this.setMute(true)
 			.then(function(){
@@ -74,9 +72,8 @@ class Thread{
 			});
 	}
 	clearProject(cb){
-		console.log('clearing project from thread: '+thread_id);
-		var self = this;
-		this.get(thread_id)
+		console.log('clearing project from thread: '+this.id);
+		this.getAsync()
 			.then((thread_obj)=>{
 				if(thread_obj.project_id){
 					delete thread_obj.project_id;
@@ -84,6 +81,7 @@ class Thread{
         return this.updateAsync(thread_obj);
       })
       .then(()=>{
+        console.log('cleared project from '+this.id);
         cb();
       })
       .catch((err)=>cb);

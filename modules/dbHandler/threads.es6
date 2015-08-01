@@ -3,7 +3,7 @@ var Thread = require('./thread.es6');
 module.exports = {
 	get(thread_ids, cb){
     if(Array.isArray(thread_ids)){
-  		var promises = thread_ids.map((thread_id) => this.getThreadAsync(thread_id));
+  		var promises = thread_ids.map((thread_id) => this.threads.getAsync(thread_id));
   		Promise.all(promises)
   			.then((out)=>{
   				cb(null, out);

@@ -1,189 +1,174 @@
+// jshint esnext: true
 // A view into a single project. Allows the user to select threads and attachments from the project. The user may also delete the project.
 var $ = require('jquery');
-var Q = require('Q');
-var MessageView = require('../modules/messageView.js');
+var MessageView = require('../modules/messageView.es6');
 var mustache = require('mustache');
 var exec = require('child_process').exec;
+var promisifyAll = require('es6-promisify-all');
 
 var EventEmitter = require('events').EventEmitter;
-var util = require('util');
 
-function ProjectView(container, conf){
-	var self = this;
-	this.$c = container;
-	this.dbHandler = new window.dbHandler();
-	this.conf = conf;
-	$('<h2>')
-		.addClass('project_title')
-		.appendTo(this.$c);
-	var button_wrapper = $('<p>')
-		.addClass('button_wrapper')
-		.appendTo(this.$c);
-	$('<button>')
-		.addClass('btn_delete_project')
-		.html('Delete project')
-		.appendTo(button_wrapper)
-		.click(function(){
-			if(window.confirm("Are you sure you want to delete project "+self.project_name+'? This will not delete its messages.')){
-				self.dbHandler.deleteProject(self.project_name)
-					.then(function(){
-						self.emit('project_deletion', {
-							project_name: self.project_name
-						});
-					});
-			}
-		});
-}
-
-util.inherits(ProjectView, EventEmitter);
-
-ProjectView.prototype.printProject = function(project_id, initial_thread){
-	console.log(initial_thread, this.initial_thread_id);
-	if(project_id === this.project_name){
-		if(initial_thread !== this.initial_thread_id){
-			console.log('GO THREAD SWITCH');
-			this.$c.find('.selected')
-				.removeClass('selected');
-			this.$c.find("[data-thread='"+initial_thread+"']").addClass('selected');
-			this.initial_thread_id = initial_thread;
-		}
-		return;
-	}
-	this.attachments = [];
-	this.$c.find('.thread_container').remove();
-	this.$c.find('.attachments').remove();
-	this.$c.find('h2').html(project_id);
-	this.project_name = project_id;
-	this.initial_thread_id = initial_thread;
-	this.printThreads();
-};
-ProjectView.prototype.printThreads = function(){
-	console.log('---- PRINTING THREADS -----');
-	var self = this;
-	this.thread_container = $('<div>')
-		.addClass('thread_container')
-		.appendTo(this.$c);
-	$('<h3>')
-		.html('Threads')
-		.appendTo(this.thread_container);
-	self.dbHandler.getProject(this.project_name)
-		.then(function(project_obj){
-			return self.dbHandler.getThreads(project_obj.threads);
-		})
-		.then(function(thread_objs){
-			console.log('thread_objs',thread_objs);
-			var def = Q.defer();
-			thread_objs.forEach(function(thread_obj, index){
-				if(thread_obj === undefined){
+class ProjectView extends EventEmitter{
+	constructor($container, conf){
+		super();
+		this.$c = $container;
+		this.dbHandler = window.dbHandler;
+		this.conf = conf;
+		$('<h2>')
+			.addClass('project_title')
+			.appendTo(this.$c);
+		var $button_wrapper = $('<p class="button_wrapper">')
+			.appendTo(this.$c);
+		$('<button class="btn_delete_project">')
+			.html('Delete project')
+			.appendTo($button_wrapper)
+			.click(()=>{
+				var project_name = this.project_name;
+				var confirm = window.confirm(`Are you sure you want to delete project $(project_name)? This will not delete its messages.`);
+				if(!confirm){
 					return;
 				}
-				self.printThread(thread_obj)
+				this.dbHandler.projects.select(this.project_name).deleteAsync()
 					.then(function(){
-						if(index === thread_objs.length-1){
-							def.resolve();
-						}
+						this.emit('project_deletion', {
+							project_name: this.project_name
+						});
 					});
 			});
-			return def.promise;
-		})
-		.fin(function(){
-			if(self.attachments.length > 0){
-				self.printAttachments();
+		return this;
+	}
+	printProject(project_id, initial_thread){
+		if(project_id === this.project_name){
+			if(initial_thread !== this.initial_thread_id){
+				this.$c.find('.selected')
+					.removeClass('selected');
+				this.$c.find("[data-thread='"+initial_thread+"']").addClass('selected');
+				this.initial_thread_id = initial_thread;
 			}
-		})
-		.catch(function(err){
-			console.log(err);
-		});
-};
-ProjectView.prototype.printThread = function(thread_obj){
-	console.log('print thread ',thread_obj);
-	var self = this;
-	var def = Q.defer();
-	var ICONS = {
-		incomplete:'graphics/icon_37352/icon_37352.png',
-		complete:'graphics/icon_45161/icon_45161.png',
-		defer:'graphics/icon_1303/icon_1303.png'
-	};
-	self.dbHandler.getThreadMessages(thread_obj)
-		.then(function(thread_messages){
-			var thread_action_status = (function(){
-				for(var i=0;i<thread_messages.length;i++){
-					var box = thread_messages[i].mailbox;
-					if(box === 'complete'){
-						return 'complete';
-					}
-					if(box === 'inbox'){
-						return 'incomplete';
-					}
+			return;
+		}
+		this.attachments = [];
+		this.$c.find('.thread_container').remove();
+		this.$c.find('.attachments').remove();
+		this.$c.find('h2').html(project_id);
+		this.project_name = project_id;
+		this.initial_thread_id = initial_thread;
+		this.printThreads();
+	}
+	printThreads(cb){
+		console.log('---- PRINTING THREADS -----');
+		this.thread_container = $('<div class="thread_container">')
+			.appendTo(this.$c);
+		$('<h3>')
+			.html('Threads')
+			.appendTo(this.thread_container);
+		this.dbHandler.projects.select(this.project_name).getAsync()
+			.then((project_obj)=>{
+				return this.dbHandler.threads.getAsync(project_obj.threads);
+			})
+			.then((thread_objs)=>{
+				var promises = thread_objs.map((thread_obj)=>{
+					return this.printThreadAsync(thread_obj);
+				});
+				return Promise.all(promises);
+			})
+			.then(()=>{
+				if(this.attachments.length > 0){
+					this.printAttachments();
 				}
-				return 'incomplete';
-			}());
-			var thread_icon = ICONS[thread_action_status];
-			var template = '<div class="thread" data-thread="{{{thread_id}}}">'+
-				'<table><tr><td><img src="{{{icon}}}"/></td><td><h4>{{{subject}}}</h4></td></tr></table>'+
-			'</div>';
-			var view = {
-				thread_id: thread_obj.thread_id,
-				icon: ICONS[thread_action_status],
-				subject: thread_messages[0].subject
-			};
-			var html = mustache.render(template, view);
-			var thread_container = $(mustache.render(html))
-				.appendTo('.thread_container')
-				.click(threadClick);
-			if(thread_obj.thread_id === self.initial_thread_id){
-				thread_container.addClass('selected');
-			}
-			thread_messages.forEach(function(mail_obj){
-				if(mail_obj.attachments){
-					self.saveAttachments(mail_obj);
-				}
+			})
+			.catch((err)=>{
+				console.log(err);
 			});
-			def.resolve();
-		});
-	function threadClick(){
-		self.$c.find('.selected')
-			.removeClass('selected');
-		$(this)
-			.addClass('selected');
-		var thread_id = $(this).data('thread');
-		self.emit('selection', {
-			thread_id: thread_id
+	}
+	printThread(thread_obj, cb){
+		if(thread_obj === undefined){
+			return cb();
+		}
+		console.log('print thread ',thread_obj);
+		var self = this;
+		var ICONS = {
+			incomplete:'graphics/icon_37352/icon_37352.png',
+			complete:'graphics/icon_45161/icon_45161.png',
+			defer:'graphics/icon_1303/icon_1303.png'
+		};
+		this.dbHandler.messages.getMessages(thread_obj.messages)
+			.then((thread_messages)=>{
+				var thread_action_status = (function(){
+					for(var i=0;i<thread_messages.length;i++){
+						var box = thread_messages[i].mailbox;
+						if(box === 'complete'){
+							return 'complete';
+						}
+						if(box === 'inbox'){
+							return 'incomplete';
+						}
+					}
+					return 'incomplete';
+				}());
+				var thread_icon = ICONS[thread_action_status];
+				var template = '<div class="thread" data-thread="{{{thread_id}}}">'+
+					'<table><tr><td><img src="{{{icon}}}"/></td><td><h4>{{{subject}}}</h4></td></tr></table>'+
+				'</div>';
+				var view = {
+					thread_id: thread_obj.thread_id,
+					icon: ICONS[thread_action_status],
+					subject: thread_messages[0].subject
+				};
+				var html = mustache.render(template, view);
+				var thread_container = $(mustache.render(html))
+					.appendTo('.thread_container')
+					.click(threadClick);
+				if(thread_obj.thread_id === this.initial_thread_id){
+					thread_container.addClass('selected');
+				}
+				thread_messages.forEach((mail_obj)=>{
+					if(mail_obj.attachments){
+						this.saveAttachments(mail_obj);
+					}
+				});
+				cb();
+			});
+		function threadClick(e){
+			self.$c.find('.selected')
+				.removeClass('selected');
+			$(e.target)
+				.addClass('selected');
+			var thread_id = $(e.target).data('thread');
+			self.emit('selection', {
+				thread_id: thread_id
+			});
+		}
+	}
+	saveAttachments(mail_obj){
+		mail_obj.attachments.forEach((attachment)=>{
+			this.attachments.push({
+				mailbox: mail_obj.mailbox,
+				uid: mail_obj.uid,
+				attachment: attachment
+			});
 		});
 	}
-	return def.promise;
-};
-ProjectView.prototype.saveAttachments = function(mail_obj){
-	var self = this;
-	mail_obj.attachments.forEach(function(attachment){
-		self.attachments.push({
-			mailbox: mail_obj.mailbox,
-			uid: mail_obj.uid,
-			attachment: attachment
+	printAttachments(){
+		this.$attachments_container = $('<div class="attachments">')
+			.appendTo(this.$c);
+		$('<h3>')
+			.html('Attachments')
+			.appendTo(this.$attachments_container);
+		this.attachments.forEach((a)=>{
+			$('<div>')
+				.html('<h4>'+a.attachment.fileName+'</h4>')
+				.addClass('attachment')
+				.appendTo(this.$attachments_container)
+				.click(function(){
+					var path = ['attachments', a.mailbox, a.uid, a.attachment.fileName].join('/');
+					var command = 'open '+path.replace(/ /g,'\\ ');
+					exec(command);
+				});
 		});
-	});
-};
-ProjectView.prototype.printAttachments = function(){
-	console.log('printing attachments');
-	var self = this;
-	var def = Q.defer();
-	this.attachments_container = $('<div>')
-		.addClass('attachments')
-		.appendTo(this.$c);
-	$('<h3>')
-		.html('Attachments')
-		.appendTo(this.attachments_container);
-	this.attachments.forEach(function(a){
-		$('<div>')
-			.html('<h4>'+a.attachment.fileName+'</h4>')
-			.addClass('attachment')
-			.appendTo(self.attachments_container)
-			.click(function(){
-				var path = ['attachments', a.mailbox, a.uid, a.attachment.fileName].join('/');
-				var command = 'open '+path.replace(/ /g,'\\ ');
-				exec(command);
-			});
-	});
-};
+	}
+}
+
+promisifyAll(ProjectView.prototype);
 
 module.exports = ProjectView;

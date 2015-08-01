@@ -10,11 +10,11 @@ global.gui = gui;
 // var MailComposer = require('./MailComposer/MailComposer.js');
 var MessageList = require('./modules/messageList.jsx');
 var MessageView = require('./modules/messageView.es6');
-// var Overlay = require('./modules/overlay.js');
+var Overlay = require('./modules/overlay.js');
 // var PreferencesEditor = require('./modules/preferencesEditor.js');
 var ProjectList = require('./modules/projectList.jsx');
-// var ProjectSelector = require('./modules/ProjectSelector');
-// var ProjectView = require('./modules/projectView.js');
+var ProjectSelector = require('./modules/ProjectSelector');
+var ProjectView = require('./modules/projectView.js');
 // var Scheduler = require('./modules/scheduler.js');
 // var Syncer = require('./modules/syncer.js');
 var TreeView = require('./modules/treeView.es6');
@@ -92,19 +92,21 @@ var overlay_is_open = false;
 					openProjectView(e.project_id);
 				});
 
-			// project_view = new ProjectView($('#project_viewer'))
-			// 	.on('selection', function(e){
-			// 		var thread_id = e.thread_id;
-			// 		message_list.selectMessageByThreadID(thread_id);
-			// 		my_dbHandler.getThreadAsync(thread_id)
-			// 			.then(function(thread_obj){
-			// 				message_view.printThread(thread_obj);
-			// 			});
-			// 	})
-			// 	.on('project_deletion', function(e){
-			// 		project_list.render();
-			// 		closeProjectView();
-			// 	});
+			project_view = new ProjectView($('#project_viewer'))
+				.on('selection', function(e){
+					var thread_id = e.thread_id;
+					message_list.selectMessageByThreadID(thread_id);
+					my_dbHandler.thread.select(thread_id).getAsync()
+						.then(function(thread_obj){
+							message_view.printThread(thread_obj);
+						});
+				})
+				.on('project_deletion', function(e){
+					project_list.render();
+					closeProjectView();
+				});
+
+			console.log('PROJECT VIEW', project_view);
 			// user_command = new UserCommand();
 			// selectBox('INBOX');
 			// addEventListeners();

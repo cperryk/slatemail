@@ -9,17 +9,17 @@ class Project{
   }
   get(cb){
     // Resolves with the project object of project name. The project object contains the message IDs.
-    var project_name = this.project_name;
+    var project_name = this.id;
     var db = this.db;
 		var tx = this.db.transaction('projects','readonly');
 		var store = tx.objectStore('projects');
-		var get_request = store.get(project_name);
+		var get_request = store.get(this.id);
 		get_request.onsuccess = function(){
 			var result = get_request.result;
 			cb(null, result);
 		};
 		get_request.onerror = function(err){
-			console.log('could not retrieve project: '+project_name);
+			console.log('could not retrieve project: '+this.id);
 			cb(err);
 		};
   }
@@ -37,28 +37,26 @@ class Project{
 		};
   }
   delete(cb){
-		console.log('deleting project: '+project_name);
 		this.getAsync()
 			.then((project_obj)=>{
-				var thread_ids = project_obj.threads;
-				var promises = thread_ids.map((thread_id)=>{
-					return this.api.threads.select(thread_id).clearProjectAsync(thread_id);
+				var promises = project_obj.threads.map((thread_id)=>{
+					return function(){
+            return this.api.threads.select(thread_id).clearProjectAsync(thread_id);
+          };
 				});
 				return Promise.all(promises);
 			})
 			.then(()=>{
-				return new Promise((resolve, reject)=>{
-					var tx = this.db.transaction('projects','readwrite');
-					var store = tx.objectStore('projects');
-					var req = store.delete(project_name);
-					req.onsuccess = resolve;
-					req.onerror = reject;
-				});
+				var tx = this.db.transaction('projects','readwrite');
+				var store = tx.objectStore('projects');
+				var req = store.delete(this.id);
+				req.onsuccess = ()=>{
+          console.log('PROJECT '+this.id+' DELETED!');
+          cb();
+        };
+				req.onerror = cb;
 			})
-			.fin(function(){
-				if(cb) cb();
-			})
-			.catch(function(err){
+			.catch((err)=>{
 				if(cb) cb(err, null);
 			});
   }
