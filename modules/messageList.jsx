@@ -1,4 +1,4 @@
-global.document= window.document;
+global.document = window.document;
 global.navigator = window.navigator;
 var $ = require('jquery');
 var promisifyAll = require('es6-promisify-all');
@@ -7,7 +7,7 @@ var favicon = require('favicon');
 var React = require('react');
 var DbHandler = window.dbHandler;
 var favicons = {};
-var util = require('util');
+
 var EventEmitter = require('events').EventEmitter;
 
 // REACT CLASSES
@@ -367,7 +367,5 @@ function parseName(from_header){
 }
 
 promisifyAll(MessageList.prototype);
-
-// util.inherits(MessageList, EventEmitter);
 
 module.exports = MessageList;

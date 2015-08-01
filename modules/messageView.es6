@@ -18,7 +18,7 @@ require('datejs');
 class MessageView extends EventEmitter{
 	constructor(container, conf){
 		super();
-		this.dbHandler = new DbHandler();
+		this.dbHandler = window.dbHandler;
 		this.conf = conf;
 		this.$c = container
 			.empty()
@@ -29,6 +29,7 @@ class MessageView extends EventEmitter{
 		this.$messages_wrapper = $('<div>')
 			.addClass('messages')
 			.appendTo(container);
+		return this;
 	}
 	clear(){
 		console.log('clearing');
@@ -45,9 +46,8 @@ class MessageView extends EventEmitter{
 		console.log('printing thread ', thread_obj);
 		// Prints thread therad_id. Resolves with the thread object
 		this.clear();
-		this.dbHandler.threads.select(thread_obj).getMessagesAsync()
+		this.dbHandler.messages.getMessagesAsync(thread_obj.messages)
 			.then((thread_messages)=>{
-				console.log('got thread_messages', self.conf);
 				this.emit('thread_messages', {
 					messages: thread_messages
 				});
@@ -55,27 +55,16 @@ class MessageView extends EventEmitter{
 				this.printTop(thread_messages);
 				this.printMessages(thread_messages);
 			})
-			.catch(function(err){
-				console.log(err);
-			})
-			.finally(function(){
+			.then(function(){
 				cb(null, thread_obj);
+			})
+			.catch(function(err){
+				cb(err);
 			});
 	}
 	printMessages(mail_objs){
-		console.log('printing messages');
-		console.log(mail_objs);
-		var self = this;
-		mail_objs.sort(function(a,b){
-			if(a.date > b.date){
-				return -1;
-			}
-			else{
-				return 1;
-			}
-		});
-		mail_objs.forEach(function(mail_obj, index){
-			var my_message = new Message(mail_obj, self);
+		mail_objs.forEach((mail_obj, index)=>{
+			var my_message = new Message(mail_obj, this);
 			if(index===0){
 				my_message.printFull();
 			}
@@ -481,6 +470,6 @@ Message.prototype = {
 	}
 };
 
-promisifyAll(MessageView);
+promisifyAll(MessageView.prototype);
 
 module.exports = MessageView;

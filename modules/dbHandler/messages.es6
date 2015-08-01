@@ -334,5 +334,30 @@ module.exports = {
 	},
 	getPID(mail_obj){
 		return [mail_obj.subject.substring(0,10) || '', mail_obj.headers.from || '', mail_obj.date, mail_obj.messageId].join('|');
+	},
+	getMessages(message_umis, cb){
+		// console.log('getting thread messages');
+		var promises = message_umis.map((umi, index)=>{
+			umi = umi.split(':');
+			var mailbox_name = umi[0];
+			var uid = parseInt(umi[1],10);
+			return this.mailboxes.select(mailbox_name).select(uid).getAsync();
+		});
+    Promise.all(promises)
+  		.then((results)=>{
+  			results.sort(sortByDate);
+  			cb(null, results);
+  		})
+  		.catch(function(err){
+        if(cb) cb(err);
+      });
+		function sortByDate(a,b){
+			if(a.date > b.date){
+				return -1;
+			}
+			else{
+				return 1;
+			}
+		}
 	}
 };

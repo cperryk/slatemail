@@ -22,7 +22,7 @@ class Thread{
 			if(cb) cb(null, false);
 		};
   }
-  get(){
+  get(cb){
 		console.log('dBHandler - getting thread ' + this.id);
 		var tx = this.db.transaction('threads','readonly');
 		var objectStore = tx.objectStore('threads');
@@ -31,40 +31,24 @@ class Thread{
 			var matching = get_request.result;
 			// console.log('THREAD '+thread_id+' LOCATED, result is...');
 			// console.log(matching);
-			cb(null, matching);
+			if(cb) cb(null, matching);
 		};
 		get_request.onerror = function(err){
-			cb(err, null);
+			if(cb) cb(err, null);
 		};
   }
 	getMessages(cb){
-		// console.log('getting thread messages');
-		this.get()
+		this.getAsync()
       .then((thread_obj)=>{
     		var message_umis = thread_obj.messages;
-    		console.time('getThreadMessages');
-    		console.log('Total messages to get', message_umis.length);
-    		var promises = message_umis.map((umi, index)=>{
-    			umi = umi.split(':');
-    			var mailbox_name = umi[0];
-    			var uid = parseInt(umi[1],10);
-    			return this.api.mailboxes.select(mailbox_name).select(uid).get();
-    		});
-        return Promises.all(promises);
+    		return this.api.messages.getMessagesAsync(message_umis);
       })
-		.then((results)=>{
-			promises.sort(sortByDate);
-			cb(null, results);
-		})
-		.catch(cb);
-		function sortByDate(a,b){
-			if(a.date > b.date){
-				return -1;
-			}
-			else{
-				return 1;
-			}
-		}
+      .then(function(mail_objs){
+        cb(null, mail_objs);
+      })
+      .catch(function(err){
+        cb(err);
+      });
 	}
 	muteThread(thread_id, cb){
 		console.log('muting thread ' + this.id);

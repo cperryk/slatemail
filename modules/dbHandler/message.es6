@@ -160,10 +160,10 @@ class Message{
 				cb(err);
 			});
 	}
-  get(){
-    console.time('getMailFromLocalBox '+this.box_name+':'+uid);
+  get(cb){
+    console.time('getMailFromLocalBox '+this.box_name+':'+this.uid);
     var tx = this.db.transaction("box_"+this.box_name,"readonly");
-    var store = tx.objectStore("box_"+mailbox_name);
+    var store = tx.objectStore("box_"+this.box_name);
     var request = store.get(this.uid);
     request.onsuccess = ()=>{
       if(cb) cb(null, request.result || false);
@@ -174,5 +174,5 @@ class Message{
     };
   }
 }
-promisifyAll(Message);
+promisifyAll(Message.prototype);
 module.exports = Message;

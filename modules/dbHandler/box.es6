@@ -46,8 +46,6 @@ class Box{
       var tx = this.db.transaction("box_"+box_name, 'readonly');
       // do not split this next line! it causes the transaction to time out for some reason.
       var req =  tx.objectStore("box_"+box_name).index('date').openCursor(null, 'prev').onsuccess = function(event) {
-        console.log(event);
-        console.log('cursor open');
         var cursor = event.target.result;
         if (cursor) {
           if(offset !== undefined && offset > 0 && count === 0){
@@ -77,12 +75,10 @@ class Box{
     }
   }
 	getAllMessages(cb){
-    console.log('GETTING ALL MESSAGES for '+this.name);
 		var arr = [];
 		this.getMessagesAsync(function(mail_obj){
 			arr.push(mail_obj);
 		}, 150, 0, function(){
-			console.log('getAllMessages return: ',arr);
 			cb(null, arr);
 		})
     .catch(function(err){

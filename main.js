@@ -9,7 +9,7 @@ global.gui = gui;
 // SlateMail component classes
 // var MailComposer = require('./MailComposer/MailComposer.js');
 var MessageList = require('./modules/messageList.jsx');
-// var MessageView = require('./modules/messageView.es6');
+var MessageView = require('./modules/messageView.es6');
 // var Overlay = require('./modules/overlay.js');
 // var PreferencesEditor = require('./modules/preferencesEditor.js');
 // var ProjectList = require('./modules/projectList.js');
@@ -17,7 +17,7 @@ var MessageList = require('./modules/messageList.jsx');
 // var ProjectView = require('./modules/projectView.js');
 // var Scheduler = require('./modules/scheduler.js');
 // var Syncer = require('./modules/syncer.js');
-// var TreeView = require('./modules/treeView.js');
+var TreeView = require('./modules/treeView.es6');
 // var UserCommand = require('./modules/userCommand.js');
 
 // utility functions
@@ -72,23 +72,23 @@ var overlay_is_open = false;
 			return my_dbHandler.connectAsync();
 		})
 		.then(function(){
-			console.log('now print');
 			message_list = new MessageList($('#inbox'));
-			console.log(message_list);
-			console.log(message_list.printBox);
 			message_list.on('selection', function(e){
 					emailSelected(e.mailbox, e.uid);
 				});
-			console.log(message_list);
 			message_list.printBoxAsync('INBOX');
-			// tree_view = new TreeView($('#tree_view'))
-			// 	.on('selection', function(e){
-			// 		selectBox(e.box_path);
-			// 	});
-			// message_view = new MessageView($('#message_viewer'))
-			// 	.on('messages', function(e){
-			// 		user_command.markSeen(e.messages);
-			// 	});
+			tree_view = new TreeView($('#tree_view'))
+				.on('selection', function(e){
+					selectBox(e.box_path);
+				});
+			//
+			message_view = new MessageView($('#message_viewer'))
+				.on('messages', function(e){
+					user_command.markSeen(e.messages);
+				});
+
+			console.log('GO MESSAGE VIEW', message_view);
+
 			// project_list = new ProjectList($('#project_list'))
 			// 	.on('selection', function(e){
 			// 		openProjectView(e.project_id);
@@ -112,7 +112,7 @@ var overlay_is_open = false;
 			// return true;
 		})
 		.then(function(){
-			// return tree_view.printTree();
+			return tree_view.printTree();
 		})
 		.then(function(){
 			// regularSync();
@@ -142,22 +142,24 @@ function emailSelected(mailbox, uid){
 	var my_thread_obj;
 	my_dbHandler.connectAsync()
 		.then(function(){
-			return my_dbHandler.getMailFromLocalBoxAsync(mailbox,uid);
+			var msg = my_dbHandler.mailboxes.select(mailbox).select(uid);
+			console.log(msg);
+			return msg.getAsync();
 		})
 		.then(function(mail_obj){
-			return my_dbHandler.getThreadAsync(mail_obj.thread_id);
+			console.log('MAIL OBJ', mail_obj);
+			return my_dbHandler.threads.select(mail_obj.thread_id).getAsync();
 		})
 		.then(function(thread_obj){
 			my_thread_obj = thread_obj;
 			return message_view.printThreadAsync(thread_obj);
 		})
 		.then(function(){
-			var thread_obj = my_thread_obj;
-			if(thread_obj.project_id !== undefined){
-				openProjectView(thread_obj.project_id, thread_obj.thread_id);
+			if(my_thread_obj.project_id !== undefined){
+				// openProjectView(my_thread_obj.project_id, my_thread_obj.thread_id);
 			}
 			else{
-				closeProjectView();
+				// closeProjectView();
 			}
 		})
 		.catch(function(error){
@@ -268,11 +270,9 @@ function regularSync(){
 			tree_view.printTree();
 		}
 	});
-	// syncer.start();
 }
 
 function openProjectView(project_id, initial_thread_id){
-	console.log('initial_thread_id = '+initial_thread_id);
 	$('body').addClass('project_viewer_open');
 	$('#project_viewer').show();
 	project_view.printProject(project_id, initial_thread_id);

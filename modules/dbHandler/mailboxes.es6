@@ -76,7 +76,7 @@ module.exports = {
   getTree(cb){
 		// Gets all of the local mailboxes, and resolves with a tree-like structure describing the hierarchy
 		// e.g. {INBOX:{},FolderA:{FolderB:{}}} etc.
-		var boxes = this.list();
+		var boxes = this.mailboxes.list();
     var tree = arrToTree(boxes);
 		cb(null, tree);
 
