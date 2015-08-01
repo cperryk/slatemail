@@ -2,12 +2,11 @@ global.document= window.document;
 global.navigator = window.navigator;
 var $ = require('jquery');
 var Q = require('Q');
-var MessageView = require('../modules/messageView.js');
+var MessageView = require('./messageView.es6');
 var DbHandler = window.dbHandler;
 var React = require('react');
 
 var EventEmitter = require('events').EventEmitter;
-var util = require('util');
 
 var ProjectListReact = React.createClass({
 	getInitialState: function(){
@@ -37,33 +36,33 @@ var ProjectItem = React.createClass({
 	}
 });
 
-function ProjectList(container, conf){
-	this.container = container;
-	this.conf = conf;
-	this.dbHandler = new DbHandler();
-	this.render();
-	this.addEventListeners();
+class ProjectList extends EventEmitter{
+	constructor(container, conf){
+		super();
+		this.container = container;
+		this.conf = conf;
+		this.dbHandler = window.dbHandler;
+		this.render();
+		this.addEventListeners();
+	}
+	render(){
+		var self = this;
+		this.dbHandler.projects.listAsync()
+			.then(function(project_names){
+				console.log(project_names);
+				console.log("GO PROJECT LIST REACT");
+				React.render(<ProjectListReact data={project_names}/>, self.container[0]);
+			});
+	}
+	addEventListeners(){
+		var self = this;
+		this.container.on('click','.project_item', function(){
+			var project_id = $(this).data('project-id');
+			self.emit('selection', {
+				project_id: project_id
+			});
+		});
+	}
 }
-
-util.inherits(ProjectList, EventEmitter);
-
-ProjectList.prototype.render = function(){
-	var self = this;
-	this.dbHandler.listProjectsAsync()
-		.then(function(project_names){
-			console.log(project_names);
-			console.log("GO PROJECT LIST REACT");
-			React.render(<ProjectListReact data={project_names}/>, self.container[0]);
-		});
-};
-ProjectList.prototype.addEventListeners = function(){
-	var self = this;
-	this.container.on('click','.project_item', function(){
-		var project_id = $(this).data('project-id');
-		self.emit('selection', {
-			project_id: project_id
-		});
-	});
-};
 
 module.exports = ProjectList;

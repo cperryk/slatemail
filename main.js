@@ -12,7 +12,7 @@ var MessageList = require('./modules/messageList.jsx');
 var MessageView = require('./modules/messageView.es6');
 // var Overlay = require('./modules/overlay.js');
 // var PreferencesEditor = require('./modules/preferencesEditor.js');
-// var ProjectList = require('./modules/projectList.js');
+var ProjectList = require('./modules/projectList.jsx');
 // var ProjectSelector = require('./modules/ProjectSelector');
 // var ProjectView = require('./modules/projectView.js');
 // var Scheduler = require('./modules/scheduler.js');
@@ -87,12 +87,11 @@ var overlay_is_open = false;
 					user_command.markSeen(e.messages);
 				});
 
-			console.log('GO MESSAGE VIEW', message_view);
+			project_list = new ProjectList($('#project_list'))
+				.on('selection', function(e){
+					openProjectView(e.project_id);
+				});
 
-			// project_list = new ProjectList($('#project_list'))
-			// 	.on('selection', function(e){
-			// 		openProjectView(e.project_id);
-			// 	});
 			// project_view = new ProjectView($('#project_viewer'))
 			// 	.on('selection', function(e){
 			// 		var thread_id = e.thread_id;
