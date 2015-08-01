@@ -1,25 +1,24 @@
 var fs = require('fs');
 var $ = require('jquery');
 require('nw.gui').Window.get().showDevTools();
+require('babel/register');
 
 var gui = require('nw.gui');
 global.gui = gui;
 
-var indexedDB = window.indexedDB;
-
 // SlateMail component classes
-var MailComposer = require('./MailComposer/MailComposer.js');
-var MessageList = require('./modules/messageList.js');
-var MessageView = require('./modules/messageView.js');
-var Overlay = require('./modules/overlay.js');
-var PreferencesEditor = require('./modules/preferencesEditor.js');
-var ProjectList = require('./modules/projectList.js');
-var ProjectSelector = require('./modules/ProjectSelector');
-var ProjectView = require('./modules/projectView.js');
-var Scheduler = require('./modules/scheduler.js');
-var Syncer = require('./modules/syncer.js');
-var TreeView = require('./modules/treeView.js');
-var UserCommand = require('./modules/userCommand.js');
+// var MailComposer = require('./MailComposer/MailComposer.js');
+var MessageList = require('./modules/messageList.jsx');
+// var MessageView = require('./modules/messageView.es6');
+// var Overlay = require('./modules/overlay.js');
+// var PreferencesEditor = require('./modules/preferencesEditor.js');
+// var ProjectList = require('./modules/projectList.js');
+// var ProjectSelector = require('./modules/ProjectSelector');
+// var ProjectView = require('./modules/projectView.js');
+// var Scheduler = require('./modules/scheduler.js');
+// var Syncer = require('./modules/syncer.js');
+// var TreeView = require('./modules/treeView.js');
+// var UserCommand = require('./modules/userCommand.js');
 
 // utility functions
 var getPassword = require('./modules/getPassword.js');
@@ -28,7 +27,10 @@ var getPassword = require('./modules/getPassword.js');
 require('jquery-ui');
 
 // global vars
-var my_dbHandler;
+
+window.dbHandler = new window.DbHandler();
+
+var my_dbHandler = window.dbHandler;
 
 
 // Instances of components
@@ -58,15 +60,6 @@ var overlay_is_open = false;
 	// return;;
 	//
 
-	// PROMISE TEST
-	// var db = new dbHandler();
-	// db
-	// 	.connectAsync()
-	// 		.then(function(){
-	// 			return db.getThreadMessagesAsync({thread_id: 1, messages:['INBOX:2355016','INBOX:2366018']});
-	// 		});
-	// return;
-
 	$(function(){
 		$('.btn_preferences').click(function(){
 			new PreferencesEditor();
@@ -75,53 +68,51 @@ var overlay_is_open = false;
 
 	getPassword()
 		.then(function(password){
-			console.log('PASSWORD IS '+password);
 			global.PREFERENCES.internal.password = password;
-			my_dbHandler = new dbHandler();
-			console.log('my dbhandler!');
-			console.log(my_dbHandler);
 			return my_dbHandler.connectAsync();
 		})
 		.then(function(){
+			console.log('now print');
 			message_list = new MessageList($('#inbox'))
 				.on('selection', function(e){
 					emailSelected(e.mailbox, e.uid);
 				});
-			tree_view = new TreeView($('#tree_view'))
-				.on('selection', function(e){
-					selectBox(e.box_path);
-				});
-			message_view = new MessageView($('#message_viewer'))
-				.on('messages', function(e){
-					user_command.markSeen(e.messages);
-				});
-			project_list = new ProjectList($('#project_list'))
-				.on('selection', function(e){
-					openProjectView(e.project_id);
-				});
-			project_view = new ProjectView($('#project_viewer'))
-				.on('selection', function(e){
-					var thread_id = e.thread_id;
-					message_list.selectMessageByThreadID(thread_id);
-					my_dbHandler.getThreadAsync(thread_id)
-						.then(function(thread_obj){
-							message_view.printThread(thread_obj);
-						});
-				})
-				.on('project_deletion', function(e){
-					project_list.render();
-					closeProjectView();
-				});
-			user_command = new UserCommand();
-			selectBox('INBOX');
-			addEventListeners();
-			return true;
+			message_list.printBox('INBOX');
+			// tree_view = new TreeView($('#tree_view'))
+			// 	.on('selection', function(e){
+			// 		selectBox(e.box_path);
+			// 	});
+			// message_view = new MessageView($('#message_viewer'))
+			// 	.on('messages', function(e){
+			// 		user_command.markSeen(e.messages);
+			// 	});
+			// project_list = new ProjectList($('#project_list'))
+			// 	.on('selection', function(e){
+			// 		openProjectView(e.project_id);
+			// 	});
+			// project_view = new ProjectView($('#project_viewer'))
+			// 	.on('selection', function(e){
+			// 		var thread_id = e.thread_id;
+			// 		message_list.selectMessageByThreadID(thread_id);
+			// 		my_dbHandler.getThreadAsync(thread_id)
+			// 			.then(function(thread_obj){
+			// 				message_view.printThread(thread_obj);
+			// 			});
+			// 	})
+			// 	.on('project_deletion', function(e){
+			// 		project_list.render();
+			// 		closeProjectView();
+			// 	});
+			// user_command = new UserCommand();
+			// selectBox('INBOX');
+			// addEventListeners();
+			// return true;
 		})
 		.then(function(){
-			return tree_view.printTree();
+			// return tree_view.printTree();
 		})
-		.fin(function(){
-			regularSync();
+		.then(function(){
+			// regularSync();
 		})
 		.catch(function(err){
 			console.log(err);

@@ -112,7 +112,7 @@ var Message = React.createClass({
 function MessageList(container, conf){
 	var self = this;
 	this.conf = conf;
-	this.dbHandler = new DbHandler();
+	this.dbHandler = window.dbHandler;
 	this.$c = container;
 	this.$c
 		.on('click', '.message', function(){
@@ -160,21 +160,18 @@ MessageList.prototype.printBox = function(box){
 	this.messages_to_print = [];
 	this.box = box;
 	this.addMessages(0)
-		.then(function(){
+		.then(()=>{
 			if(box === 'INBOX'){
-				var def = Q.defer();
-				self.dbHandler.getDueMailAsync()
+				return self.dbHandler.mailboxes.getDueMailAsync()
 					.then(function(due_mail){
-						console.log('DUE MAIL', due_mail);
-						due_mail.forEach(function(mail_obj){
+						console.log('GOT DUE MAIL: ', due_mail);
+						due_mail.forEach((mail_obj)=>{
 							if(self.printed_threads.indexOf(mail_obj.thread_id)===-1){
 								self.messages_to_print.push(mail_obj);
 								self.printed_threads.push(mail_obj.thread_id);
 							}
 						});
-						def.resolve();
 					});
-				return def.promise;
 			}
 			else{
 				return true;
@@ -204,10 +201,11 @@ MessageList.prototype.addMessages = function(offset){
 		var self = this;
 		var def = Q.defer();
 		var d1 = new Date().getTime();
-		this.dbHandler.getMessagesFromMailboxAsync(this.box, function(mail_obj){
+		console.log(this.dbHandler);
+		this.dbHandler.mailboxes.select(this.box).getMessagesAsync((mail_obj)=>{
 
-			// console.log(self.printed_threads);
-			// console.log(mail_obj);
+			console.log(mail_obj);
+
 			if(mail_obj.thread_id === undefined){
 				return;
 			}
@@ -221,7 +219,10 @@ MessageList.prototype.addMessages = function(offset){
 			var d2 = new Date().getTime();
 			console.log('fetch time: '+(d2-d1));
 			def.resolve();
-		});
+		})
+		.catch(function(err){
+			console.log(err);
+		})
 		return def.promise;
 	};
 MessageList.prototype.reflectMessages = function(){
@@ -350,6 +351,7 @@ function getPreviewText(mail_object){
 }
 
 function parseName(from_header){
+	var s = '';
 	if(!from_header || from_header.length === 0){
 		return '';
 	}

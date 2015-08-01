@@ -115,7 +115,10 @@ module.exports = {
     var self = this;
     var boxes = this.mailboxes.list();
     var filtered = boxes.filter((box) => box.indexOf('SlateMail/scheduled/') === 0);
-    var promises = filtered.map((box) => this.mailboxes.getAllMessagesAsync(box));
+		var promises = filtered.map(function(box){
+			return self.mailboxes.select(box).getAllMessagesAsync();
+		});
+
     Promise.all(promises)
       .then(function(results){
         var msgs = [];
@@ -125,7 +128,10 @@ module.exports = {
         });
         cb(null, msgs);
       })
-      .catch(cb);
+      .catch(function(err){
+				console.log(err);
+				cb(err);
+			});
   },
   getScheduledBoxes(cb){
     var stores = this.db.objectStoreNames;
@@ -184,6 +190,7 @@ module.exports = {
 		};
 	},
   select(boxname){
+		console.log('selecting');
     return new Box(boxname, this);
   }
 };

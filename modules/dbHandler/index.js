@@ -1,2 +1,4 @@
 require('babel/register');
-require('./dbHandler.es6');
+var DbHandler = require('./modules/dbHandler/dbHandler.es6');
+
+window.DbHandler = DbHandler;

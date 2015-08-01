@@ -1,12 +1,13 @@
 // jshint esnext: true
-
-var Message = require('./message.js');
+var promisifyAll = require('es6-promisify-all');
+var Message = require('./message.es6');
 
 class Box{
   constructor(boxname, api){
     this.db = api.db;
     this.api = api;
     this.name = boxname;
+    return this;
   }
 	getMailWithProperty(mailbox_name, property, value, cb){
 		// console.log('getting mail from box '+mailbox_name + ' with property '+property+' set to '+value);
@@ -41,11 +42,12 @@ class Box{
       if(cb) cb();
     }
     else{
-      var tx = this.db.transaction("box_"+box_name);
-      var store = tx.objectStore("box_"+box_name);
-      var index = store.index('date');
       var count = 0;
-      index.openCursor(null, 'prev').onsuccess = function(event) {
+      var tx = this.db.transaction("box_"+box_name, 'readonly');
+      // do not split this next line! it causes the transaction to time out for some reason.
+      var req =  tx.objectStore("box_"+box_name).index('date').openCursor(null, 'prev').onsuccess = function(event) {
+        console.log(event);
+        console.log('cursor open');
         var cursor = event.target.result;
         if (cursor) {
           if(offset !== undefined && offset > 0 && count === 0){
@@ -75,15 +77,17 @@ class Box{
     }
   }
 	getAllMessages(cb){
-		console.log('get all mail from mailbox: '+box);
-    var box = this.name;
+    console.log('GETTING ALL MESSAGES for '+this.name);
 		var arr = [];
-		this.getMessagesAsync(box, function(mail_obj){
+		this.getMessagesAsync(function(mail_obj){
 			arr.push(mail_obj);
-		}, null, null, function(){
-			console.log(arr);
+		}, 150, 0, function(){
+			console.log('getAllMessages return: ',arr);
 			cb(null, arr);
-		});
+		})
+    .catch(function(err){
+      console.log(err);
+    });
 	}
 	getUIDs(onKey, onEnd){
     var box_name = this.name;
@@ -150,4 +154,5 @@ class Box{
 
 }
 
+promisifyAll(Box.prototype);
 module.exports = Box;

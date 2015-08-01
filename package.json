@@ -1,10 +1,13 @@
 {
   "name": "SlateMail",
   "main": "main.html",
-  "window":{
-  	"toolbar":true,
-  	"frame":true,
-  	"icon":"appicon.png",
+  "window": {
+    "toolbar": true,
+    "frame": true,
+    "icon": "appicon.png",
     "js-flags": "--harmony --harmony_classes"
+  },
+  "devDependencies": {
+    "keychain": "0.0.4"
   }
 }

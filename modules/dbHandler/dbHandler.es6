@@ -6,19 +6,19 @@
 var fs = require('fs');
 var fsx = require('fs-extra'); // for some reason, setting fs to fs-extra isn't recognized later in the execution...?
 var promisifyAll = require('es6-promisify-all');
-
+var indexedDB = window.indexedDB;
 // Warning: console.log(mail_obj) may crash node-webkit with no errors. Perhaps because mail_objs may be huge.
 
 promisifyAll(fsx);
 
 class DbHandler{
 	constructor(){
-		this.connectAsync()
-			.then(()=>{
-				this.projects = new Projects(this.db);
-				this.threads = new Threads(this.db);
-				this.mailboxes = new Mailboxes(this.db);
-			});
+		// this.connectAsync()
+		// 	.then(()=>{
+		// 		this.projects = new Projects(this.db);
+		// 		this.threads = new Threads(this.db);
+		// 		this.mailboxes = new Mailboxes(this.db);
+		// 	});
 		return this;
 	}
 	addObjectStore(store_name, store_conf, cb){
@@ -63,7 +63,7 @@ class DbHandler{
 			.catch(cb);
 	}
 	connect(cb){
-		console.log('connecting local database');
+		console.log('connecting local database!!!');
 		var request = indexedDB.open("slatemail");
 		request.onupgradeneeded = ()=>{
 			this.db = request.result;
@@ -94,7 +94,6 @@ class DbHandler{
 
 		};
 		request.onsuccess = ()=>{
-			console.log('success');
 			this.db = request.result;
 			this.db.onversionchange = function(event){
 				console.log('db version chagned');
@@ -103,7 +102,8 @@ class DbHandler{
 				console.log('db closed');
 			};
 			this.db.onerorr = (event)=> cb(event, null);
-			cb(null, null);
+			console.log('CONNECTION COMPLETE');
+			cb();
 		};
 		request.onerror = function(){
 			cb(request.error, null);
@@ -187,3 +187,5 @@ function nameSpacePrototype(classFnc, namespace, fncs){
      configurable: true
   });
 }
+
+module.exports = DbHandler;

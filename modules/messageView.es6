@@ -45,7 +45,7 @@ class MessageView extends EventEmitter{
 		console.log('printing thread ', thread_obj);
 		// Prints thread therad_id. Resolves with the thread object
 		this.clear();
-		this.dbHandler.getThreadMessagesAsync(thread_obj)
+		this.dbHandler.threads.select(thread_obj).getMessagesAsync()
 			.then((thread_messages)=>{
 				console.log('got thread_messages', self.conf);
 				this.emit('thread_messages', {

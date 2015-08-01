@@ -1,10 +1,11 @@
 // jshint esnext: true
-
+var promisifyAll = require('es6-promisify-all');
 class Project{
   constructor(project_name, api){
     this.id = project_name;
     this.api = api;
     this.db = api.db;
+    return this;
   }
   get(cb){
     // Resolves with the project object of project name. The project object contains the message IDs.
@@ -62,3 +63,5 @@ class Project{
 			});
   }
 }
+promisifyAll(Project.prototype);
+module.exports = Project;

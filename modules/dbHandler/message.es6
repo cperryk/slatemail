@@ -1,10 +1,12 @@
 // jshint esnext: true
+var promisifyAll = require('es6-promisify-all');
 class Message{
   constructor(box_name, uid, api){
     this.box_name = box_name;
     this.uid = parseInt(uid,10);
     this.db = api.db;
     this.api = api;
+    return this;
   }
   update(mail_obj, cb){
     var db = this.db;
@@ -172,5 +174,5 @@ class Message{
     };
   }
 }
-
+promisifyAll(Message);
 module.exports = Message;

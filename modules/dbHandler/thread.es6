@@ -1,10 +1,13 @@
 // jshint esnext: true
 
+var promisifyAll = require('es6-promisify-all');
+
 class Thread{
   constructor(thread_id, api){
     this.id = parseInt(thread_id, 10);
     this.db = api.db;
     this.api = this.api;
+    return this;
   }
   update(thread_obj, cb){
 		var tx = this.db.transaction('threads',"readwrite");
@@ -102,5 +105,7 @@ class Thread{
       .catch((err)=>cb);
 	}
 }
+
+promisifyAll(Thread.prototype);
 
 module.exports = Thread;
