@@ -195,6 +195,7 @@ function addSelectedEmailListeners(){
 									.putInProjectAsync(project_id);
 							})
 							.then(function(){
+								console.log('continuing...');
 								return my_dbHandler.mailboxes
 									.select(selected_email.mailbox)
 									.select(selected_email.uid)

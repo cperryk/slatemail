@@ -47,7 +47,7 @@ class Message{
 			return true;
 		}
 	}
-	putInProject(project_name){
+	putInProject(project_name, cb){
     console.log('putting in project: '+project_name);
     var box_name = this.box_name;
     var uid = this.uid;
