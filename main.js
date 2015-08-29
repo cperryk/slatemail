@@ -95,13 +95,10 @@ var overlay_is_open = false;
 
 			project_view = new ProjectView($('#project_viewer'))
 				.on('selection', function(e){
-					console.log(e);
 					var thread_id = e.thread_id;
-					console.log('PROJECT VIEW SELECTION! Select thread ', thread_id);
 					message_list.selectMessageByThreadID(thread_id);
 					my_dbHandler.threads.select(thread_id).getAsync()
 						.then(function(thread_obj){
-							console.log(thread_obj);
 							message_view.printThread(thread_obj);
 						});
 				})
@@ -161,10 +158,10 @@ function emailSelected(mailbox, uid){
 		})
 		.then(function(){
 			if(my_thread_obj.project_id !== undefined){
-				// openProjectView(my_thread_obj.project_id, my_thread_obj.thread_id);
+				openProjectView(my_thread_obj.project_id, my_thread_obj.thread_id);
 			}
 			else{
-				// closeProjectView();
+				closeProjectView();
 			}
 		})
 		.catch(function(error){
@@ -294,6 +291,8 @@ function openProjectView(project_id, initial_thread_id){
 	console.log('opening project view');
 	$('body').addClass('project_viewer_open');
 	$('#project_viewer').show();
+	/* TODO: When the user selects another email in the same project, the entire
+	proejct view is reprinted, which means queries go out to the database. Fix this */
 	project_view.printProject(project_id, initial_thread_id);
 }
 function closeProjectView(){
