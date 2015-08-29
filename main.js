@@ -95,10 +95,13 @@ var overlay_is_open = false;
 
 			project_view = new ProjectView($('#project_viewer'))
 				.on('selection', function(e){
+					console.log(e);
 					var thread_id = e.thread_id;
+					console.log('PROJECT VIEW SELECTION! Select thread ', thread_id);
 					message_list.selectMessageByThreadID(thread_id);
-					my_dbHandler.thread.select(thread_id).getAsync()
+					my_dbHandler.threads.select(thread_id).getAsync()
 						.then(function(thread_obj){
+							console.log(thread_obj);
 							message_view.printThread(thread_obj);
 						});
 				})

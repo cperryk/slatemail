@@ -138,7 +138,9 @@ class ProjectView extends EventEmitter{
 				.removeClass('selected');
 			$(e.target)
 				.addClass('selected');
-			var thread_id = $(e.target).data('thread');
+			var thread_id = $(e.currentTarget).data('thread');
+			console.log(e.currentTarget);
+			console.log('thread id is ', thread_id);
 			self.emit('selection', {
 				thread_id: thread_id
 			});
