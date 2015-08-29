@@ -1,78 +1,77 @@
+// jshint esnext: true
+
 global.document = window.document;
 global.navigator = window.navigator;
 var $ = require('jquery');
-// var dbHandler = require('./dbHandler');
 var mustache = require('mustache');
 var Typeahead = require('typeahead');
 
 var EventEmitter = require('events').EventEmitter;
-var util = require('util');
 
-function ProjectSelector(target_container, conf){
-	var self = this;
-	this.conf = conf;
-	this.dbHandler = new window.dbHandler();
-	this.container = $('<div>')
-		.addClass('project_selector')
-		.appendTo(target_container);
-	var container = this.container;
-	this.dbHandler.connect()
-		.then(function(){
-			return self.dbHandler.listProjects();
-		})
-		.then(function(projects){
-			var template =
-				'<h1>Enter a project</h1>'+
-				'<input/>'+
-				// '<h2>Recent Projects</h2>'+
-				'<ul class="project_list">'+
-					'{{#.}}'+
-						'<li class="recent_project" data-project-id="{{.}}">{{.}}</li>'+
-					'{{/.}}'+
-				'</ul>'+
-				'<button class="btn_submit">Submit</button>';
-			container.html(mustache.render(template, projects));
-			var input = container.find('input');
-			var typeahead = input
-					.typeahead({
-						hint: true,
-						highlight: true,
-						minLength: 1
-					}, {
-						name: 'states',
-		  				displayKey: 'value',
-						source: substringMatcher(projects)
-					});
-			container
-				.on('click', '.recent_project', function(){
-					self.selectProject($(this).data('project-id'));
-				})
-				.find('.btn_submit')
-					.click(function(){
+class ProjectSelector extends EventEmitter{
+	constructor(target_container, conf){
+		super();
+		var self = this;
+		this.conf = conf;
+		this.dbHandler = window.dbHandler;
+		this.container = $('<div>')
+			.addClass('project_selector')
+			.appendTo(target_container);
+		var container = this.container;
+		this.dbHandler.projects.listAsync()
+			.then(function(projects){
+				var template =
+					'<h1>Enter a project</h1>'+
+					'<input/>'+
+					'<ul class="project_list">'+
+						'{{#.}}'+
+							'<li class="recent_project" data-project-id="{{.}}">{{.}}</li>'+
+						'{{/.}}'+
+					'</ul>'+
+					'<button class="btn_submit">Submit</button>';
+				container.html(mustache.render(template, projects));
+				var input = container.find('input');
+				var typeahead = input
+						.typeahead({
+							hint: true,
+							highlight: true,
+							minLength: 1
+						}, {
+							name: 'states',
+			  				displayKey: 'value',
+							source: substringMatcher(projects)
+						});
+				container
+					.on('click', '.recent_project', function(){
+						self.selectProject($(this).data('project-id'));
+					})
+					.find('.btn_submit')
+						.click(function(){
+							self.selectProject(input.typeahead('val'));
+						});
+				input.focus();
+				$(window).on('keydown.projectSelector', function(e){
+					if(e.keyCode === 13){
 						self.selectProject(input.typeahead('val'));
-					});
-			input.focus();
-			$(window).on('keydown.projectSelector', function(e){
-				if(e.keyCode === 13){
-					self.selectProject(input.typeahead('val'));
-				}
+					}
+				});
+			})
+			.catch(function(err){
+				console.log(err);
 			});
-		})
-		.catch(function(err){
-			console.log(err);
-		});
+	}
+	selectProject(project_id){
+		if(!(typeof project_id === 'string' && project_id !== '')){
+			return;
+		}
+		console.log(project_id+' selected');
+		$(window).unbind('keydown.projectSelector');
+		this.emit('selection', {project_id: project_id});
+	}
 }
 
-util.inherits(ProjectSelector, EventEmitter);
 
-ProjectSelector.prototype.selectProject = function(project_id){
-	if(!(typeof project_id === 'string' && project_id !== '')){
-		return;
-	}
-	console.log(project_id+' selected');
-	$(window).unbind('keydown.projectSelector');
-	this.emit('selection', {project_id: project_id});
-};
+
 
 var substringMatcher = function(strs) {
   return function findMatches(q, cb) {

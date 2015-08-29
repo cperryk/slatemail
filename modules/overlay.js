@@ -5,7 +5,7 @@ var EventEmitter = require('events').EventEmitter;
 
 class Overlay extends EventEmitter{
 	constructor(conf){
-		var self = this;
+		super();
 		this.conf = conf;
 		this.$shade = $('<div>')
 			.addClass('overlay')
@@ -18,12 +18,12 @@ class Overlay extends EventEmitter{
 			.addClass('btn_ex')
 			.html('X')
 			.appendTo(this.$c)
-			.click(function(){
-				self.close();
+			.click(()=>{
+				this.close();
 			});
-		$(window).on('keydown.overlay', function(e){
+		$(window).on('keydown.overlay', (e)=>{
 			if(e.keyCode === 27){ // escape key
-				self.close();
+				this.close();
 			}
 		});
 	}

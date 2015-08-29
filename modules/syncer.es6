@@ -1,5 +1,6 @@
+// jshint esnext: true
 var dbHandler = window.dbHandler;
-var Imaper = require('../modules/imaper.js');
+var Imaper = require('../modules/imaper.es6');
 var Q = require('Q');
 var fs = require('fs-extra');
 var throat = require('throat');
@@ -8,9 +9,7 @@ var syncing = false;
 var indexedDB = window.indexedDB;
 
 function Syncer(conf){
-	console.log('NEW SYNCER');
 	this.imaper = new Imaper();
-	console.log(dbHandler);
 	this.dbHandler = new dbHandler();
 	this.conf = conf;
 	return this;
@@ -18,7 +17,6 @@ function Syncer(conf){
 Syncer.prototype = {
 	start: function(){
 		// Starts the syncer, which syncs the mailboxes at regular intervals
-		var self = this;
 		this.stopped = false;
 		this.runSync();
 		return this;
@@ -29,25 +27,24 @@ Syncer.prototype = {
 		return this;
 	},
 	runSync: function(){
-		var self = this;
 		if(self.stopped !== false){
 			return;
 		}
 		this.syncAll()
-			.then(function(results){
+			.then((results)=>{
 				if(results !== false){
-					if(self.conf.onSyncComplete){
-						self.conf.onSyncComplete();
+					if(this.conf.onSyncComplete){
+						this.conf.onSyncComplete();
 					}
-					setTimeout(function(){
-						self.runSync();
+					setTimeout(()=>{
+						this.runSync();
 					}, 15000);
 				}
 			});
 	}
 };
 
-Syncer.prototype.syncAll = function(){
+Syncer.prototype.syncAll = function(cb){
 	/*
 	Syncs all local boxes with all remotes boxes.
 	Deletes local messages that no longer exist on the remote server.
@@ -55,10 +52,8 @@ Syncer.prototype.syncAll = function(){
 	Threads all new messages.
 	 */
 	var self = this;
-	var def = Q.defer();
 	if(syncing === true){
-		def.resolve(false);
-		return def.promise;
+		return cb();
 	}
 	else{
 		syncing = true;
@@ -67,84 +62,70 @@ Syncer.prototype.syncAll = function(){
 	var box_paths = box_paths;
 	var remote_descriptors;
 	this.imaper.connect()
-		.then(function(){
-			return self.imaper.getBoxPaths();
+		.then(()=>{
+			return this.imaper.getBoxPaths();
 		})
-		.then(function(paths){
-			// These were creating some problems for me so I've removed them from the syncing process for now.
+		.then((paths)=>{
 			paths.splice(paths.indexOf('Deleted Items'), 1);
 			paths.splice(paths.indexOf('Drafts'), 1);
 			if(global.PREFERENCES.demo){
-				box_paths = paths.filter(function(path){
+				box_paths = paths.filter((path)=>{
 					return path.indexOf('SlateMail') === 0 || path === 'INBOX' || path === 'Sent Items';
 				});
 			}
 		})
-		.then(function(){
+		.then(()=>{
 			console.log('BOX PATHS', box_paths);
 			console.log('deleting boxes');
-			return self.dbHandler.getAllMailboxesAsync()
-				.then(function(local_boxes){
-					var boxes_to_delete = local_boxes.filter(function(local_box){
-						return box_paths.indexOf(local_box) === -1;
-					});
-					if(boxes_to_delete.length > 0){
-						return self.dbHandler.deleteBoxesAsync(boxes_to_delete)
-							.then(function(){
-								def.resolve();
-							});
-					}
-					else{
-						console.log('no local boxes to delete');
-						return true;
-					}
-				});
+			var local_boxes = this.dbHandler.list();
+			var boxes_to_delete = local_boxes.filter((local_box)=>{
+				return box_paths.indexOf(local_box) === -1;
+			});
+			if(boxes_to_delete.length > 0){
+				return this.dbHandler.mailboxes.delete(boxes_to_delete);
+			}
+			else{
+				console.log('no local boxes to delete');
+				return true;
+			}
 		})
-		.then(function(){
-			return self.dbHandler.ensureLocalBoxesAsync(box_paths);
+		.then(()=>{
+			return this.dbHandler.mailboxes.ensure(box_paths);
 		})
-		.then(function(){
+		.then(()=>{
 			var box_results = {};
 			var promises = box_paths.map(function(box_path){
-				return function(){
-					var def = Q.defer();
-					self.getRemoteDescriptors(box_path)
+				return new Promise((resolve, reject)=>{
+					self.getRemoteDescriptorsAsync(box_path)
 						.then(function(results){
 							box_results[box_path] = results;
-							def.resolve();
-						});
-					return def.promise;
-				};
+							resolve();
+						})
+						.catch(reject);
+				});
 			});
 			return promises.reduce(Q.when, Q())
 				.then(function(){
 					remote_descriptors = box_results;
-				})
-				.catch(function(err){
-					console.log(err);
 				});
 		})
 		.then(function(){
-			var results = [];
-			var def = Q.defer();
-			var promises = box_paths.map(function(box_path){
-				return function(){
-					var def = Q.defer();
-					self.syncBox(box_path, remote_descriptors[box_path])
-						.then(function(box_results){
-							results.push(box_results);
-						})
-						.fin(function(){
-							def.resolve();
-						});
-					return def.promise;
-				};
-			});
-			promises.reduce(Q.when, Q())
-				.then(function(){
-					def.resolve(results);
+			return new Promise(function(resolve, reject){
+				var results = [];
+				var promises = box_paths.map(function(box_path){
+					return new Promise(function(resolve, reject){
+						self.syncBoxAsync(box_path, remote_descriptors[box_path])
+							.then(function(box_results){
+								results.push(box_results);
+								resolve();
+							});
+					});
 				});
-			return def.promise;
+				return promises.reduce(Q.when, Q())
+					.then(function(){
+						resolve(results);
+					});
+			});
 		})
 		.then(function(results){
 			console.log(results);
@@ -155,7 +136,7 @@ Syncer.prototype.syncAll = function(){
 				mailbox.new_messages.forEach(function(msg){
 					if(msg.downloaded === true){
 						promises.push(function(){
-							return self.dbHandler.threadMessageAsync(mailbox.mailbox, msg.uid);
+							return self.dbHandler.messages.threadAsync(mailbox.mailbox, msg.uid);
 						});
 					}
 				});
@@ -172,12 +153,12 @@ Syncer.prototype.syncAll = function(){
 		.fin(function(){
 			syncing = false;
 			console.log('SYNCING COMPLETE');
-			def.resolve(true);
+			cb(null, true);
 		})
 		.catch(function(err){
 			console.log(err);
+			cb(err);
 		});
-	return def.promise;
 };
 
 
@@ -201,15 +182,15 @@ Syncer.prototype.syncBox = function(mailbox_name, remote_descriptors){
 	var local_descriptors;
 	var downloaded_messages;
 	var self = this;
-	this.getLocalDescriptors(mailbox_name)
-		.then(function(local_descriptors){
+	this.getLocalDescriptorsAsync(mailbox_name)
+		.then((local_descriptors)=>{
 			// if(mailbox_name==='INBOX'){
 			// 	local_descriptors = [];
 			// }
 			return Q.all([
-				self.deleteLocalMessages(mailbox_name, local_descriptors, remote_descriptors),
-				self.downloadNewMail(mailbox_name, local_descriptors, remote_descriptors),
-				self.updateFlags(mailbox_name, local_descriptors, remote_descriptors)
+				this.deleteLocalMessagesAsync(mailbox_name, local_descriptors, remote_descriptors),
+				this.downloadNewMailAsync(mailbox_name, local_descriptors, remote_descriptors),
+				this.updateFlagsAsync(mailbox_name, local_descriptors, remote_descriptors)
 			]);
 		})
 		.then(function(outputs){
@@ -234,11 +215,9 @@ Syncer.prototype.syncBox = function(mailbox_name, remote_descriptors){
 	return def.promise;
 };
 
-Syncer.prototype.updateFlags = function(mailbox_name, local_descriptors, remote_descriptors){
+Syncer.prototype.updateFlags = function(mailbox_name, local_descriptors, remote_descriptors, cb){
 	console.log('updating flags for '+mailbox_name);
-	var def = Q.defer();
 	var to_update = [];
-	var self = this;
 	for(var uid in local_descriptors){
 		if(remote_descriptors[uid]){
 			var local_flags = local_descriptors[uid];
@@ -248,90 +227,75 @@ Syncer.prototype.updateFlags = function(mailbox_name, local_descriptors, remote_
 			}
 		}
 	}
-	var promises = [];
-	to_update.forEach(function(update){
-		promises.push(self.dbHandler.updateFlagsAsync(mailbox_name, update.uid, update.flags));
+	var promises = to_update.map((update)=>{
+		return promises.push(this.dbHandler.mailboxes.select(mailbox_name).select(update.uid).updateFlags(update.flags));
 	});
-	Q.all(promises)
+	Promise.all(promises)
 		.then(function(){
 			console.log('flags updated');
+			cb();
 		})
 		.catch(function(err){
-			console.log(err);
+			cb(err);
 		});
-	// dbHandler.updateFlags(mailbox_name, uid, remote_flags);
-	function arraysEqual(arr1, arr2) {
-		if(arr1.length !== arr2.length)
-				return false;
-		for(var i = arr1.length; i--;) {
-				if(arr1[i] !== arr2[i])
-						return false;
-		}
-		return true;
-	}
 };
 
-Syncer.prototype.getRemoteDescriptors = function(mailbox_name){
+Syncer.prototype.getRemoteDescriptors = function(mailbox_name, cb){
 	console.log('get remote descriptor: '+mailbox_name);
-	var def = Q.defer();
 	this.imaper.getUIDsFlags(mailbox_name)
 		.then(function(msgs){
 			var out = {};
 			msgs.forEach(function(msg){
 				out[msg.uid] = msg.flags;
 			});
-			def.resolve(out);
+			cb(null, out);
 		})
 		.catch(function(err){
-			console.log(err);
+			cb(err);
 		});
-	return def.promise;
 };
 
-Syncer.prototype.getLocalDescriptors = function(mailbox_name){
-	var def = Q.defer();
+Syncer.prototype.getLocalDescriptors = function(mailbox_name, cb){
 	var request = indexedDB.open('slatemail');
 	request.onsuccess = function(){
 		var db = request.result;
 		var tx = db.transaction("descriptors",'readonly');
 		var object_store = tx.objectStore('descriptors');
-		var get_request = object_store.get(mailbox_name);
-		get_request.onsuccess = function(){
-			var result = get_request.result;
+		var req = object_store.get(mailbox_name);
+		req.onsuccess = function(){
+			var result = req.result;
 			if(result){
-				def.resolve(result.descriptors);
+				cb(null, result.descriptors);
 			}
 			else{
-				def.resolve({});
+				cb(null, {});
 			}
 		};
+		req.onerror = function(err){
+			cb(err);
+		};
 	};
-	return def.promise;
 };
 
-Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors, remote_descriptors){
+Syncer.prototype.deleteLocalMessages = function(mailbox_name, local_descriptors, remote_descriptors, cb){
 	console.log('deleting local messages');
-	var def = Q.defer();
-	var promises = [];
 	var messages_to_delete = [];
-	var self = this;
 	for(var uid in local_descriptors){
 		if(uid in remote_descriptors === false){
 			messages_to_delete.push(parseInt(uid,10));
 		}
 	}
-	messages_to_delete.forEach(function(uid){
-		promises.push(self.dbHandler.removeLocalMessageAsync(mailbox_name, uid));
+	var promises = messages_to_delete.map((uid)=>{
+		return this.dbHandler.mailboxes.select(mailbox_name).select(uid).deleteAsync();
 	});
-	Q.all(promises)
+	Promise.all(promises)
 		.then(function(){
 			console.log('local messages deleted');
-			def.resolve();
+			if(cb) cb();
 		})
 		.catch(function(err){
-			console.log(err);
+			if(cb) cb(err);
 		});
-	return def.promise;
 };
 
 Syncer.prototype.saveDescriptors = function(mailbox_name, msgs){
@@ -441,5 +405,15 @@ Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptor
 		});
 	return def.promise;
 };
+
+function arraysEqual(arr1, arr2) {
+	if(arr1.length !== arr2.length)
+			return false;
+	for(var i = arr1.length; i--;) {
+			if(arr1[i] !== arr2[i])
+					return false;
+	}
+	return true;
+}
 
 module.exports = Syncer;

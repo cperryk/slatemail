@@ -1,3 +1,4 @@
+
 var fs = require('fs');
 var $ = require('jquery');
 require('nw.gui').Window.get().showDevTools();
@@ -185,16 +186,29 @@ function addSelectedEmailListeners(){
 					.on('selection', function(e){
 						var project_id = e.project_id;
 						var selected_email = message_list.getSelection();
-						my_dbHandler.putInProjectAsync(selected_email.mailbox, selected_email.uid, project_id)
+						my_dbHandler.projects.select(project_id).ensureAsync()
 							.then(function(){
-								return my_dbHandler.getMailFromLocalBoxAsync(selected_email.mailbox, selected_email.uid);
+								console.log('now...');
+								return my_dbHandler.mailboxes
+									.select(selected_email.mailbox)
+									.select(selected_email.uid)
+									.putInProjectAsync(project_id);
+							})
+							.then(function(){
+								return my_dbHandler.mailboxes
+									.select(selected_email.mailbox)
+									.select(selected_email.uid)
+									.getAsync();
 							})
 							.then(function(mail_obj){
 								openProjectView(project_id, mail_obj.thread_id);
 							})
 							.then(function(){
 								project_list.render();
-						});
+							})
+							.catch(function(err){
+								console.log(err);
+							});
 						overlay.close();
 				});
 			},
@@ -274,6 +288,7 @@ function regularSync(){
 }
 
 function openProjectView(project_id, initial_thread_id){
+	console.log('opening project view');
 	$('body').addClass('project_viewer_open');
 	$('#project_viewer').show();
 	project_view.printProject(project_id, initial_thread_id);

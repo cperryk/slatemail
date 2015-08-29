@@ -23,7 +23,26 @@ class Project{
 			cb(err);
 		};
   }
-  update(project_obj){
+  ensure(cb){
+    console.log('ensuring ' + this.id);
+    this.getAsync()
+      .then((project_obj)=>{
+        console.log(project_obj);
+        if(!project_obj){
+          return this.updateAsync({
+            threads: [],
+            name: this.id
+          });
+        }
+        console.log('complete');
+        cb();
+      })
+      .catch(function(err){
+        console.log(err);
+        cb(err);
+      });
+  }
+  update(project_obj, cb){
 		var tx = this.db.transaction('projects',"readwrite");
 		var store = tx.objectStore('projects');
 		var put_request = store.put(project_obj);

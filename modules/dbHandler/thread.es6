@@ -32,6 +32,7 @@ class Thread{
 			if(cb) cb(null, matching);
 		};
 		get_request.onerror = function(err){
+      console.log(err);
 			if(cb) cb(err, null);
 		};
   }

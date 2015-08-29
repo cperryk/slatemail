@@ -64,9 +64,13 @@ class ProjectView extends EventEmitter{
 			.appendTo(this.thread_container);
 		this.dbHandler.projects.select(this.project_name).getAsync()
 			.then((project_obj)=>{
-				return this.dbHandler.threads.getAsync(project_obj.threads);
+				console.log(project_obj);
+				return Promise.all(project_obj.threads.map((thread_id)=>{
+					return this.dbHandler.threads.select(thread_id).getAsync();
+				}));
 			})
 			.then((thread_objs)=>{
+				console.log(thread_objs);
 				var promises = thread_objs.map((thread_obj)=>{
 					return this.printThreadAsync(thread_obj);
 				});
@@ -92,7 +96,7 @@ class ProjectView extends EventEmitter{
 			complete:'graphics/icon_45161/icon_45161.png',
 			defer:'graphics/icon_1303/icon_1303.png'
 		};
-		this.dbHandler.messages.getMessages(thread_obj.messages)
+		this.dbHandler.messages.getMessagesAsync(thread_obj.messages)
 			.then((thread_messages)=>{
 				var thread_action_status = (function(){
 					for(var i=0;i<thread_messages.length;i++){

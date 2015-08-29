@@ -48,44 +48,55 @@ class Message{
 		}
 	}
 	putInProject(project_name){
+    console.log('putting in project: '+project_name);
     var box_name = this.box_name;
     var uid = this.uid;
 		//console.log('putting '+box_name+':'+uid+' in project: '+project_name);
 		var project = this.api.projects.select(project_name);
+    var thread;
     var message_obj;
-		this.api.projects.ensureAsync(project_name)
-			.then(()=>this.get())
+		this.getAsync()
 
       // update project
 			.then((my_message_obj) => {
+        console.log('my message obj', my_message_obj);
         message_obj = my_message_obj;
-        return project.get();
+        return project.getAsync();
       })
       .then((project_obj)=> {
+        console.log(project_obj);
 				if(project_obj.threads.indexOf(message_obj.thread_id) === -1){
 					project_obj.threads.push(message_obj.thread_id);
-					return project.update(project_obj);
+          console.log(project_obj);
+					return project.updateAsync(project_obj);
 				}
         return;
 			})
 
       // update thread;
-      .then((message_obj, cb)=>{
-        var thread = this.api.threads.select(message_obj.thread_id);
-				return thread.get();
+      .then(()=>{
+        console.log('getting thread');
+        try{
+          thread = this.api.threads.select(message_obj.thread_id);
+        }
+        catch(e){
+          console.log(e);
+        }
+        console.log(thread);
+				return thread.getAsync();
 			})
       .then((thread_obj) => {
+        console.log('updating thread');
         thread_obj.project_id = project_name;
-        return thread.update(thread_obj);
+        return thread.updateAsync(thread_obj);
       })
-
+      .then(()=>{
+        console.log('thread '+thread.id+' added to project: '+project_name);
+        cb();
+      })
 			.catch(function(error){
 				cb(err);
-			})
-			.finally(function(){
-				cb();
 			});
-		return def.promise;
 	}
 	removeFromThread(thread_id, cb){
 		console.log('removing message '+box_name+':'+uid+' from '+thread_id);
