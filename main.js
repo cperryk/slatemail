@@ -201,6 +201,7 @@ function addSelectedEmailListeners(){
 									.getAsync();
 							})
 							.then(function(mail_obj){
+								console.log('opening project view');
 								openProjectView(project_id, mail_obj.thread_id);
 							})
 							.then(function(){

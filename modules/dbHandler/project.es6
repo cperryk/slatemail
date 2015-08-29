@@ -29,9 +29,15 @@ class Project{
       .then((project_obj)=>{
         console.log(project_obj);
         if(!project_obj){
-          return this.updateAsync({
+          this.updateAsync({
             threads: [],
             name: this.id
+          })
+          .then(()=>{
+            cb();
+          })
+          .catch((err)=>{
+            cb(err);
           });
         }
         console.log('complete');
