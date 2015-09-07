@@ -26,7 +26,7 @@ class Message{
     var uid = this.uid;
 		//console.log('updating flags on '+box_name+':'+uid);
 		var db = this.db;
-    this.get()
+    this.getAsync()
       .then((mail_obj)=>{
   			if(!arraysEqual(mail_obj.flags, flags)){
           mail_obj.flags = flags;
@@ -135,7 +135,7 @@ class Message{
 
 		console.log('deleting local '+box_name+':'+uid);
 		// var get_request = db.transaction("box_"+box_name,'readonly').objectStore("box_"+box_name).get(uid);
-		this.get()
+		this.getAsync()
 			.then((mail_obj)=>{
 				if(!mail_obj){
 					console.log('resolving because no mail object found');

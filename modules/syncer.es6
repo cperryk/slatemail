@@ -228,7 +228,7 @@ Syncer.prototype.updateFlags = function(mailbox_name, local_descriptors, remote_
 		}
 	}
 	var promises = to_update.map((update)=>{
-		return promises.push(this.dbHandler.mailboxes.select(mailbox_name).select(update.uid).updateFlags(update.flags));
+		return promises.push(this.dbHandler.mailboxes.select(mailbox_name).select(update.uid).updateFlagsAsync(update.flags));
 	});
 	Promise.all(promises)
 		.then(function(){

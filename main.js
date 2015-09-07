@@ -17,7 +17,7 @@ var ProjectList = require('./modules/projectList.jsx');
 var ProjectSelector = require('./modules/ProjectSelector');
 var ProjectView = require('./modules/projectView.js');
 // var Scheduler = require('./modules/scheduler.js');
-// var Syncer = require('./modules/syncer.js');
+var Syncer = require('./modules/syncer.es6');
 var TreeView = require('./modules/treeView.es6');
 // var UserCommand = require('./modules/userCommand.js');
 
@@ -117,7 +117,7 @@ var overlay_is_open = false;
 			return tree_view.printTree();
 		})
 		.then(function(){
-			// regularSync();
+			regularSync();
 		})
 		.catch(function(err){
 			console.log(err);
