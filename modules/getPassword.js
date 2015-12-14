@@ -8,7 +8,6 @@ function getPassword(){
 	// var password;
 	// // console.log(global.PREFERENCES.internal.user);
 	// // keychain.getPassword({account:global.PREFERENCES.internal.user, service:'SlateMail'}, function(err, pass){
-	// def.resolve('@z919XLWslUo');
 	// return def;
 	// keychain.getPassword({account:'Chris.Kirk@slate.com', service:'SlateMail'}, function(err, pass){
 	// 	console.log(err);
