@@ -147,6 +147,35 @@ class Box{
       cb(err);
     });
   }
+  saveMailObj(mail_obj, cb){
+    var mailbox_name = this.name;
+  	// console.log('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
+  	process.stdout.write('*** saving mail object to local box: '+mailbox_name+':'+mail_obj.uid+"\r");
+  	this.saveAttachments(mailbox_name, mail_obj)
+  		.then((mail_obj)=>{
+  			mail_obj.mailbox = mailbox_name;
+  			var tx = db.transaction("box_"+mailbox_name,"readwrite");
+  			var store = tx.objectStore("box_"+mailbox_name);
+  			mail_obj.uid = parseInt(mail_obj.uid,10);
+  			mail_obj.subject = mail_obj.subject ? mail_obj.subject : '';
+  			mail_obj.short_subject = this.api.messages.shortenSubject(mail_obj.subject);
+  			mail_obj.pid = this.api.messages.getPID(mail_obj);
+  			var put_request = store.put(mail_obj);
+  			put_request.onsuccess = function(){
+  				console.log('      save for '+mailbox_name+':'+mail_obj.uid+' successful!');
+  				// dbHandler.threadMail(mailbox_name, mail_obj);
+          cb();
+  			};
+  			put_request.onerror = function(err){
+  				console.log(err);
+          cb(err);
+  			};
+  		})
+  		.catch(function(err){
+  			cb(err);
+  		});
+  	return def.promise;
+  }
 
 }
 

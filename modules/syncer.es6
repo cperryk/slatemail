@@ -5,6 +5,7 @@ var Q = require('Q');
 var fs = require('fs-extra');
 var throat = require('throat');
 var syncing = false;
+var promisifyAll = require('es6-promisify-all');
 
 var indexedDB = window.indexedDB;
 
@@ -104,8 +105,8 @@ Syncer.prototype.syncAll = function(cb){
 						.catch(reject);
 				});
 			});
-			return promises.reduce(Q.when, Q())
-				.then(function(){
+			return runSequential(promises)
+				.then(()=>{
 					remote_descriptors = box_results;
 				});
 		})
@@ -121,31 +122,27 @@ Syncer.prototype.syncAll = function(cb){
 							});
 					});
 				});
-				return promises.reduce(Q.when, Q())
-					.then(function(){
-						resolve(results);
-					});
+				return runSequential(promises)
+					.then(resolve);
 			});
 		})
 		.then(function(results){
 			console.log(results);
 			console.log('downloading and deletion complete; threading now');
-			var def = Q.defer();
-			var promises = [];
-			results.forEach(function(mailbox){
-				mailbox.new_messages.forEach(function(msg){
-					if(msg.downloaded === true){
-						promises.push(function(){
-							return self.dbHandler.messages.threadAsync(mailbox.mailbox, msg.uid);
-						});
-					}
+			return new Promise(function(resolve, reject){
+				var promises = [];
+				results.forEach(function(mailbox){
+					mailbox.new_messages.forEach(function(msg){
+						if(msg.downloaded === true){
+							promises.push(function(){
+								return self.dbHandler.messages.threadAsync(mailbox.mailbox, msg.uid);
+							});
+						}
+					});
 				});
+				runSequential(promises)
+					.then(resolve);
 			});
-			promises.reduce(Q.when, Q())
-				.then(function(){
-					def.resolve();
-				});
-			return def.promise;
 		})
 		.then(function(){
 			return self.saveAllDescriptors(remote_descriptors);
@@ -319,10 +316,9 @@ Syncer.prototype.saveDescriptors = function(mailbox_name, msgs){
 };
 
 
-Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, remote_descriptors){
+Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, remote_descriptors, cb){
 	console.log('downloading new mail');
 	var self = this;
-	var def = Q.defer();
 	var to_get = [];
 	// var promises = [];
 	for(var uid in remote_descriptors){
@@ -330,15 +326,13 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 			to_get.push(uid);
 		}
 	}
-
-
 	var results = [];
 	var promises = to_get.map(function(uid, index){
 		return function(){
 			return self.dbHandler.getMailFromLocalBoxAsync(mailbox_name, uid)
 				.then(function(mail_obj){
 					if(mail_obj === false){
-						return self.downloadMessage(mailbox_name, uid, remote_descriptors, index, promises.length)
+						return self.downloadMessageAsync(mailbox_name, uid, remote_descriptors, index, promises.length)
 							.then(function(res){
 								results.push(res);
 							});
@@ -354,23 +348,19 @@ Syncer.prototype.downloadNewMail = function(mailbox_name, local_descriptors, rem
 				});
 		};
 	});
-
 	console.log('total messages to get: '+promises.length);
-
-	promises.reduce(Q.when, Q())
+	runSequential(promises)
 		.then(function(){
-			def.resolve(results);
+			cb(null, results);
 		});
-	return def.promise;
 };
 
-Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptors, index, l){
+Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptors, index, l, cb){
 	console.log('------------ downloading message '+mailbox_name+':'+uid+', index = '+index+' of '+l+'-------------------');
 	// console.log(remote_descriptors[uid]);
-	var def = Q.defer();
 	var self = this;
 	this.imaper.getMessageWithUID(mailbox_name, uid)
-		.then(function(mail_obj){
+		.then((mail_obj)=>{
 			if(!mail_obj){
 				console.log('no mail object found... '+mailbox_name+':'+uid);
 				def.resolve({uid:uid, downloaded:false, flags:mail_obj.flags});
@@ -380,30 +370,29 @@ Syncer.prototype.downloadMessage = function(mailbox_name, uid, remote_descriptor
 				// mail_obj.date = mail_obj.date.toString();
 				mail_obj.flags = remote_descriptors[uid];
 				mail_obj.uid = uid;
-				self.dbHandler.saveMailToLocalBoxAsync(mailbox_name, mail_obj)
+				this.dbHandler.mailboxes.select(mailbox_name).saveMailObjAsync(mail_obj)
 					.then(function(){
 						console.log('\t\tMESSAGE '+uid+' (index '+ index +') SAVED; RESOLVING.');
-						def.resolve({
+						cb(null, {
 							uid:uid,
 							downloaded:true,
 							flags:mail_obj.flags
 						});
 					})
 					.catch(function(err){
-						console.log("ERROR IN DOWNLOAD MESSAGE");
+						// console.log("ERROR IN DOWNLOAD MESSAGE");
 						console.log(err);
-						def.resolve({
+						cb(null, ({
 							uid:uid,
 							downloaded:false,
 							flags:mail_obj.flags
-						});
+						}));
 					});
 			}
 		})
 		.catch(function(err){
-			console.log(err);
+			cb(err);
 		});
-	return def.promise;
 };
 
 function arraysEqual(arr1, arr2) {
@@ -415,5 +404,14 @@ function arraysEqual(arr1, arr2) {
 	}
 	return true;
 }
+
+function runSequential(promises){
+  return promises.reduce(function(prev, curr){
+    return prev.then(curr);
+  }, promises[0]());
+}
+
+promisifyAll(Syncer.prototype);
+
 
 module.exports = Syncer;
