@@ -5,3 +5,4 @@ preferences
 modules/.module-cache
 *.sublime-project
 *.sublime-workspace
+modules/getPassword.js
